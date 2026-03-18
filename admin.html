@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.supabase.co; script-src 'self' https://unpkg.com https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://*.supabase.co; form-action 'self'; base-uri 'self';">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>НПО Мелодия - Панель администратора</title>
+  <link rel="stylesheet" href="styles.css"> <!-- Основные стили (цвета/шрифты) -->
+  <link rel="stylesheet" href="admin.css"> <!-- Специфичные стили админки -->
+</head>
+<body class="admin-body">
+
+  <!-- Экран авторизации в админку -->
+  <div id="adminLoginScreen" class="admin-login-screen">
+    <div class="card pad admin-login-card">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" alt="Logo" style="width: 64px; border-radius: 50%;">
+        <h2>Вход в панель управления</h2>
+      </div>
+      <form id="adminLoginForm" class="auth-form">
+        <input class="input" type="email" name="email" placeholder="Email администратора" required>
+        <input class="input" type="password" name="password" placeholder="Пароль" required>
+        <button class="btn primary" type="submit" style="width: 100%;">Войти</button>
+        <div id="loginError" class="muted" style="color: red; margin-top: 10px; display: none;">Неверный логин или пароль</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Основной интерфейс админа -->
+  <div id="adminPanel" class="admin-panel" style="display: none;">
+    
+    <!-- Сайдбар -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" alt="Logo" class="sidebar-logo">
+        <b>НПО Мелодия Admin</b>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="nav-item active" data-view="dashboard">📊 Дашборд</a>
+        <a href="#users" class="nav-item" data-view="users">👥 Пользователи</a>
+        <a href="#events" class="nav-item" data-view="events">📅 Афиша (События)</a>
+        <a href="#artists" class="nav-item" data-view="artists">🎧 Артисты</a>
+        <a href="#releases" class="nav-item" data-view="releases">💿 Релизы</a>
+        <a href="#podcasts" class="nav-item" data-view="podcasts">🎙️ Подкасты</a>
+        <a href="#streams" class="nav-item" data-view="streams">🔴 Стримы</a>
+        <a href="#merch" class="nav-item" data-view="merch">👕 Мерч</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="muted" style="font-size: 12px; margin-bottom: 12px;" id="adminCurrentEmail">admin@...</div>
+        <button class="btn ghost" id="adminLogoutBtn" style="width: 100%; border: 1px solid rgba(255,255,255,0.1)">Выход</button>
+      </div>
+    </aside>
+
+    <!-- Основной контент -->
+    <main class="admin-main">
+      <header class="admin-header">
+        <h1 id="pageTitle">Дашборд</h1>
+        <div class="header-actions">
+          <button id="addBtn" class="btn primary" style="display: none;">+ Добавить</button>
+        </div>
+      </header>
+      
+      <div class="admin-content" id="viewContainer">
+        <!-- Сюда динамически загружаются вьюшки (таблицы) -->
+        <div class="muted">Загрузка данных...</div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Модальное окно редактирования/добавления -->
+  <div id="adminModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-inner" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <div id="editorTitle" class="modal-title">Редактирование</div>
+        </div>
+        <button class="btn ghost modal-close" id="editorClose" type="button" aria-label="Закрыть">
+        <svg class="modal-close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18"/>
+        </svg>
+      </button>
+      </div>
+      <div class="modal-body pad" id="editorBody">
+        <!-- Форма генерируется динамически в JS -->
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script type="module" src="/src/admin/main.js"></script>
+</body>
+</html>

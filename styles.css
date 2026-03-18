@@ -1,0 +1,2246 @@
+    @font-face {
+      font-family: "ISOCP EUR Italic";
+      src: url("ISOCPEUR Italic.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #f4f4f1;
+      --fg: #111;
+      --text: #111;
+      --text-muted: rgba(17, 17, 17, .68);
+      --muted: rgba(17, 17, 17, .68);
+      --stroke: rgba(17, 17, 17, .16);
+      --stroke2: rgba(17, 17, 17, .10);
+      --border: rgba(17, 17, 17, .10);
+      --surface: rgba(0, 0, 0, .04);
+      --surface-2: rgba(0, 0, 0, .06);
+      --card-bg: rgba(0, 0, 0, .06);
+      --card-text: var(--text);
+      --card: var(--card-bg);
+      --button-bg: rgba(0, 0, 0, .08);
+      --button-text: var(--text);
+      --overlay: rgba(0, 0, 0, .55);
+      --header-bg: transparent;
+      --bg-overlay: rgba(255, 255, 255, .76);
+      --surface-hover: #111;
+      --text-hover: #fff;
+      --border-hover: transparent;
+      --radius: 18px;
+      --max: 1180px;
+      --modal-bg: rgba(255, 255, 255, .97);
+      --focus-offset: 2px;
+      --pad: 16px;
+      --pad-sm: 12px;
+      --btn-primary-inverted-fg: var(--bg);
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      font-family: "ISOCP EUR Italic", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", sans-serif;
+      font-size: clamp(15px, 0.2vw + 14px, 17px);
+      font-weight: 400;
+      letter-spacing: .01em;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.5;
+      overflow-x: hidden;
+      position: relative;
+      isolation: isolate;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      /* Фоновый контур как на референсе */
+      background-image: url("https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/bg-contour.jpg");
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center center;
+      filter: grayscale(1) contrast(2.2) brightness(1.15);
+      opacity: .16;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background: var(--bg-overlay);
+    }
+
+    #streams,
+    a[href="#streams"] {
+      display: none !important;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit
+    }
+
+    .container {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 18px
+    }
+
+    .topbar {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 50;
+      height: 78px;
+      backdrop-filter: blur(12px);
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      box-shadow: none;
+    }
+
+    .topbar .in {
+      height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 14px;
+      flex-wrap: nowrap;
+    }
+
+    .topbar .in>* {
+      min-width: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      font-size: clamp(28px, 1.7vw, 36px);
+      line-height: 1;
+      flex-shrink: 0;
+      position: static;
+      gap: 0;
+      margin-left: 8px;
+    }
+
+    .brand-name {
+      color: var(--fg);
+      white-space: nowrap;
+      font-size: clamp(31px, 8.1vw, 47px);
+      line-height: 1;
+      text-align: left;
+      display: block;
+      position: relative;
+      top: 3px;
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      overflow: hidden;
+      cursor: pointer;
+      user-select: none;
+      transition: background .25s ease, color .25s ease, border-color .25s ease;
+    }
+
+    .brand-mark:hover,
+    .brand-mark:active {
+      transform: none;
+      background: var(--surface-hover);
+      color: var(--text-hover);
+      border-color: var(--border-hover);
+    }
+
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: invert(1);
+      transition: filter .25s ease;
+    }
+
+    .brand-mark:hover img,
+    .brand-mark:active img {
+      filter: invert(0);
+    }
+
+    .menu-toggle {
+      color: var(--fg);
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .mobile-menu-backdrop {
+      position: fixed;
+      inset: 78px 0 0 0;
+      background: rgba(0, 0, 0, .25);
+      backdrop-filter: blur(4px);
+      z-index: 79;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease;
+    }
+
+    .mobile-menu {
+      position: fixed;
+      top: 78px;
+      left: 12px;
+      right: 12px;
+      z-index: 80;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--bg);
+      padding: 10px;
+      transform: translateY(-14px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .18s ease, opacity .18s ease;
+    }
+
+    .mobile-menu a {
+      display: block;
+      padding: 11px 12px;
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 16px;
+      letter-spacing: .02em;
+      border: 1px solid transparent;
+    }
+
+    .mobile-menu a:hover,
+    .mobile-menu a:active {
+      color: var(--text-hover);
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+    }
+
+    body.menu-open .mobile-menu {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    body.menu-open .mobile-menu-backdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .nav {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      overflow: auto;
+      flex: 1 1 auto;
+      justify-content: center;
+      margin-left: 0;
+    }
+
+    .nav a {
+      color: var(--text-muted);
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: .02em;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      transition: background .25s ease, color .25s ease, border-color .25s ease;
+    }
+
+    .nav a:hover,
+    .nav a:active {
+      color: var(--text-hover);
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+    }
+
+    .nav a.active {
+      color: var(--text);
+      background: var(--surface-2);
+      border-color: var(--stroke)
+    }
+
+    .right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-shrink: 0;
+      margin-left: auto
+    }
+
+    .topbar .btn:hover,
+    .topbar .btn:active {
+      background: var(--surface-hover);
+      color: var(--text-hover);
+      border-color: var(--border-hover);
+    }
+
+    .right .btn {
+      width: 48px;
+      min-width: 48px;
+      height: 48px;
+      padding: 0;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: .02em;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      border-radius: 12px;
+      transition: background .25s ease, color .25s ease, border-color .25s ease;
+    }
+
+    .right .btn:hover,
+    .right .btn:active {
+      transform: none;
+      color: var(--text-hover);
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+    }
+
+    .right .btn.sc-btn {
+      position: relative;
+      top: -2px;
+    }
+
+    .right .btn.profile-button {
+      width: auto;
+      min-width: auto;
+      padding: 8px 10px;
+    }
+
+    .right .btn .sc-icon,
+    .right .btn .profile-button-icon {
+      width: 24px;
+      height: 24px
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--button-bg);
+      color: var(--button-text);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: .02em;
+      cursor: pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: var(--surface-hover);
+      color: var(--text-hover);
+      border-color: var(--border-hover)
+    }
+
+    .btn.primary {
+      background: var(--surface-hover);
+      color: var(--text-hover);
+      border-color: var(--surface-hover)
+    }
+
+    .btn.ghost {
+      background: transparent
+    }
+
+    .btn.sc-btn {
+      width: 48px;
+      min-width: 48px;
+      height: 48px;
+      padding: 0;
+      border-radius: 999px;
+    }
+
+    .sc-icon {
+      width: 18px;
+      height: 18px;
+      display: block;
+      fill: currentColor;
+    }
+
+    .profile-button .profile-button-icon {
+      display: block;
+    }
+
+    main {
+      padding-top: 78px
+    }
+
+    section {
+      padding: 56px 0;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 18px
+    }
+
+    main section .head h2 {
+      text-align: center;
+    }
+
+    h1,
+    h2 {
+      margin: 0
+    }
+
+    h1 {
+      font-size: clamp(36px, 4.8vw, 68px);
+      line-height: 1.04;
+      letter-spacing: .02em;
+      font-weight: 560
+    }
+
+    h2 {
+      font-size: clamp(20px, 2vw, 28px);
+      line-height: 1.15;
+      letter-spacing: .015em;
+      font-weight: 500
+    }
+
+    .sub {
+      margin-top: 10px;
+      color: var(--text-muted);
+      max-width: 760px;
+      font-size: clamp(15px, .35vw + 14px, 18px);
+      line-height: 1.55
+    }
+
+    b,
+    strong {
+      font-weight: 560
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px
+    }
+
+    .g2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+
+    .g3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr))
+    }
+
+    .g4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr))
+    }
+
+    .card {
+      border: none;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+      box-shadow: none;
+    }
+
+    /* Убрать серые подложки с обёрток разделов (артисты, релизы) */
+    .card:has(.pad > #artistsGrid),
+    .card:has(.pad > #releasesGrid) {
+      background: transparent;
+      backdrop-filter: none;
+    }
+
+    .open-card {
+      cursor: pointer;
+      user-select: none;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      background: var(--card-bg);
+      border: none;
+      box-shadow: none;
+      color: var(--card-text);
+      transition: background .25s ease, border-color .25s ease, color .25s ease;
+    }
+
+    .open-card:focus-visible {
+      outline: 2px solid var(--stroke);
+      outline-offset: var(--focus-offset);
+    }
+
+    .open-card:hover,
+    .open-card:active,
+    .open-card.is-pressed {
+      background: var(--surface-hover) !important;
+      border-color: var(--border-hover) !important;
+      color: var(--text-hover) !important;
+    }
+
+    .open-card:hover *:not(img):not(svg),
+    .open-card:active *:not(img):not(svg),
+    .open-card.is-pressed *:not(img):not(svg) {
+      color: var(--text-hover) !important;
+      border-color: rgba(255, 255, 255, .25) !important;
+    }
+
+    .open-card:hover .tag,
+    .open-card:active .tag,
+    .open-card.is-pressed .tag {
+      background: transparent !important;
+      color: var(--text-hover) !important;
+    }
+
+    .open-card:hover .catalog-title,
+    .open-card:hover .artist-card-name,
+    .open-card:hover .merch-card-title,
+    .open-card:hover .catalog-meta,
+    .open-card:active .catalog-title,
+    .open-card:active .artist-card-name,
+    .open-card:active .merch-card-title,
+    .open-card:active .catalog-meta,
+    .open-card.is-pressed .catalog-title,
+    .open-card.is-pressed .artist-card-name,
+    .open-card.is-pressed .merch-card-title,
+    .open-card.is-pressed .catalog-meta {
+      font-weight: 900;
+    }
+
+    #artistsGrid .open-card .pad,
+    #merchGrid .open-card .pad,
+    #releasesGrid .open-card .pad {
+      padding: 12px;
+    }
+
+    #artistsGrid .artist-card .artist-card-name {
+      display: block;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    #artistsGrid .artist-name {
+      display: block;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      word-break: break-word;
+      line-height: 1.2;
+    }
+
+    .pad {
+      padding: var(--pad)
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 14px 0
+    }
+
+    .muted {
+      color: var(--text-muted)
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .02em;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap
+    }
+
+    .sp {
+      justify-content: space-between
+    }
+
+    .event-card-title {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .event-card-date {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .catalog-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .catalog-media {
+      padding: 6px;
+    }
+
+    .catalog-body {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 72px;
+    }
+
+    .catalog-title {
+      font-size: 15px;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+      text-align: center;
+    }
+
+    .catalog-meta {
+      font-size: 12px;
+      line-height: 1.35;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .event-tags {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+      min-height: 30px;
+    }
+
+    .event-tags .tag {
+      min-width: 96px;
+      justify-content: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 12px;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+
+    #streamNext {
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    .quick-links {
+      margin-top: 14px
+    }
+
+    .quick-links .title {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 58px 0 36px
+    }
+
+    .heroGrid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1.1fr .9fr;
+      align-items: stretch;
+    }
+
+    .heroArt {
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      border: 1px solid var(--stroke2);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .heroArt .bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255, 255, 255, .08), transparent 45%),
+        radial-gradient(circle at 70% 80%, rgba(255, 255, 255, .06), transparent 50%);
+      pointer-events: none;
+    }
+
+    .heroArt .smile {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .heroArt img {
+      width: min(520px, 90%);
+      height: auto;
+    }
+
+    .hero-main-image {
+      width: min(640px, 92%);
+      height: auto;
+      display: block;
+      background: transparent;
+      /* Делает арт нейтрально‑серым в обеих темах */
+      filter: grayscale(1) brightness(1.25) contrast(1.1);
+    }
+
+    .heroArt .cap {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-top: 1px solid var(--stroke2);
+      background: rgba(0, 0, 0, .55);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .hero-fullscreen .hero {
+      padding: 0
+    }
+
+    .hero-fullscreen .hero .container {
+      max-width: none;
+      padding: 0
+    }
+
+    .hero-fullscreen .heroGrid {
+      display: block
+    }
+
+    .hero-fullscreen .heroGrid>div:first-child {
+      display: none
+    }
+
+    .hero-fullscreen .heroArt {
+      min-height: calc(100vh - 78px);
+      border: 0;
+      border-radius: 0;
+    }
+
+    .hero-fullscreen .heroArt .bg,
+    .hero-fullscreen .heroArt .cap {
+      display: none
+    }
+
+    .hero-fullscreen .heroArt .smile {
+      padding: 0
+    }
+
+    .hero-fullscreen .heroArt .hero-main-image {
+      width: 100%;
+      height: 100%;
+      max-height: none;
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    .intro-start {
+      margin-top: -78px;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid rgba(17, 17, 17, .08);
+    }
+
+    .intro-start-image {
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      display: block;
+      object-fit: cover;
+      object-position: center center;
+      background: transparent;
+      filter: none;
+      opacity: 1;
+    }
+
+    /* Media blocks (везде одно изображение) */
+    .media {
+      width: 100%;
+      aspect-ratio: 4/5;
+      border-bottom: 1px solid var(--stroke2);
+      background: rgba(0, 0, 0, .02);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    /* Skeleton loading */
+    .skeleton-card {
+      pointer-events: none;
+    }
+
+    .skeleton {
+      position: relative;
+      overflow: hidden;
+      background: rgba(0, 0, 0, .06);
+    }
+
+    .skeleton::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg,
+          transparent,
+          rgba(255, 255, 255, .25),
+          transparent);
+      animation: skeleton-shimmer 1.2s infinite;
+    }
+
+    .skeleton-media {
+      width: 100%;
+      height: 0;
+      padding-bottom: 100%;
+      border: none;
+      background-clip: padding-box;
+    }
+
+    .skeleton-line {
+      height: 12px;
+      border-radius: 999px;
+      margin-top: 8px;
+    }
+
+    .skeleton-line-lg {
+      width: 80%;
+    }
+
+    .skeleton-line-sm {
+      width: 40%;
+    }
+
+    .skeleton-row .media.skeleton-media {
+      aspect-ratio: 16/9;
+      padding-bottom: 0;
+      height: 120px;
+    }
+
+    @keyframes skeleton-shimmer {
+      0% {
+        transform: translateX(-100%);
+      }
+
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    /* Карточки артистов: высота по контенту, квадратное фото, без пустых блоков */
+    #artistsGrid {
+      align-items: start;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    #artistsGrid .artist-card {
+      height: auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #artistsGrid .artist-card .media {
+      width: 100%;
+      aspect-ratio: 1/1;
+      overflow: hidden;
+      padding: 0;
+      border: none;
+      background: transparent;
+      display: block;
+      flex: none;
+    }
+
+    #artistsGrid .artist-card .media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #artistsGrid .artist-card .artist-card-body {
+      padding: 12px;
+      min-height: 0;
+      flex: none;
+      display: block;
+    }
+
+    /* Карточки мерча: как у артистов — без рамки вокруг изображения */
+    #merchGrid {
+      align-items: start;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    #merchGrid .merch-card {
+      height: auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #merchGrid .merch-card .media {
+      width: 100%;
+      aspect-ratio: 1/1;
+      overflow: hidden;
+      padding: 0;
+      border: none;
+      background: transparent;
+      display: block;
+      flex: none;
+    }
+
+    #merchGrid .merch-card .media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #merchGrid .merch-card .merch-card-body {
+      padding: 12px;
+      min-height: 0;
+      flex: none;
+      display: block;
+    }
+
+    /* Релизы: без рамки, на всю ширину — компактная сетка как у артистов/мерча */
+    #releasesGrid {
+      align-items: start;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    /* Релизы: без рамки, на всю ширину */
+    #releasesGrid .open-card .media {
+      width: 100%;
+      max-width: 100%;
+      padding: 0;
+      border: none;
+      background: transparent;
+      overflow: hidden;
+      display: block;
+      aspect-ratio: unset;
+    }
+
+    #releasesGrid .open-card .media img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+      max-width: 100%;
+      vertical-align: top;
+    }
+
+    #releasesGrid .open-card .pad {
+      text-align: center;
+    }
+
+    #merchGrid .open-card .pad {
+      text-align: center;
+    }
+
+    #merchGrid .open-card .pad .row {
+      justify-content: center;
+    }
+
+    .media.square {
+      aspect-ratio: 1/1
+    }
+
+    .media.wide {
+      aspect-ratio: 16/9
+    }
+
+    .media img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      opacity: .98;
+    }
+
+    .media.cover {
+      padding: 0;
+    }
+
+    .media.cover img {
+      object-fit: cover;
+    }
+
+    /* Карточки афиши: только постер + название до hover; без подложек; изображения не инвертируются */
+    #eventsGrid .event-card {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      transition: background .25s ease, color .25s ease;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #eventsGrid .event-card:hover,
+    #eventsGrid .event-card:active {
+      background: var(--surface-hover);
+    }
+
+    #eventsGrid .event-card:hover .event-card-title,
+    #eventsGrid .event-card:hover .event-card-date,
+    #eventsGrid .event-card:active .event-card-title,
+    #eventsGrid .event-card:active .event-card-date {
+      color: var(--text-hover) !important;
+      font-weight: 900;
+    }
+
+    #eventsGrid .event-card .pad {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: var(--pad-sm) var(--pad);
+      background: transparent;
+      min-height: 0;
+    }
+
+    #eventsGrid .event-card:hover .pad,
+    #eventsGrid .event-card:active .pad {
+      background: transparent;
+    }
+
+    #eventsGrid .event-card .event-card-title {
+      text-align: center;
+      flex: 1;
+      min-width: 0;
+      color: var(--text);
+    }
+
+    #eventsGrid .event-card .event-card-date {
+      text-align: right;
+      flex-shrink: 0;
+      color: var(--text-muted);
+    }
+
+    #eventsGrid .event-card .event-card-title,
+    #eventsGrid .event-card .event-card-date {
+      transition: font-weight .18s ease, color .25s ease;
+    }
+
+    #eventsGrid .event-poster,
+    #eventsGrid .event-media {
+      width: 100%;
+      max-width: 100%;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      padding: 0;
+      border: none;
+      background: transparent;
+      display: block;
+    }
+
+    #eventsGrid .event-poster img,
+    #eventsGrid .event-media img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      max-width: 100%;
+      vertical-align: top;
+    }
+
+    .auth-forms {
+      gap: 10px;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 8px;
+      padding: var(--pad-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .auth-member {
+      border: 1px solid var(--border);
+      padding: var(--pad-sm);
+      background: var(--surface);
+    }
+
+    .auth-status {
+      margin-top: 12px;
+      font-size: 13px;
+    }
+
+    .exclusive-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    /* Forms */
+    .input,
+    textarea {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      transition: border-color .15s ease, background .15s ease;
+    }
+
+    .input::placeholder,
+    textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    .input:focus,
+    textarea:focus {
+      border-color: var(--stroke);
+      background: var(--surface-2);
+    }
+
+    .input:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--stroke);
+      outline-offset: var(--focus-offset);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: var(--overlay);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-inner {
+      width: min(920px, 100%);
+      max-width: 100vw;
+      max-height: 86vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: hidden;
+      border: 1px solid var(--border);
+      background: var(--modal-bg);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, .18);
+      box-sizing: border-box;
+    }
+
+    .modal-header {
+      display: grid;
+      grid-template-columns: 300px 1fr 56px;
+      align-items: center;
+      position: relative;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      min-height: 72px;
+      flex-shrink: 0;
+    }
+
+    .modal-header-text {
+      grid-column: 1;
+      min-width: 0;
+      text-align: center;
+      justify-self: center;
+    }
+
+    .modal-header .btn.ghost {
+      grid-column: 3;
+      justify-self: end;
+      position: static;
+      transform: none;
+    }
+
+    .modal-close {
+      width: 40px;
+      min-width: 40px;
+      height: 40px;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .modal-header .btn.ghost:hover,
+    .modal-header .btn.ghost:active {
+      transform: translateY(-50%);
+      background: var(--surface-hover) !important;
+      color: var(--text-hover) !important;
+      border-color: var(--border-hover) !important;
+    }
+
+    .modal-title {
+      font-weight: 700;
+      letter-spacing: .02em;
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .modal-sub {
+      display: none;
+    }
+
+    .modal-body {
+      background: transparent;
+      color: var(--text);
+      overflow-y: auto;
+    }
+
+    .modal-inner {
+      color: var(--text);
+      background: var(--modal-bg)
+    }
+
+    /* Карточка афиши при раскрытии: чёрный текст на белом (в стиле сайта) */
+    #mBody {
+      color: var(--text)
+    }
+
+    #mBody .event-modal-right,
+    .event-modal-wrap .event-modal-right {
+      background: var(--modal-bg);
+      color: var(--text);
+    }
+
+    #mBody .event-modal-right .muted,
+    .event-modal-wrap .event-modal-right .muted {
+      color: var(--text-muted);
+    }
+
+    #mBody .event-modal-right b,
+    #mBody .event-modal-right .tag {
+      color: var(--text);
+    }
+
+    #mBody .event-modal-right .divider {
+      background: var(--border);
+    }
+
+    /* Booking form in modal */
+    #mBody .booking-form-modal {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #mBody .booking-form-modal .input,
+    #mBody .booking-form-modal textarea {
+      padding: 11px 14px;
+      border-radius: 10px;
+    }
+
+    #mBody .booking-form-modal .btn.primary {
+      margin-top: 6px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      background: var(--fg);
+      color: var(--bg);
+      border-color: var(--fg);
+    }
+
+    #mBody .booking-form-modal .btn.primary:hover {
+      background: rgba(17, 17, 17, .88);
+      border-color: rgba(17, 17, 17, .88);
+      color: var(--bg);
+    }
+
+    #mBody .booking-form-modal .booking-status {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    #mBody .card.pad>b:first-child {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      margin-bottom: 2px;
+    }
+
+    #mBody .card.pad .muted {
+      color: var(--text-muted);
+    }
+
+    #mBody .card .pad .muted {
+      color: var(--text-muted);
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    #mBody .card .media.square {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    #mBody .tag {
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .event-modal-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 10px;
+    }
+
+    .event-modal-wrap .event-modal-left {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .event-modal-wrap .event-modal-right {
+      grid-column: 2;
+      grid-row: 1 / -1;
+    }
+
+    .event-modal-wrap .event-modal-actions {
+      grid-column: 1;
+      grid-row: 2;
+      display: flex;
+      justify-content: center;
+      padding-top: 6px;
+    }
+
+    #mBody .event-modal-actions .event-ticket-btn,
+    .event-modal-wrap .event-modal-actions .event-ticket-btn {
+      justify-content: center;
+      padding: 10px 16px;
+      font-size: 13px;
+      background: transparent !important;
+      border: 1px solid transparent !important;
+      color: var(--text-muted);
+      transition: color .18s ease, background .18s ease, border-color .18s ease;
+    }
+
+    #mBody .event-modal-actions .event-ticket-btn:hover,
+    #mBody .event-modal-actions .event-ticket-btn:active,
+    .event-modal-wrap .event-modal-actions .event-ticket-btn:hover,
+    .event-modal-wrap .event-modal-actions .event-ticket-btn:active {
+      color: var(--text-hover) !important;
+      background: var(--surface-hover) !important;
+      border-color: var(--border-hover) !important;
+    }
+
+    #mBody .event-modal-left {
+      width: 100%;
+      max-width: 300px;
+      margin: 0;
+      justify-self: start;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      outline: none;
+    }
+
+    #mBody .event-modal-left .media {
+      padding: 0;
+      background: transparent;
+      border: none;
+      aspect-ratio: unset;
+      height: auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    #mBody .event-modal-left .media img {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      display: block;
+      vertical-align: top;
+    }
+
+    /* Десктоп: уменьшаем постер, чтобы всегда была видна кнопка */
+    @media (min-width: 769px) {
+      #mBody .event-modal-left .media {
+        max-height: 62vh;
+        overflow: hidden;
+      }
+
+      #mBody .event-modal-left .media img {
+        max-height: 62vh;
+        object-fit: contain;
+      }
+    }
+
+    #mBody .event-modal-right .muted,
+    #mBody .event-modal-right .tag,
+    .event-modal-wrap .event-modal-right .muted,
+    .event-modal-wrap .event-modal-right .tag {
+      font-weight: 700;
+    }
+
+    footer {
+      padding: 24px 0 40px;
+      color: var(--muted);
+      font-size: 14px
+    }
+
+    @media (max-width: 1200px) {
+      .container {
+        padding: 0 16px
+      }
+
+      .g4 {
+        grid-template-columns: repeat(3, minmax(0, 1fr))
+      }
+
+      #artistsGrid,
+      #merchGrid,
+      #releasesGrid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 980px) {
+      .nav {
+        display: none
+      }
+
+      .heroGrid {
+        grid-template-columns: 1fr
+      }
+
+      .g4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+      }
+
+      #artistsGrid,
+      #merchGrid,
+      #releasesGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .g3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+      }
+
+      .g2 {
+        grid-template-columns: 1fr
+      }
+
+      section {
+        padding: 44px 0
+      }
+    }
+
+    @media (max-width: 760px) {
+
+      .topbar,
+      .topbar .in {
+        height: 68px
+      }
+
+      .topbar .in {
+        position: relative;
+        justify-content: flex-start;
+        align-items: center;
+      }
+
+      .brand {
+        position: static;
+        gap: 0;
+        align-items: center;
+      }
+
+      .brand .brand-mark {
+        position: static;
+        transform: none;
+        width: 46px;
+        height: 46px;
+        padding: 0;
+      }
+
+      .brand .brand-mark img {
+        object-fit: cover;
+      }
+
+      .right {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .right .btn {
+        width: 46px;
+        min-width: 46px;
+        height: 46px;
+        font-size: 14px;
+      }
+
+      .right .btn.profile-button {
+        width: auto;
+        min-width: auto;
+        padding: 10px 14px;
+      }
+
+      .right .btn .sc-icon,
+      .right .btn .profile-button-icon {
+        width: 22px;
+        height: 22px
+      }
+
+      main {
+        padding-top: 68px
+      }
+
+      .mobile-menu {
+        top: 68px
+      }
+
+      .mobile-menu-backdrop {
+        inset: 68px 0 0 0
+      }
+
+      h1 {
+        font-size: clamp(28px, 8.2vw, 44px);
+        line-height: 1.06
+      }
+
+      h2 {
+        font-size: clamp(18px, 5.8vw, 22px)
+      }
+
+      body {
+        font-size: 15px;
+        line-height: 1.45
+      }
+
+      .hero-fullscreen .heroArt {
+        min-height: calc(100vh - 68px)
+      }
+
+      .hero-fullscreen .heroArt .smile {
+        width: 100%;
+        height: 100%;
+      }
+
+      .hero-fullscreen .heroArt .hero-main-image {
+        width: 100%;
+        height: 100%;
+        max-height: none;
+        object-fit: cover;
+        object-position: center 24%;
+      }
+
+      .intro-start {
+        margin-top: -68px;
+        min-height: 100vh;
+      }
+
+      .intro-start-image {
+        min-height: 100vh;
+        object-position: center 24%;
+      }
+
+      #streams .head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      #streams .head>div {
+        width: 100%;
+        min-width: 0;
+      }
+
+      #streams .head .row {
+        width: 100%;
+      }
+
+      #streamNext {
+        width: 100%;
+        display: flex;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.25;
+      }
+
+      /* Compact mobile cards */
+      section {
+        padding: 24px 0;
+      }
+
+      .card {
+        border-radius: 12px;
+      }
+
+      .pad {
+        padding: 10px;
+      }
+
+      .row {
+        gap: 6px;
+      }
+
+      .tag {
+        font-size: 10px;
+        padding: 4px 7px;
+      }
+
+      .btn {
+        font-size: 11px;
+        padding: 6px 10px;
+      }
+
+      .media {
+        aspect-ratio: 1/1;
+        padding: 6px;
+      }
+
+      #artistsGrid .artist-card .media,
+      #merchGrid .merch-card .media {
+        padding: 0;
+        aspect-ratio: 1/1;
+      }
+
+      #artistsGrid .artist-card .artist-card-body,
+      #merchGrid .merch-card .merch-card-body {
+        padding: 12px;
+        min-height: 0;
+      }
+
+      .media.wide {
+        aspect-ratio: 4/3;
+      }
+
+      .muted {
+        font-size: 12px;
+      }
+
+      .catalog-title {
+        font-size: 11px;
+      }
+
+      .catalog-meta {
+        font-size: 10px;
+      }
+
+      #artistsGrid,
+      #releasesGrid,
+      #merchGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px;
+      }
+
+      #eventsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px;
+      }
+
+      #podcastsGrid,
+      #streamsList {
+        gap: 8px;
+      }
+
+      #mBody .event-modal-left,
+      #mBody .event-modal-left .card {
+        overflow: visible;
+      }
+
+      #mBody .event-modal-left .pad .btn {
+        max-width: 100%;
+        word-break: break-word;
+      }
+
+      /* Афиша на мобильной: как на скрине — постер целиком, карточка без рамки */
+      #eventsGrid .event-card {
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        background: var(--card);
+        border: none;
+        box-shadow: none;
+      }
+
+      #eventsGrid .event-poster,
+      #eventsGrid .event-media {
+        aspect-ratio: unset !important;
+        height: auto !important;
+        overflow: hidden;
+        padding: 0 !important;
+        border: none;
+        background: transparent;
+        width: 100%;
+        max-width: 100%;
+        display: block;
+      }
+
+      #eventsGrid .event-poster img,
+      #eventsGrid .event-media img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: contain;
+        max-width: 100%;
+        vertical-align: top;
+      }
+
+      #eventsGrid .event-card .pad {
+        padding: 12px;
+      }
+    }
+
+    @media (max-width: 768px) {
+
+      .modal-header-text {
+        grid-column: 1 / -1;
+        justify-self: center;
+        text-align: center;
+      }
+
+      /* Карточка афиши: как на скрине — изображение сверху на всю ширину, подпись под ним */
+      .event-card {
+        padding: 0;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .event-card .pad {
+        padding: 12px;
+      }
+
+      #eventsGrid .event-poster,
+      #eventsGrid .event-media {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+        aspect-ratio: unset !important;
+        height: auto;
+        overflow: hidden;
+        display: block;
+      }
+
+      #eventsGrid .event-poster img,
+      #eventsGrid .event-media img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: contain;
+        max-width: 100%;
+        vertical-align: top;
+      }
+
+      #eventsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .event-modal-wrap {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        min-width: 0;
+      }
+
+      .event-modal-wrap .event-modal-left {
+        grid-row: 1;
+      }
+
+      .event-modal-wrap .event-modal-right {
+        grid-column: 1;
+        grid-row: 2;
+        min-width: 0;
+      }
+
+      #mBody .event-modal-left {
+        max-width: 100%;
+        width: 100%;
+      }
+
+      #mBody .event-modal-left .media img {
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+      }
+
+      #mBody .modal-body {
+        min-width: 0;
+        overflow-x: hidden;
+      }
+
+      .event-modal-wrap .event-modal-actions {
+        grid-column: 1;
+        grid-row: 3;
+        padding-top: 8px;
+      }
+
+      .event-modal-actions .event-ticket-btn {
+        width: 100%;
+        max-width: 100%;
+        background: transparent !important;
+        border: 1px solid transparent !important;
+        color: var(--muted);
+        padding: 11px 12px;
+        font-size: 14px;
+        transition: color .18s ease, background .18s ease, border-color .18s ease;
+      }
+
+      .event-modal-actions .event-ticket-btn:hover,
+      .event-modal-actions .event-ticket-btn:active {
+        color: var(--text-hover) !important;
+        background: var(--surface-hover) !important;
+        border-color: var(--border-hover) !important;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        padding: 0 14px
+      }
+
+      .g4 {
+        grid-template-columns: 1fr
+      }
+
+      .g3 {
+        grid-template-columns: 1fr
+      }
+
+      .heroArt {
+        min-height: 360px
+      }
+
+      .hero-fullscreen .hero .container {
+        padding: 0
+      }
+
+      .right .afisha-btn {
+        display: none
+      }
+
+      .pill {
+        font-size: 11px
+      }
+
+      #streamNext {
+        font-size: 11px;
+        padding: 6px 9px
+      }
+
+      /* Keep compact grids on very small screens */
+      #artistsGrid,
+      #releasesGrid,
+      #merchGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      #eventsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      /* Афиша: постер не обрезать в квадрат, отображение как на скрине */
+      #eventsGrid .event-poster,
+      #eventsGrid .event-media {
+        aspect-ratio: unset !important;
+        padding: 0 !important;
+      }
+
+      .media {
+        aspect-ratio: 1/1;
+      }
+
+      .pad {
+        padding: 8px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .brand {
+        gap: 9px
+      }
+
+      .brand-name {
+        font-size: 31px
+      }
+
+      .brand-mark {
+        width: 44px;
+        height: 44px;
+        font-size: 19px
+      }
+
+      .right .btn {
+        width: 44px;
+        min-width: 44px;
+        height: 44px;
+        font-size: 13px;
+      }
+
+      .right .btn.profile-button {
+        width: auto;
+        min-width: auto;
+        padding: 8px 12px;
+      }
+
+      .right .btn .sc-icon,
+      .right .btn .profile-button-icon {
+        width: 20px;
+        height: 20px
+      }
+
+      .btn {
+        padding: 8px 11px;
+        font-size: 13px
+      }
+
+      .tag {
+        padding: 5px 8px
+      }
+
+      .mobile-menu a {
+        font-size: 13px
+      }
+    }
+
+    @media (max-height: 700px) {
+      section {
+        padding: 34px 0
+      }
+
+      .hero-fullscreen .heroArt {
+        min-height: calc(100vh - 68px)
+      }
+    }
+
+    /* Global sharp corners */
+    .card,
+    .heroArt,
+    .btn,
+    .tag,
+    .pill,
+    .brand-mark,
+    .mobile-menu,
+    .mobile-menu a,
+    .nav a,
+    .input,
+    textarea,
+    #modal>div {
+      border-radius: 0 !important;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000;
+        --fg: #fff;
+        --text: #fff;
+        --text-muted: rgba(255, 255, 255, .72);
+        --muted: rgba(255, 255, 255, .72);
+        --stroke: rgba(255, 255, 255, .14);
+        --stroke2: rgba(255, 255, 255, .10);
+        --border: rgba(255, 255, 255, .10);
+        --surface: rgba(255, 255, 255, .04);
+        --surface-2: rgba(255, 255, 255, .06);
+        --card-bg: rgba(255, 255, 255, .06);
+        --card-text: var(--text);
+        --card: var(--card-bg);
+        --button-bg: rgba(255, 255, 255, .06);
+        --button-text: var(--text);
+        --overlay: rgba(0, 0, 0, .7);
+        --bg-overlay: rgba(0, 0, 0, .82);
+        --surface-hover: #fff;
+        --text-hover: #000;
+        --modal-bg: #060606;
+        --btn-primary-inverted-fg: #0a0a0a;
+      }
+
+      body::before {
+        filter: grayscale(1) invert(1) contrast(3.4) brightness(1.5);
+        opacity: .22;
+      }
+
+      .intro-start {
+        border-bottom: 1px solid rgba(255, 255, 255, .06);
+      }
+
+      .media {
+        background: rgba(255, 255, 255, .02);
+      }
+
+      .auth-form,
+      .auth-member {
+        background: rgba(255, 255, 255, .02);
+      }
+
+      .input,
+      textarea {
+        background: rgba(255, 255, 255, .03);
+        color: var(--fg);
+      }
+
+      .input::placeholder,
+      textarea::placeholder {
+        color: rgba(255, 255, 255, .45);
+      }
+
+      .input:focus,
+      textarea:focus {
+        border-color: rgba(255, 255, 255, .28);
+        background: rgba(255, 255, 255, .05);
+      }
+
+      .open-card:hover *:not(img):not(svg),
+      .open-card:active *:not(img):not(svg),
+      .open-card.is-pressed *:not(img):not(svg) {
+        border-color: rgba(0, 0, 0, .2) !important;
+      }
+
+      #mBody .event-modal-right b,
+      #mBody .event-modal-right .tag {
+        color: var(--text);
+      }
+
+      #mBody .event-modal-right .divider {
+        background: var(--border);
+      }
+
+      .brand-mark img {
+        filter: invert(0);
+      }
+
+      .brand-mark:hover img,
+      .brand-mark:active img {
+        filter: invert(1);
+      }
+    }
+
+    @keyframes skeleton-loading {
+      0% {
+        background-color: var(--surface-2);
+      }
+
+      100% {
+        background-color: var(--border);
+      }
+    }
+
+    .skeleton {
+      animation: skeleton-loading 1s linear infinite alternate;
+      border-radius: var(--radius);
+      width: 100%;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--btn-primary);
+      color: var(--bg);
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-weight: 500;
+      z-index: 9999;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+/* Карусель в карточке товара (модалка мерча) */
+#mBody .event-modal-left .merch-modal-carousel-wrap,
+.merch-modal-carousel-wrap {
+  width: 100%;
+  position: relative;
+  min-width: 0;
+}
+
+.merch-modal-carousel {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.merch-modal-carousel .carousel-track-wrap {
+  overflow: hidden;
+  width: 100%;
+}
+
+.merch-modal-carousel .carousel-track {
+  display: flex;
+  transition: transform 0.3s ease;
+  width: 100%;
+}
+
+.merch-modal-carousel .carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.merch-modal-carousel .carousel-slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  vertical-align: top;
+  max-width: 100%;
+}
+
+.merch-modal-carousel .carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+.merch-modal-carousel .carousel-arrow span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.merch-modal-carousel .carousel-arrow-prev {
+  left: 8px;
+}
+
+.merch-modal-carousel .carousel-arrow-next {
+  right: 8px;
+}
+
+.merch-modal-carousel .carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.merch-modal-carousel .carousel-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--border);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.merch-modal-carousel .carousel-dot-active,
+.merch-modal-carousel .carousel-dot:hover {
+  background: var(--text);
+}

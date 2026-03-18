@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/nikita/Documents/НПО/npo.melody-fixed/**)",
+      "Bash(npm run:*)"
+    ]
+  }
+}

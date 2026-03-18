@@ -1,0 +1,11 @@
+node_modules
+dist
+.DS_Store
+
+# Vite / build cache
+.vite
+*.log
+
+# macOS
+.DS_Store
+*/.DS_Store

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.supabase.co; script-src 'self' https://unpkg.com https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://*.supabase.co https://httpbin.org; form-action 'self'; base-uri 'self';">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>НПО Мелодия</title>
+  <meta name="description"
+    content="НПО Мелодия — клуб / лейбл / трансляции. Афиша, артисты, релизы, подкасты, live, мерч, контакты.">
+
+  <link rel="icon" href="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" type="image/png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="hero-fullscreen">
+  <header class="topbar">
+    <div class="container">
+      <div class="in">
+        <div class="brand">
+          <button class="brand-mark menu-toggle" id="mobileMenuToggle" type="button" aria-label="Открыть меню"
+            aria-expanded="false">
+            <img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" alt="Логотип НПО Мелодия">
+          </button>
+        </div>
+
+        <nav class="nav" aria-label="Навигация">
+          <a href="#events">Афиша</a>
+          <a href="#artists">Артисты</a>
+          <a href="#releases">Релизы</a>
+          <a href="#merch">Мерч</a>
+          <a href="#profile">Профиль</a>
+          <a href="#contacts">Контакты</a>
+        </nav>
+
+        <div class="right">
+          <a class="btn sc-btn"
+            href="https://soundcloud.com/npo_radio?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing"
+            target="_blank" rel="noopener noreferrer" aria-label="SoundCloud">
+            <svg class="sc-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M3.56 11.97a.8.8 0 0 0-.8.8v4.46a.8.8 0 1 0 1.6 0v-4.46a.8.8 0 0 0-.8-.8Zm2.52-1.37a.8.8 0 0 0-.8.8v5.83a.8.8 0 0 0 1.6 0V11.4a.8.8 0 0 0-.8-.8Zm2.52-.82a.8.8 0 0 0-.8.8v6.65a.8.8 0 1 0 1.6 0v-6.65a.8.8 0 0 0-.8-.8Zm2.52.44a.8.8 0 0 0-.8.8v6.21a.8.8 0 1 0 1.6 0v-6.21a.8.8 0 0 0-.8-.8Zm2.52 1.25a.8.8 0 0 0-.8.8v4.96a.8.8 0 0 0 1.6 0v-4.96a.8.8 0 0 0-.8-.8Zm1.91 6.56h4.11a2.94 2.94 0 1 0-.34-5.86 4.88 4.88 0 0 0-9.53-.76.8.8 0 0 0 1.49.58 3.28 3.28 0 0 1 6.36.84v.18a.8.8 0 0 0 .96.78c.18-.03.35-.05.52-.05a1.34 1.34 0 1 1 0 2.68h-4.11a.8.8 0 1 0 0 1.6Z" />
+            </svg>
+          </a>
+          <a class="btn" href="#streams">Live</a>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="mobile-menu-backdrop" id="mobileMenuBackdrop" hidden></div>
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Мобильная навигация" hidden>
+    <a href="#events">Афиша</a>
+    <a href="#artists">Артисты</a>
+    <a href="#releases">Релизы</a>
+    <a href="#merch">Мерч</a>
+    <a href="#profile">Профиль</a>
+    <a href="#contacts">Контакты</a>
+  </nav>
+
+  <main>
+
+    <section class="intro-start" id="home">
+      <img
+        class="intro-start-image"
+        src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/npo_print_source%20(1).png"
+        alt="НПО Мелодия — главная обложка"
+      >
+    </section>
+
+    <section id="events">
+      <div class="container">
+        <div class="head">
+          <div>
+            <h2>Афиша</h2>
+          </div>
+        </div>
+
+        <div class="grid g4" id="eventsGrid"></div>
+      </div>
+    </section>
+
+    <section id="artists">
+      <div class="container">
+        <div class="head">
+          <h2>Артисты</h2>
+        </div>
+
+        <div class="card">
+          <div class="pad">
+            <div class="grid g4" id="artistsGrid"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="merch">
+      <div class="container">
+        <div class="head">
+          <div>
+            <h2>Мерч</h2>
+          </div>
+        </div>
+
+        <div class="grid g4" id="merchGrid"></div>
+      </div>
+    </section>
+
+    <section id="streams">
+      <div class="container">
+        <div class="head">
+          <div>
+            <h2>Live</h2>
+          </div>
+        </div>
+
+        <div class="grid g2">
+          <div class="card">
+            <div class="pad">
+              <div class="row sp">
+                <b>Live</b>
+              </div>
+            </div>
+            <div class="divider" style="margin:0;"></div>
+            <div class="pad">
+              <div class="media wide"><img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" alt=""></div>
+            </div>
+          </div>
+
+          <div class="card pad">
+            <div class="row sp">
+              <b>Архив</b>
+              <span class="tag">3 записи</span>
+            </div>
+            <div class="divider"></div>
+            <div class="grid" id="streamsList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="releases">
+      <div class="container">
+        <div class="head">
+          <div>
+            <h2>Релизы</h2>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="pad">
+            <div class="grid g4" id="releasesGrid"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="profile">
+      <div class="container">
+        <div class="head">
+          <div>
+            <h2>Профиль</h2>
+          </div>
+        </div>
+
+        <div class="grid g2">
+          <div class="card pad">
+            <b>Аккаунт участника</b>
+            <div class="divider"></div>
+
+            <div id="authGuest" class="grid auth-forms login-register-buttons">
+              <form id="loginForm" class="auth-form login-form">
+                <b>Вход</b>
+                <input class="input" name="email" type="email" placeholder="Email" required>
+                <input class="input" name="password" type="password" placeholder="Пароль" required>
+                <button class="btn" type="submit">Войти</button>
+              </form>
+
+              <form id="registerForm" class="auth-form register-form">
+                <b>Регистрация</b>
+                <input class="input" name="name" placeholder="Имя" required>
+                <input class="input" name="email" type="email" placeholder="Email" required>
+                <input class="input" name="password" type="password" placeholder="Пароль (мин. 6 символов)" required>
+                <input class="input" name="password2" type="password" placeholder="Повтори пароль" required>
+                <button class="btn primary" type="submit">Создать аккаунт</button>
+              </form>
+            </div>
+
+            <div id="authMember" class="auth-member" hidden>
+              <div class="muted">Ты вошел как <b id="memberName">—</b>.</div>
+              <div style="height:10px"></div>
+              <button class="btn" id="logoutBtn" type="button">Выйти</button>
+            </div>
+
+            <div id="authStatus" class="muted auth-status">Доступ к эксклюзиву закрыт.</div>
+          </div>
+
+          <div class="card pad">
+            <div class="row sp">
+              <b>Эксклюзив</b>
+              <span class="tag" id="exclusiveBadge">закрыт</span>
+            </div>
+            <div class="divider"></div>
+
+            <div id="exclusiveLocked" class="muted">
+              Зарегистрируйся или войди, чтобы открыть закрытые релизы, архивы и ранний доступ к анонсам.
+            </div>
+
+            <div id="exclusiveContent" class="exclusive-list" hidden>
+              <div class="card pad">
+                <b>Early Access: NPO VA 002</b>
+                <div class="muted" style="margin-top:6px;">Превью треков + закрытый pre-save.</div>
+              </div>
+              <div class="card pad">
+                <b>Private Stream Archive</b>
+                <div class="muted" style="margin-top:6px;">Закрытые записи из ночных сетов.</div>
+              </div>
+              <div class="card pad">
+                <b>Members Promo Code</b>
+                <div class="muted" style="margin-top:6px;">Скидка 15% на мерч и закрытые дропы.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contacts">
+      <div class="container">
+        <div class="head">
+          <div>
+            <h2>Контакты</h2>
+          </div>
+        </div>
+
+        <div class="grid g2">
+          <div class="card pad">
+            <b>НПО Мелодия</b>
+            <div class="divider"></div>
+            <div class="row"><span class="tag">Адрес</span><span class="muted">Москва, 3-я улица Ямского Поля, 2к5А</span></div>
+            <div style="height:10px"></div>
+            <div class="row"><span class="tag">Букинг</span><span class="muted">booking@npo-melodiya.ru</span></div>
+            <div class="divider"></div>
+            <div class="row">
+              <a class="btn" href="#" data-placeholder-link="Поставь ссылку">Telegram</a>
+              <a class="btn" href="https://www.instagram.com/npo_melody/" target="_blank"
+                rel="noopener noreferrer">Instagram</a>
+              <a class="btn" href="#" data-placeholder-link="Поставь ссылку">SoundCloud</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">© <span id="year">2026</span> НПО Мелодия</div>
+    </footer>
+
+  </main>
+
+  <div id="modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-inner">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <div id="mTitle" class="modal-title">—</div>
+          <div id="mSub" class="modal-sub">—</div>
+        </div>
+        <button class="btn ghost modal-close" id="mClose" type="button" aria-label="Закрыть">
+          <svg class="modal-close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body pad" id="mBody"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script type="module" src="./src/main.js"></script>
+
+</body>
+
+</html>
