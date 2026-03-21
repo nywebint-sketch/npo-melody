@@ -1,7 +1,6 @@
 // Entry for public site
-// Re-use existing data layer and UI logic without changes.
+// Стили дублируются в index.html (<link href="/styles.css">), чтобы в dev не терять CSS из‑за CSP.
 
-import '../styles.css';
 import './db.js';
 import './script.js';
 

@@ -3,7 +3,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.supabase.co; script-src 'self' https://unpkg.com https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://*.supabase.co https://httpbin.org; form-action 'self'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.supabase.co; script-src 'self' https://unpkg.com https://*.supabase.co; style-src 'self' 'unsafe-inline' blob: data:; font-src 'self' data: blob:; img-src 'self' https: data:; connect-src 'self' https://*.supabase.co https://httpbin.org; form-action 'self'; base-uri 'self';">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -30,6 +30,7 @@
     content="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png">
 
   <link rel="icon" href="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" type="image/png">
+  <link rel="stylesheet" href="/styles.css">
 </head>
 
 <body class="hero-fullscreen">
@@ -71,6 +72,7 @@
     <a href="#events">Афиша</a>
     <a href="#artists">Артисты</a>
     <a href="#releases">Релизы</a>
+    <a href="#streams">Live</a>
     <a href="#merch">Мерч</a>
     <a href="#profile">Профиль</a>
     <a href="#contacts">Контакты</a>
@@ -145,13 +147,15 @@
 
         <div class="card catalog-block">
           <div class="pad catalog-block__pad">
-            <div class="grid g2 streams-live-grid">
-              <div class="streams-live-col">
+            <div class="grid g2 streams-section-grid">
+              <div class="streams-col">
                 <div
                   id="streamsLiveHint"
-                  class="card pad open-card streams-live-open-row"
+                  class="card pad open-card streams-hint-row"
                   role="button"
                   tabindex="0"
+                  aria-expanded="false"
+                  aria-controls="streamsLivePanel"
                   aria-label="Live"
                 >
                   <div class="row sp">
@@ -159,8 +163,8 @@
                     <span class="tag">→</span>
                   </div>
                 </div>
-                <div id="streamsLivePanel" class="card streams-live-panel" hidden>
-                  <div class="modal-header streams-live-panel-header">
+                <div id="streamsLivePanel" class="card streams-panel" role="region" aria-label="Live" hidden aria-hidden="true">
+                  <div class="modal-header streams-panel-header">
                     <div class="modal-header-text">
                       <div class="modal-title">Live</div>
                     </div>
@@ -170,18 +174,20 @@
                       </svg>
                     </button>
                   </div>
-                  <div class="pad">
+                  <div class="pad streams-panel-body">
                     <div class="media wide"><img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" alt="НПО Мелодия — обложка раздела Live"></div>
                   </div>
                 </div>
               </div>
 
-              <div class="streams-live-col">
+              <div class="streams-col">
                 <div
                   id="streamsArchiveHint"
-                  class="card pad open-card streams-live-open-row"
+                  class="card pad open-card streams-hint-row"
                   role="button"
                   tabindex="0"
+                  aria-expanded="false"
+                  aria-controls="streamsArchivePanel"
                   aria-label="Архив"
                 >
                   <div class="row sp">
@@ -189,8 +195,8 @@
                     <span class="tag">→</span>
                   </div>
                 </div>
-                <div id="streamsArchivePanel" class="card streams-live-panel streams-archive-panel" hidden>
-                  <div class="modal-header streams-live-panel-header">
+                <div id="streamsArchivePanel" class="card streams-panel" role="region" aria-label="Архив" hidden aria-hidden="true">
+                  <div class="modal-header streams-panel-header">
                     <div class="modal-header-text">
                       <div class="modal-title">Архив</div>
                       <div id="streamsArchiveCount" class="modal-sub">—</div>
@@ -201,7 +207,7 @@
                       </svg>
                     </button>
                   </div>
-                  <div class="pad streams-archive-panel-body">
+                  <div class="pad streams-panel-body">
                     <div class="grid" id="streamsList"></div>
                   </div>
                 </div>

@@ -462,7 +462,8 @@
       grid-template-columns: repeat(2, minmax(0, 1fr))
     }
 
-    .streams-live-col {
+    /* Секция #streams: две колонки Live / Архив */
+    .streams-col {
       min-width: 0;
       display: flex;
       flex-direction: column;
@@ -489,16 +490,16 @@
       line-height: 1.45;
     }
 
-    /* Как строки в #streamsList: карточка + кликабельный open-card */
-    .streams-live-open-row b {
+    /* Строка-заглушка: как строки архива (#streamsList) */
+    .streams-hint-row b {
       max-width: 72%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    /* Шапка с крестиком как у модалки (#modal .modal-header) */
-    .streams-live-panel .streams-live-panel-header {
+    /* Шапка с крестиком — те же классы, что у #modal */
+    .streams-panel .streams-panel-header {
       border-top-left-radius: var(--radius);
       border-top-right-radius: var(--radius);
     }

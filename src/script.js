@@ -55,6 +55,8 @@ const FALLBACK_STREAMS = [
   { id: "__demo_stream_3", title: "Архив: гостевой микс", date: "01.03.2026" }
 ];
 
+let clubSession = null;
+
 const streamsAuthOk = () => Boolean(clubSession?.email);
 
 async function loadStreamsData() {
@@ -165,8 +167,6 @@ const clubRequest = async (path, { method = "GET", body = null, auth = true } = 
   }
   return payload || {};
 };
-
-let clubSession = null;
 
 function renderExclusiveItems(items = []) {
   const exclusiveContent = $("#exclusiveContent");
@@ -619,14 +619,26 @@ const streamsLiveHint = $("#streamsLiveHint");
 const streamsArchivePanel = $("#streamsArchivePanel");
 const streamsArchiveHint = $("#streamsArchiveHint");
 
+/** Live / Архив: одна схема — строка-заглушка + панель с шапкой как у #modal */
+function setStreamsPanelOpen(which, open) {
+  const hint = which === "live" ? streamsLiveHint : streamsArchiveHint;
+  const panel = which === "live" ? streamsLivePanel : streamsArchivePanel;
+  if (panel) {
+    panel.hidden = !open;
+    panel.setAttribute("aria-hidden", open ? "false" : "true");
+  }
+  if (hint) {
+    hint.hidden = open;
+    hint.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+}
+
 function openStreamsLivePanel() {
-  if (streamsLivePanel) streamsLivePanel.hidden = false;
-  if (streamsLiveHint) streamsLiveHint.hidden = true;
+  setStreamsPanelOpen("live", true);
 }
 
 function closeStreamsLivePanel() {
-  if (streamsLivePanel) streamsLivePanel.hidden = true;
-  if (streamsLiveHint) streamsLiveHint.hidden = false;
+  setStreamsPanelOpen("live", false);
 }
 
 function promptStreamsAuth() {
@@ -635,13 +647,11 @@ function promptStreamsAuth() {
 }
 
 function openStreamsArchivePanel() {
-  if (streamsArchivePanel) streamsArchivePanel.hidden = false;
-  if (streamsArchiveHint) streamsArchiveHint.hidden = true;
+  setStreamsPanelOpen("archive", true);
 }
 
 function closeStreamsArchivePanel() {
-  if (streamsArchivePanel) streamsArchivePanel.hidden = true;
-  if (streamsArchiveHint) streamsArchiveHint.hidden = false;
+  setStreamsPanelOpen("archive", false);
 }
 
 function bindHintPressHandlers(hint) {
@@ -658,8 +668,27 @@ function bindHintPressHandlers(hint) {
   });
 }
 
-function bindStreamsLiveOpeners() {
-  const headerLive = document.querySelector('header.topbar .right a.btn[href="#streams"]');
+function scrollToStreamsSection() {
+  document.getElementById("streams")?.scrollIntoView({ behavior: "smooth" });
+  try {
+    history.replaceState(null, "", "#streams");
+  } catch {
+    window.location.hash = "streams";
+  }
+}
+
+function requireStreamsAuthOrPrompt() {
+  if (streamsAuthOk()) return true;
+  scrollToStreamsSection();
+  promptStreamsAuth();
+  return false;
+}
+
+function bindStreamsSectionPanels() {
+  const liveNavLinks = document.querySelectorAll(
+    'header.topbar a[href="#streams"], #mobileMenu a[href="#streams"]'
+  );
+
   $("#streamsLiveCloseBtn")?.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -674,45 +703,27 @@ function bindStreamsLiveOpeners() {
   bindHintPressHandlers(streamsLiveHint);
   bindHintPressHandlers(streamsArchiveHint);
 
-  const scrollToStreams = () => {
-    document.getElementById("streams")?.scrollIntoView({ behavior: "smooth" });
-    try {
-      history.replaceState(null, "", "#streams");
-    } catch {
-      window.location.hash = "streams";
-    }
-  };
-
   streamsLiveHint?.addEventListener("click", (e) => {
     e.preventDefault();
-    if (!streamsAuthOk()) {
-      scrollToStreams();
-      promptStreamsAuth();
-      return;
-    }
+    if (!requireStreamsAuthOrPrompt()) return;
     openStreamsLivePanel();
-    scrollToStreams();
+    scrollToStreamsSection();
   });
-  headerLive?.addEventListener("click", (e) => {
-    e.preventDefault();
-    if (!streamsAuthOk()) {
-      scrollToStreams();
-      promptStreamsAuth();
-      return;
-    }
-    openStreamsLivePanel();
-    scrollToStreams();
+
+  liveNavLinks.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (!requireStreamsAuthOrPrompt()) return;
+      openStreamsLivePanel();
+      scrollToStreamsSection();
+    });
   });
 
   streamsArchiveHint?.addEventListener("click", (e) => {
     e.preventDefault();
-    if (!streamsAuthOk()) {
-      scrollToStreams();
-      promptStreamsAuth();
-      return;
-    }
+    if (!requireStreamsAuthOrPrompt()) return;
     openStreamsArchivePanel();
-    scrollToStreams();
+    scrollToStreamsSection();
   });
 }
 
@@ -1379,7 +1390,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await window.dbLayer.syncDefaultData();
     await refreshClubSession();
   }
-  bindStreamsLiveOpeners();
+  bindStreamsSectionPanels();
   await initApp();
   initClubAuth();
 });
