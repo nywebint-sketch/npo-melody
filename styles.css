@@ -36,6 +36,13 @@
       --pad-sm: 12px;
       --container-pad-x: 16px;
       --btn-primary-inverted-fg: var(--bg);
+      /* Как у кнопки закрытия: покой — без заливки, чёрный текст; наведение — инверсия */
+      --btn-close-idle-bg: transparent;
+      --btn-close-idle-text: var(--text);
+      --btn-close-idle-border: transparent;
+      --btn-close-hover-bg: #0a0a0a;
+      --btn-close-hover-text: #fff;
+      --btn-close-hover-border: transparent;
     }
 
     * {
@@ -155,10 +162,10 @@
     .brand-mark {
       width: 48px;
       height: 48px;
-      border: 1px solid transparent;
-      background: transparent;
+      border: 1px solid var(--btn-close-idle-border);
+      background: var(--btn-close-idle-bg);
       border-radius: 12px;
-      color: var(--text-muted);
+      color: var(--btn-close-idle-text);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -170,11 +177,12 @@
     }
 
     .brand-mark:hover,
-    .brand-mark:active {
+    .brand-mark:active,
+    .brand-mark:focus-visible {
       transform: none;
-      background: var(--surface-hover);
-      color: var(--text-hover);
-      border-color: var(--border-hover);
+      background: var(--btn-close-hover-bg);
+      color: var(--btn-close-hover-text);
+      border-color: var(--btn-close-hover-border);
     }
 
     .brand-mark img {
@@ -187,7 +195,8 @@
     }
 
     .brand-mark:hover img,
-    .brand-mark:active img {
+    .brand-mark:active img,
+    .brand-mark:focus-visible img {
       filter: invert(0);
     }
 
@@ -296,10 +305,11 @@
     }
 
     .topbar .btn:hover,
-    .topbar .btn:active {
-      background: var(--surface-hover);
-      color: var(--text-hover);
-      border-color: var(--border-hover);
+    .topbar .btn:active,
+    .topbar .btn:focus-visible {
+      background: var(--btn-close-hover-bg);
+      color: var(--btn-close-hover-text);
+      border-color: var(--btn-close-hover-border);
     }
 
     .right .btn {
@@ -310,19 +320,20 @@
       font-size: 16px;
       font-weight: 500;
       letter-spacing: .02em;
-      background: transparent;
-      border: 1px solid transparent;
-      color: var(--text-muted);
+      background: var(--btn-close-idle-bg);
+      border: 1px solid var(--btn-close-idle-border);
+      color: var(--btn-close-idle-text);
       border-radius: 12px;
-      transition: background .25s ease, color .25s ease, border-color .25s ease;
+      transition: background .2s ease, color .2s ease, border-color .2s ease;
     }
 
     .right .btn:hover,
-    .right .btn:active {
+    .right .btn:active,
+    .right .btn:focus-visible {
       transform: none;
-      color: var(--text-hover);
-      background: var(--surface-hover);
-      border-color: var(--border-hover);
+      color: var(--btn-close-hover-text);
+      background: var(--btn-close-hover-bg);
+      border-color: var(--btn-close-hover-border);
     }
 
     .right .btn.sc-btn {
@@ -348,33 +359,45 @@
       justify-content: center;
       padding: 10px 14px;
       border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--button-bg);
-      color: var(--button-text);
+      border: 1px solid var(--btn-close-idle-border);
+      background: var(--btn-close-idle-bg);
+      color: var(--btn-close-idle-text);
       font-size: 13px;
       font-weight: 500;
       letter-spacing: .02em;
       cursor: pointer;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      transition: background .2s ease, color .2s ease, border-color .2s ease;
       user-select: none;
       white-space: nowrap;
     }
 
-    .btn:hover {
-      transform: translateY(-1px);
-      background: var(--surface-hover);
-      color: var(--text-hover);
-      border-color: var(--border-hover)
+    .btn:hover,
+    .btn:active,
+    .btn:focus-visible {
+      transform: none;
+      background: var(--btn-close-hover-bg);
+      color: var(--btn-close-hover-text);
+      border-color: var(--btn-close-hover-border);
     }
 
     .btn.primary {
-      background: var(--surface-hover);
-      color: var(--text-hover);
-      border-color: var(--surface-hover)
+      background: var(--btn-close-idle-bg);
+      color: var(--btn-close-idle-text);
+      border-color: var(--btn-close-idle-border);
+    }
+
+    .btn.primary:hover,
+    .btn.primary:active,
+    .btn.primary:focus-visible {
+      background: var(--btn-close-hover-bg);
+      color: var(--btn-close-hover-text);
+      border-color: var(--btn-close-hover-border);
     }
 
     .btn.ghost {
-      background: transparent
+      background: var(--btn-close-idle-bg);
+      color: var(--btn-close-idle-text);
+      border-color: var(--btn-close-idle-border);
     }
 
     .btn.sc-btn {
@@ -1346,20 +1369,19 @@
       z-index: 2;
       margin: 0;
       transform: translateY(-50%) !important;
-      color: var(--text);
-      background: transparent;
-      border-color: var(--border);
+      color: var(--btn-close-idle-text);
+      background: var(--btn-close-idle-bg);
+      border-color: var(--btn-close-idle-border);
       transition: background .12s ease, border-color .12s ease, color .12s ease;
     }
 
-    /* Явная инверсия: не зависит от --surface-hover / --text-hover (в dark они белый/чёрный и ломали крест) */
     .modal-header .btn.modal-close:hover,
     .modal-header .btn.modal-close:active,
     .modal-header .btn.modal-close:focus-visible {
       transform: translateY(-50%) !important;
-      background: #0a0a0a !important;
-      color: #fff !important;
-      border-color: #0a0a0a !important;
+      background: var(--btn-close-hover-bg) !important;
+      color: var(--btn-close-hover-text) !important;
+      border-color: var(--btn-close-hover-border) !important;
     }
 
     .modal-close {
@@ -1367,7 +1389,7 @@
       min-width: 40px;
       height: 40px;
       padding: 0;
-      border: 1px solid var(--border);
+      border: 1px solid transparent;
       border-radius: var(--radius);
       display: flex;
       align-items: center;
@@ -1381,11 +1403,12 @@
     }
 
     .modal-header .btn.ghost:hover:not(.modal-close),
-    .modal-header .btn.ghost:active:not(.modal-close) {
+    .modal-header .btn.ghost:active:not(.modal-close),
+    .modal-header .btn.ghost:focus-visible:not(.modal-close) {
       transform: none;
-      background: var(--surface-hover) !important;
-      color: var(--text-hover) !important;
-      border-color: var(--border-hover) !important;
+      background: var(--btn-close-hover-bg) !important;
+      color: var(--btn-close-hover-text) !important;
+      border-color: var(--btn-close-hover-border) !important;
     }
 
     .modal-title {
@@ -1473,15 +1496,17 @@
       padding: 12px 20px;
       font-size: 14px;
       font-weight: 600;
-      background: var(--fg);
-      color: var(--bg);
-      border-color: var(--fg);
+      background: var(--btn-close-idle-bg);
+      color: var(--btn-close-idle-text);
+      border-color: var(--btn-close-idle-border);
     }
 
-    #mBody .booking-form-modal .btn.primary:hover {
-      background: rgba(17, 17, 17, .88);
-      border-color: rgba(17, 17, 17, .88);
-      color: var(--bg);
+    #mBody .booking-form-modal .btn.primary:hover,
+    #mBody .booking-form-modal .btn.primary:active,
+    #mBody .booking-form-modal .btn.primary:focus-visible {
+      background: var(--btn-close-hover-bg);
+      border-color: var(--btn-close-hover-border);
+      color: var(--btn-close-hover-text);
     }
 
     #mBody .booking-form-modal .booking-status {
@@ -1639,6 +1664,12 @@
       padding: 10px 12px !important;
     }
 
+    /* Описание афиши — без второй подложки (#mBody .event-modal-right перебивает .card) */
+    #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right {
+      background: transparent;
+      backdrop-filter: none;
+    }
+
     #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right .muted {
       margin-top: 0;
       font-weight: 500;
@@ -1667,16 +1698,17 @@
       line-height: 1.25;
       border-radius: 0;
       letter-spacing: 0.02em;
-      background: var(--surface-hover) !important;
-      color: var(--text-hover) !important;
-      border-color: var(--surface-hover) !important;
+      background: var(--btn-close-idle-bg) !important;
+      color: var(--btn-close-idle-text) !important;
+      border-color: var(--btn-close-idle-border) !important;
     }
 
     #mBody .afisha-modal-wrap .afisha-modal-actions .event-ticket-btn.btn.primary:hover,
-    #mBody .afisha-modal-wrap .afisha-modal-actions .event-ticket-btn.btn.primary:active {
-      background: var(--surface-hover) !important;
-      color: var(--text-hover) !important;
-      border-color: var(--surface-hover) !important;
+    #mBody .afisha-modal-wrap .afisha-modal-actions .event-ticket-btn.btn.primary:active,
+    #mBody .afisha-modal-wrap .afisha-modal-actions .event-ticket-btn.btn.primary:focus-visible {
+      background: var(--btn-close-hover-bg) !important;
+      color: var(--btn-close-hover-text) !important;
+      border-color: var(--btn-close-hover-border) !important;
     }
 
     #mBody .event-modal-actions .event-ticket-btn:not(.btn.primary),
@@ -1684,19 +1716,21 @@
       justify-content: center;
       padding: 10px 16px;
       font-size: 13px;
-      background: transparent !important;
-      border: 1px solid transparent !important;
-      color: var(--text-muted);
+      background: var(--btn-close-idle-bg) !important;
+      border: 1px solid var(--btn-close-idle-border) !important;
+      color: var(--btn-close-idle-text);
       transition: color .18s ease, background .18s ease, border-color .18s ease;
     }
 
     #mBody .event-modal-actions .event-ticket-btn:not(.btn.primary):hover,
     #mBody .event-modal-actions .event-ticket-btn:not(.btn.primary):active,
+    #mBody .event-modal-actions .event-ticket-btn:not(.btn.primary):focus-visible,
     .event-modal-wrap .event-modal-actions .event-ticket-btn:not(.btn.primary):hover,
-    .event-modal-wrap .event-modal-actions .event-ticket-btn:not(.btn.primary):active {
-      color: var(--text-hover) !important;
-      background: var(--surface-hover) !important;
-      border-color: var(--border-hover) !important;
+    .event-modal-wrap .event-modal-actions .event-ticket-btn:not(.btn.primary):active,
+    .event-modal-wrap .event-modal-actions .event-ticket-btn:not(.btn.primary):focus-visible {
+      color: var(--btn-close-hover-text) !important;
+      background: var(--btn-close-hover-bg) !important;
+      border-color: var(--btn-close-hover-border) !important;
     }
 
     #mBody .event-modal-left {
@@ -2218,19 +2252,20 @@
       .event-modal-actions .event-ticket-btn:not(.btn.primary) {
         width: 100%;
         max-width: 100%;
-        background: transparent !important;
-        border: 1px solid transparent !important;
-        color: var(--muted);
+        background: var(--btn-close-idle-bg) !important;
+        border: 1px solid var(--btn-close-idle-border) !important;
+        color: var(--btn-close-idle-text);
         padding: 11px 12px;
         font-size: 14px;
         transition: color .18s ease, background .18s ease, border-color .18s ease;
       }
 
       .event-modal-actions .event-ticket-btn:not(.btn.primary):hover,
-      .event-modal-actions .event-ticket-btn:not(.btn.primary):active {
-        color: var(--text-hover) !important;
-        background: var(--surface-hover) !important;
-        border-color: var(--border-hover) !important;
+      .event-modal-actions .event-ticket-btn:not(.btn.primary):active,
+      .event-modal-actions .event-ticket-btn:not(.btn.primary):focus-visible {
+        color: var(--btn-close-hover-text) !important;
+        background: var(--btn-close-hover-bg) !important;
+        border-color: var(--btn-close-hover-border) !important;
       }
     }
 
@@ -2437,6 +2472,12 @@
         --text-hover: #000;
         --modal-bg: #060606;
         --btn-primary-inverted-fg: #0a0a0a;
+        --btn-close-idle-bg: transparent;
+        --btn-close-idle-text: var(--text);
+        --btn-close-idle-border: transparent;
+        --btn-close-hover-bg: #fff;
+        --btn-close-hover-text: #0a0a0a;
+        --btn-close-hover-border: transparent;
       }
 
       body::before {
@@ -2586,9 +2627,9 @@
   min-width: 32px;
   min-height: 32px;
   padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--text);
+  border: 1px solid var(--btn-close-idle-border);
+  background: var(--btn-close-idle-bg);
+  color: var(--btn-close-idle-text);
   cursor: pointer;
   border-radius: 4px;
   display: flex;
@@ -2597,7 +2638,15 @@
   font-size: 16px;
   line-height: 1;
   flex-shrink: 0;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.merch-modal-carousel .carousel-arrow:hover,
+.merch-modal-carousel .carousel-arrow:active,
+.merch-modal-carousel .carousel-arrow:focus-visible {
+  background: var(--btn-close-hover-bg);
+  color: var(--btn-close-hover-text);
+  border-color: var(--btn-close-hover-border);
 }
 
 .merch-modal-carousel .carousel-arrow span {

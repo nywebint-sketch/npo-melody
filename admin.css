@@ -9,6 +9,13 @@ body.admin-body {
   display: flex;
   height: 100vh;
   overflow: hidden;
+  /* Те же кнопки «закрыть»: покой — без заливки, светлый текст; hover — белая плашка, тёмный текст */
+  --btn-close-idle-bg: transparent;
+  --btn-close-idle-text: rgba(255, 255, 255, 0.92);
+  --btn-close-idle-border: transparent;
+  --btn-close-hover-bg: #ffffff;
+  --btn-close-hover-text: #0a0a0a;
+  --btn-close-hover-border: transparent;
 }
 
 /* ЭКРАН ЛОГИНА */
@@ -162,21 +169,30 @@ body.admin-body {
   padding: 6px 12px;
   font-size: 13px;
   border-radius: 6px;
-  border: 1px solid var(--bd-100, rgba(255,255,255,0.2));
-  background: transparent;
-  color: var(--txt-100, #fff);
+  border: 1px solid var(--btn-close-idle-border);
+  background: var(--btn-close-idle-bg);
+  color: var(--btn-close-idle-text);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
-.btn-sm:hover {
-  background: rgba(255,255,255,0.1);
+.btn-sm:hover,
+.btn-sm:active,
+.btn-sm:focus-visible {
+  background: var(--btn-close-hover-bg);
+  color: var(--btn-close-hover-text);
+  border-color: var(--btn-close-hover-border);
 }
 .btn-sm.danger {
-  border-color: rgba(255, 50, 50, 0.4);
-  color: #ff5555;
+  border-color: transparent;
+  color: #ff6b6b;
+  background: transparent;
 }
-.btn-sm.danger:hover {
-  background: rgba(255, 50, 50, 0.1);
+.btn-sm.danger:hover,
+.btn-sm.danger:active,
+.btn-sm.danger:focus-visible {
+  background: #ff6b6b;
+  color: #0a0a0a;
+  border-color: transparent;
 }
 
 /* ФОРМА (РЕДАКТОР) */
