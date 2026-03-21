@@ -40,6 +40,46 @@ body.admin-body {
   box-shadow: 0 10px 40px rgba(0,0,0,0.5);
 }
 
+/*
+  Форма входа использует классы из styles.css (.input, .auth-form, .btn), где переменные
+  :root рассчитаны на светлый фон. На тёмном фоне админки поля и primary-кнопка «теряются».
+*/
+.admin-login-card .auth-form {
+  border-color: var(--bd-100, rgba(255, 255, 255, 0.16));
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.admin-login-card .auth-form .input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--bd-100, rgba(255, 255, 255, 0.16));
+  color: var(--txt-100, #fcfcfc);
+}
+
+.admin-login-card .auth-form .input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.admin-login-card .auth-form .input:focus,
+.admin-login-card .auth-form .input:focus-visible {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.09);
+  outline: none;
+}
+
+.admin-login-card .auth-form .btn.primary {
+  background: var(--bg-btn, #ffffff);
+  color: #0a0a0a;
+  border-color: transparent;
+}
+
+.admin-login-card .auth-form .btn.primary:hover,
+.admin-login-card .auth-form .btn.primary:active,
+.admin-login-card .auth-form .btn.primary:focus-visible {
+  background: #e8e8e8;
+  color: #0a0a0a;
+  border-color: transparent;
+}
+
 /* САЙДБАР */
 .admin-sidebar {
   width: 250px;
