@@ -109,7 +109,13 @@ const logout = async () => {
 // Используем таблицу profiles как источник пользователей (email / name / role)
 const getUsers = async () => withClient(async (client) => {
   const { data, error } = await client.from('profiles').select('*').order('created_at', { ascending: false });
-  return safeArray(data, error);
+  const rows = safeArray(data, error);
+  // В части схем вместо `id` используется `user_id` (тот же UUID, что в auth.users)
+  return rows.map((row) => {
+    if (!row || row.id) return row;
+    if (row.user_id) return { ...row, id: row.user_id };
+    return row;
+  });
 }, []);
 
 const checkIsAdmin = async () => {
@@ -120,11 +126,29 @@ const checkIsAdmin = async () => {
   return me?.role === 'admin';
 };
 
-const updateUserRole = async (id, role) => withClient(async (client) => {
-  const { data, error } = await client.from('profiles').update({ role }).eq('id', id).select().single();
-  if (error) throw error;
-  return data;
-}, null);
+const updateUserRole = async (id, role) => {
+  const client = initSupabase();
+  if (!client) throw new Error('Supabase client is not initialized');
+  const tryUpdate = async (column) => {
+    const { data, error } = await client.from('profiles').update({ role }).eq(column, id).select();
+    if (error) throw error;
+    return data;
+  };
+  let rows = await tryUpdate('id');
+  if (!rows?.length) {
+    try {
+      rows = await tryUpdate('user_id');
+    } catch (e) {
+      const msg = String(e?.message || e?.details || '');
+      // колонка `user_id` может отсутствовать в схеме
+      if (!/column|does not exist|Could not find|user_id/i.test(msg)) throw e;
+    }
+  }
+  if (!rows?.length) {
+    throw new Error('Профиль не найден или нет прав на изменение (проверьте RLS в Supabase).');
+  }
+  return rows[0];
+};
 
 const uploadImage = async (file) => withClient(async (client) => {
   if (!file) throw new Error('Файл не передан');

@@ -133,22 +133,16 @@ body.admin-body {
 }
 
 /* ОСНОВНОЙ КОНТЕНТ */
+/* Затемнение — только в фоне, без отдельного слоя ::before (он мог перехватывать клики в части браузеров) */
 .admin-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-image: var(--bg-img);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), var(--bg-img);
   background-size: cover;
   background-position: center;
   position: relative;
-}
-.admin-main::before {
-  content: "";
-  position: absolute;
-  top:0; left:0; right:0; bottom:0;
-  background: rgba(0,0,0,0.75);
   backdrop-filter: blur(5px);
-  z-index: 1;
 }
 
 .admin-header {
@@ -204,6 +198,14 @@ body.admin-body {
 .admin-table td .actions {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+/* Чтобы «Изменить» и «Удалить» не уезжали за край при узком окне */
+.admin-table th:last-child,
+.admin-table td:last-child {
+  min-width: 140px;
+  box-sizing: border-box;
 }
 .btn-sm {
   padding: 6px 12px;
@@ -281,10 +283,86 @@ body.admin-body {
 .editor-actions {
   display: flex;
   gap: 12px;
+  align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid var(--border);
+}
+.editor-actions-main {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.editor-actions.editor-actions--spread {
+  justify-content: space-between;
+}
+
+/*
+  В модалке: body.admin-body даёт .btn прозрачный фон и светлый текст — на светлой модалке
+  кнопки не видны. Нельзя брать var(--text) как фон: в тёмной теме ОС --text белый — кнопка
+  сливается с белой подложкой модалки. Явные цвета для светлой/тёмной модалки.
+*/
+#adminModal .editor-actions .btn.primary {
+  background: #111;
+  color: #f6f6f3;
+  border: 1px solid #111;
+}
+
+#adminModal .editor-actions .btn.primary:hover,
+#adminModal .editor-actions .btn.primary:active,
+#adminModal .editor-actions .btn.primary:focus-visible {
+  background: #2c2c2c;
+  color: #fff;
+  border-color: #2c2c2c;
+  opacity: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  #adminModal .editor-actions .btn.primary {
+    background: #fff;
+    color: #0a0a0a;
+    border-color: #fff;
+  }
+
+  #adminModal .editor-actions .btn.primary:hover,
+  #adminModal .editor-actions .btn.primary:active,
+  #adminModal .editor-actions .btn.primary:focus-visible {
+    background: #e6e6e6;
+    color: #0a0a0a;
+    border-color: #e6e6e6;
+  }
+}
+
+#adminModal .editor-actions .btn.ghost {
+  background: transparent;
+  color: #111;
+  border: 1px solid rgba(0, 0, 0, 0.22);
+}
+
+#adminModal .editor-actions .btn.ghost:hover,
+#adminModal .editor-actions .btn.ghost:active,
+#adminModal .editor-actions .btn.ghost:focus-visible {
+  background: rgba(0, 0, 0, 0.06);
+  color: #111;
+  border-color: rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  #adminModal .editor-actions .btn.ghost {
+    color: rgba(255, 255, 255, 0.92);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  #adminModal .editor-actions .btn.ghost:hover,
+  #adminModal .editor-actions .btn.ghost:active,
+  #adminModal .editor-actions .btn.ghost:focus-visible {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
 }
 
 /* --- Специфичные правки для админки, чтобы не конфликтовать с публичным сайтом --- */

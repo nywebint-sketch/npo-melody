@@ -144,12 +144,15 @@ async function loadUsersView() {
   addBtn.style.display = 'none';
   const rawUsers = await db.getUsers();
   const users = (rawUsers || []).filter(Boolean);
+  const session = await db.getSession();
+  const currentId = session?.user?.id || '';
 
   let rows = '';
   for (const u of users) {
     const email = u.email || '—';
     const name = u.name || '—';
-    const role = u.role || 'member';
+    const role = u.role || 'user';
+    const userId = u.id || u.user_id;
     const createdSource = u.created_at !== undefined ? u.created_at : u.createdAt;
     let created = '—';
     if (createdSource) {
@@ -158,7 +161,25 @@ async function loadUsersView() {
     }
     const bg = role === 'admin' ? '#fff' : 'rgba(255,255,255,0.1)';
     const color = role === 'admin' ? '#000' : '#fff';
-    const disabled = role === 'admin' ? 'disabled style="opacity:0.3"' : '';
+    const isSelf = Boolean(currentId && userId && String(userId) === String(currentId));
+    let actionCell = '';
+    if (!userId) {
+      actionCell = '<span class="muted">Нет id профиля</span>';
+    } else if (role === 'admin') {
+      if (isSelf) {
+        actionCell = '<span class="muted">Текущий аккаунт</span>';
+      } else {
+        actionCell =
+          '<button type="button" class="btn-sm danger" data-admin-action="remove-admin" data-id="' +
+          String(userId) +
+          '">Снять роль админа</button>';
+      }
+    } else {
+      actionCell =
+        '<button type="button" class="btn-sm" data-admin-action="make-admin" data-id="' +
+        String(userId) +
+        '">Сделать админом</button>';
+    }
 
     rows +=
       '<tr>' +
@@ -167,7 +188,7 @@ async function loadUsersView() {
       '<td><span class="tag" style="background:' + bg + ';color:' + color + '">' + role + '</span></td>' +
       '<td>' + created + '</td>' +
       '<td><div class="actions">' +
-      '<button class="btn-sm" onclick="app.makeAdmin(\'' + u.id + '\')" ' + disabled + '>Сделать админом</button>' +
+      actionCell +
       '</div></td>' +
       '</tr>';
   }
@@ -179,13 +200,49 @@ async function loadUsersView() {
     '<tbody>' + rows + '</tbody>' +
     '</table>' +
     '</div>';
+
+  wireUserRoleActionButtons();
+}
+
+/** Прямая привязка к кнопкам ролей (не полагаемся только на всплытие). */
+function wireUserRoleActionButtons() {
+  if (!viewContainer) return;
+  viewContainer.querySelectorAll('button[data-admin-action="make-admin"], button[data-admin-action="remove-admin"]').forEach((btn) => {
+    btn.addEventListener(
+      'click',
+      (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = btn.getAttribute('data-id');
+        const action = btn.getAttribute('data-admin-action');
+        if (!id) return;
+        if (action === 'make-admin') void window.app.makeAdmin(id);
+        else if (action === 'remove-admin') void window.app.removeAdmin(id);
+      },
+      { capture: true }
+    );
+  });
 }
 
 window.app = {
   makeAdmin: async (id) => {
-    if (confirm('Сделать пользователя администратором?')) {
+    if (!confirm('Сделать пользователя администратором?')) return;
+    try {
       await db.updateUserRole(id, 'admin');
-      loadUsersView();
+      await loadUsersView();
+    } catch (err) {
+      console.error(err);
+      alert(err?.message || 'Не удалось назначить администратора');
+    }
+  },
+  removeAdmin: async (id) => {
+    if (!confirm('Снять роль администратора с этого пользователя?')) return;
+    try {
+      await db.updateUserRole(id, 'user');
+      await loadUsersView();
+    } catch (err) {
+      console.error(err);
+      alert(err?.message || 'Не удалось снять роль');
     }
   }
 };
@@ -220,8 +277,7 @@ async function loadEventsView() {
       <td>${e.status || '—'}</td>
       <td>
         <div class="actions">
-          <button class="btn-sm" onclick="app.editEvent('${e.id}')">Изменить</button>
-          <button class="btn-sm danger" onclick="app.deleteEvent('${e.id}')">Удалить</button>
+          <button type="button" class="btn-sm" data-admin-action="edit-event" data-id="${e.id}">Изменить</button>
         </div>
       </td>
     </tr>
@@ -270,6 +326,7 @@ async function openEventEditor(id = null) {
   }
 
   editorTitle.textContent = isEdit ? 'Редактировать событие' : 'Новое событие';
+  const eventSubmitLabel = isEdit ? 'Сохранить' : 'Добавить событие';
 
   editorBody.innerHTML = `
     <form id="editorForm" class="editor-form">
@@ -309,9 +366,12 @@ async function openEventEditor(id = null) {
         </div>
         <div class="muted" style="font-size:12px;">Оставьте пустым, чтобы не менять текущую картинку.</div>
       </div>
-      <div class="editor-actions">
-        <button type="button" class="btn ghost" onclick="document.getElementById('adminModal').style.display='none'">Отмена</button>
-        <button type="submit" class="btn primary" id="saveEventBtn">Сохранить</button>
+      <div class="editor-actions${isEdit ? ' editor-actions--spread' : ''}">
+        ${isEdit ? `<button type="button" class="btn-sm danger" data-admin-action="delete-event" data-id="${id}">Удалить событие</button>` : ''}
+        <div class="editor-actions-main">
+          <button type="button" class="btn ghost" data-admin-action="close-modal">Отмена</button>
+          <button type="submit" class="btn primary" id="saveEventBtn">${eventSubmitLabel}</button>
+        </div>
       </div>
     </form>
   `;
@@ -333,7 +393,7 @@ async function openEventEditor(id = null) {
         posterUrl = await db.uploadImage(file);
       } catch (err) {
         alert('Ошибка при загрузке картинки!');
-        btn.textContent = 'Сохранить';
+        btn.textContent = eventSubmitLabel;
         btn.disabled = false;
         return;
       }
@@ -362,13 +422,13 @@ async function openEventEditor(id = null) {
   });
 }
 
-window.app.editEvent = openEventEditor;
-window.app.deleteEvent = async (id) => {
-  if (confirm('Точно удалить событие?')) {
+async function deleteEventById(id) {
+  if (confirm('Точно удалить?')) {
     await db.deleteEvent(id);
     loadEventsView();
+    if (adminModal) adminModal.style.display = 'none';
   }
-};
+}
 
 // ---- АРТИСТЫ ----
 
@@ -385,8 +445,7 @@ async function loadArtistsView() {
       <td>${a.bookable ? 'Да' : 'Нет'}</td>
       <td>
         <div class="actions">
-          <button class="btn-sm" onclick="app.editArtist('${a.id}')">Изменить</button>
-          <button class="btn-sm danger" onclick="app.deleteArtist('${a.id}')">Удалить</button>
+          <button type="button" class="btn-sm" data-admin-action="edit-artist" data-id="${a.id}">Изменить</button>
         </div>
       </td>
     </tr>
@@ -413,6 +472,7 @@ async function openArtistEditor(id = null) {
   }
 
   editorTitle.textContent = isEdit ? 'Редактировать артиста' : 'Новый артист';
+  const artistSubmitLabel = isEdit ? 'Сохранить' : 'Добавить артиста';
 
   editorBody.innerHTML = `
     <form id="editorForm" class="editor-form">
@@ -443,9 +503,12 @@ async function openArtistEditor(id = null) {
         </div>
         <div class="muted" style="font-size:12px;">Оставьте пустым, чтобы не менять текущую картинку.</div>
       </div>
-      <div class="editor-actions">
-        <button type="button" class="btn ghost" onclick="document.getElementById('adminModal').style.display='none'">Отмена</button>
-        <button type="submit" class="btn primary" id="saveArtistBtn">Сохранить</button>
+      <div class="editor-actions${isEdit ? ' editor-actions--spread' : ''}">
+        ${isEdit ? `<button type="button" class="btn-sm danger" data-admin-action="delete-artist" data-id="${id}">Удалить артиста</button>` : ''}
+        <div class="editor-actions-main">
+          <button type="button" class="btn ghost" data-admin-action="close-modal">Отмена</button>
+          <button type="submit" class="btn primary" id="saveArtistBtn">${artistSubmitLabel}</button>
+        </div>
       </div>
     </form>
   `;
@@ -467,7 +530,7 @@ async function openArtistEditor(id = null) {
         posterUrl = await db.uploadImage(file);
       } catch (err) {
         alert('Ошибка при загрузке картинки!');
-        btn.textContent = 'Сохранить';
+        btn.textContent = artistSubmitLabel;
         btn.disabled = false;
         return;
       }
@@ -493,13 +556,13 @@ async function openArtistEditor(id = null) {
   });
 }
 
-window.app.editArtist = openArtistEditor;
-window.app.deleteArtist = async (id) => {
-  if (confirm('Точно удалить артиста?')) {
+async function deleteArtistById(id) {
+  if (confirm('Точно удалить?')) {
     await db.deleteArtist(id);
     loadArtistsView();
+    if (adminModal) adminModal.style.display = 'none';
   }
-};
+}
 
 // --- РЕЛИЗЫ ---
 
@@ -600,6 +663,57 @@ async function loadMerchView() {
 }
 
 // ---- ИНИЦИАЛИЗАЦИЯ ----
+
+/*
+  CSP в admin.html (script-src без 'unsafe-inline') блокирует inline onclick.
+  Делегирование кликов по data-admin-action.
+  target может быть Text-узлом внутри кнопки — у него нет .closest(), обрабатываем через родителя.
+*/
+function adminActionElementFromEvent(ev) {
+  const t = ev.target;
+  const el = t instanceof Element ? t : t.parentElement;
+  return el?.closest?.('[data-admin-action]') ?? null;
+}
+
+/* Фаза capture: срабатывает до всплытия и не зависит от перехвата кликов дочерними слоями */
+if (adminPanel) {
+  document.addEventListener(
+    'click',
+    (ev) => {
+      const btn = adminActionElementFromEvent(ev);
+      if (!btn || btn.disabled) return;
+      if (!adminPanel.contains(btn)) return;
+      const action = btn.getAttribute('data-admin-action');
+      const id = btn.getAttribute('data-id');
+      if (action === 'make-admin' || action === 'remove-admin') {
+        return;
+      }
+      if (action === 'edit-event' && id) {
+        ev.preventDefault();
+        void openEventEditor(id);
+      } else if (action === 'edit-artist' && id) {
+        ev.preventDefault();
+        void openArtistEditor(id);
+      }
+    },
+    true
+  );
+}
+
+if (adminModal) {
+  adminModal.addEventListener('click', (ev) => {
+    const btn = adminActionElementFromEvent(ev);
+    if (!btn || btn.disabled) return;
+    const action = btn.getAttribute('data-admin-action');
+    const id = btn.getAttribute('data-id');
+    if (action === 'close-modal') {
+      adminModal.style.display = 'none';
+      return;
+    }
+    if (action === 'delete-event' && id) void deleteEventById(id);
+    if (action === 'delete-artist' && id) void deleteArtistById(id);
+  });
+}
 
 checkAuth();
 
