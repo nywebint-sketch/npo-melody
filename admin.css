@@ -246,27 +246,36 @@ body.admin-body {
   flex-direction: column;
   gap: 6px;
 }
+/* Подписи и поля: цвета из styles.css (:root), не из body.admin-body (--txt-*),
+   иначе на светлой модалке (var(--modal-bg)) светлый текст и тёмные инпуты нечитаемы. */
 .form-group label {
   font-size: 13px;
-  color: var(--txt-200, rgba(255,255,255,0.6));
+  color: var(--text-muted);
 }
-.form-group input, 
-.form-group textarea, 
+.form-group input,
+.form-group textarea,
 .form-group select {
-  background-color: rgba(0,0,0,0.5);
-  border: 1px solid var(--bd-100, rgba(255,255,255,0.2));
-  color: white;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
   padding: 12px;
   border-radius: 8px;
   font-family: inherit;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.85;
 }
 .form-group textarea {
   resize: vertical;
   min-height: 80px;
 }
-.form-group input:focus, 
-.form-group textarea:focus {
-  border-color: white;
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--stroke);
+  background: var(--surface-2);
   outline: none;
 }
 .editor-actions {
@@ -275,7 +284,7 @@ body.admin-body {
   justify-content: flex-end;
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid var(--bd-100, rgba(255,255,255,0.1));
+  border-top: 1px solid var(--border);
 }
 
 /* --- Специфичные правки для админки, чтобы не конфликтовать с публичным сайтом --- */
