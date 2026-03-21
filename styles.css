@@ -1542,8 +1542,145 @@
       padding-top: 6px;
     }
 
-    #mBody .event-modal-actions .event-ticket-btn,
-    .event-modal-wrap .event-modal-actions .event-ticket-btn {
+    /* Модалка мерча / афиша: компактное окно, колонка с фото по ширине картинки */
+    @media (min-width: 521px) {
+      #modal.modal-overlay:has(.merch-modal-wrap) .modal-inner,
+      #modal.modal-overlay:has(.afisha-modal-wrap) .modal-inner {
+        width: min(640px, calc(100vw - 36px));
+        max-width: min(640px, calc(100vw - 36px));
+      }
+    }
+
+    .event-modal-wrap.merch-modal-wrap,
+    .event-modal-wrap.afisha-modal-wrap {
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-rows: auto;
+      /* Растягиваем колонки на одну высоту — иначе при длинном тексте слева кнопка «уезжает вверх» */
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    .merch-modal-wrap .event-modal-left,
+    .afisha-modal-wrap .event-modal-left {
+      grid-column: 1;
+      grid-row: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      min-width: 0;
+    }
+
+    .merch-modal-wrap .event-modal-poster-slot,
+    .afisha-modal-wrap .event-modal-poster-slot {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .merch-modal-wrap .event-modal-right,
+    .afisha-modal-wrap .event-modal-right {
+      grid-column: 2;
+      grid-row: 1;
+      min-width: 0;
+    }
+
+    #mBody .merch-modal-wrap .event-modal-left,
+    #mBody .afisha-modal-wrap .event-modal-left {
+      max-width: 240px;
+      width: 100%;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .merch-modal-wrap .merch-modal-actions,
+    .afisha-modal-wrap .afisha-modal-actions {
+      justify-content: flex-start;
+      margin-top: auto;
+      padding: 8px 0 0;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      align-self: stretch;
+      box-sizing: border-box;
+    }
+
+    .merch-modal-wrap .merch-preorder-btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.25;
+      border-radius: 0;
+      letter-spacing: 0.02em;
+    }
+
+    #mBody .merch-modal-wrap .merch-modal-desc,
+    .merch-modal-wrap .merch-modal-desc {
+      margin: 0;
+      font-weight: 500;
+      font-size: clamp(14px, 0.875rem, 18px);
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+      color: var(--text-muted);
+    }
+
+    .merch-modal-wrap .event-modal-right.merch-modal-right,
+    .afisha-modal-wrap .event-modal-right.afisha-modal-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 6px;
+      min-height: 0;
+      padding: 10px 12px !important;
+    }
+
+    #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right .muted {
+      margin-top: 0;
+      font-weight: 500;
+      font-size: clamp(14px, 0.875rem, 18px);
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+      color: var(--text-muted);
+    }
+
+    #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right .divider {
+      margin: 4px 0;
+    }
+
+    /* #mBody + .event-ticket-btn перебивал афишу по специфичности — только для не-primary (артист/релиз) */
+    #mBody .afisha-modal-wrap .afisha-modal-actions .event-ticket-btn.btn.primary {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      padding: 7px 10px !important;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.25;
+      border-radius: 0;
+      letter-spacing: 0.02em;
+      background: var(--surface-hover) !important;
+      color: var(--text-hover) !important;
+      border-color: var(--surface-hover) !important;
+    }
+
+    #mBody .afisha-modal-wrap .afisha-modal-actions .event-ticket-btn.btn.primary:hover,
+    #mBody .afisha-modal-wrap .afisha-modal-actions .event-ticket-btn.btn.primary:active {
+      background: var(--surface-hover) !important;
+      color: var(--text-hover) !important;
+      border-color: var(--surface-hover) !important;
+    }
+
+    #mBody .event-modal-actions .event-ticket-btn:not(.btn.primary),
+    .event-modal-wrap .event-modal-actions .event-ticket-btn:not(.btn.primary) {
       justify-content: center;
       padding: 10px 16px;
       font-size: 13px;
@@ -1553,10 +1690,10 @@
       transition: color .18s ease, background .18s ease, border-color .18s ease;
     }
 
-    #mBody .event-modal-actions .event-ticket-btn:hover,
-    #mBody .event-modal-actions .event-ticket-btn:active,
-    .event-modal-wrap .event-modal-actions .event-ticket-btn:hover,
-    .event-modal-wrap .event-modal-actions .event-ticket-btn:active {
+    #mBody .event-modal-actions .event-ticket-btn:not(.btn.primary):hover,
+    #mBody .event-modal-actions .event-ticket-btn:not(.btn.primary):active,
+    .event-modal-wrap .event-modal-actions .event-ticket-btn:not(.btn.primary):hover,
+    .event-modal-wrap .event-modal-actions .event-ticket-btn:not(.btn.primary):active {
       color: var(--text-hover) !important;
       background: var(--surface-hover) !important;
       border-color: var(--border-hover) !important;
@@ -1998,6 +2135,36 @@
         width: 100%;
       }
 
+      #mBody .merch-modal-wrap .event-modal-left,
+      #mBody .afisha-modal-wrap .event-modal-left {
+        max-width: 100%;
+      }
+
+      /* Мерч / афиша на мобилке: фото → текст → кнопка */
+      .merch-modal-wrap .event-modal-left,
+      .afisha-modal-wrap .event-modal-left {
+        display: contents;
+      }
+
+      .event-modal-wrap.merch-modal-wrap,
+      .event-modal-wrap.afisha-modal-wrap {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+      }
+
+      .merch-modal-wrap .event-modal-poster-slot,
+      .afisha-modal-wrap .event-modal-poster-slot {
+        grid-column: 1;
+        grid-row: 1;
+        width: 100%;
+      }
+
+      .merch-modal-wrap .event-modal-right,
+      .afisha-modal-wrap .event-modal-right {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
       /* Постер/фото: как на десктопе — ограничение по высоте, иначе на узком экране съедает всё окно */
       #mBody .event-modal-left .media {
         max-height: min(48dvh, 360px);
@@ -2014,8 +2181,15 @@
         margin: 0 auto;
       }
 
+      /* max-height только на треке — иначе обрезались точки под слайдами */
       #mBody .event-modal-left .merch-modal-carousel-wrap {
+        max-height: none;
+        overflow: visible;
+      }
+
+      #mBody .event-modal-left .merch-modal-carousel .carousel-track-wrap {
         max-height: min(48dvh, 360px);
+        overflow: hidden;
       }
 
       .merch-modal-carousel .carousel-slide img {
@@ -2033,7 +2207,15 @@
         padding-top: 8px;
       }
 
-      .event-modal-actions .event-ticket-btn {
+      .merch-modal-wrap .merch-modal-actions,
+      .afisha-modal-wrap .afisha-modal-actions {
+        grid-column: 1;
+        grid-row: 3;
+        margin-top: 0;
+        padding-top: 12px;
+      }
+
+      .event-modal-actions .event-ticket-btn:not(.btn.primary) {
         width: 100%;
         max-width: 100%;
         background: transparent !important;
@@ -2044,8 +2226,8 @@
         transition: color .18s ease, background .18s ease, border-color .18s ease;
       }
 
-      .event-modal-actions .event-ticket-btn:hover,
-      .event-modal-actions .event-ticket-btn:active {
+      .event-modal-actions .event-ticket-btn:not(.btn.primary):hover,
+      .event-modal-actions .event-ticket-btn:not(.btn.primary):active {
         color: var(--text-hover) !important;
         background: var(--surface-hover) !important;
         border-color: var(--border-hover) !important;
@@ -2092,7 +2274,13 @@
       }
 
       #mBody .event-modal-left .merch-modal-carousel-wrap {
+        max-height: none;
+        overflow: visible;
+      }
+
+      #mBody .event-modal-left .merch-modal-carousel .carousel-track-wrap {
         max-height: min(40dvh, 300px);
+        overflow: hidden;
       }
 
       .merch-modal-carousel .carousel-slide img {

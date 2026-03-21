@@ -730,12 +730,14 @@ function bindStreamsSectionPanels() {
 const appendDivider = (parent) => parent.appendChild(el("div", { className: "divider" }));
 
 function buildEventModalBody(eventItem) {
-  const wrapper = el("div", { className: "event-modal-wrap" });
+  const wrapper = el("div", { className: "event-modal-wrap afisha-modal-wrap" });
 
   const left = el("div", { className: "card event-modal-left" });
-  left.appendChild(createMedia(eventItem.poster || "logo.png", eventItem.title, "media"));
+  const posterSlot = el("div", { className: "event-modal-poster-slot" });
+  posterSlot.appendChild(createMedia(eventItem.poster || "logo.png", eventItem.title, "media"));
+  left.appendChild(posterSlot);
 
-  const right = el("div", { className: "card pad event-modal-right" });
+  const right = el("div", { className: "card pad event-modal-right afisha-modal-right" });
   const about = el("div", { className: "muted", text: eventItem.about || "—" });
   about.style.marginTop = "8px";
   right.appendChild(about);
@@ -767,7 +769,7 @@ function buildEventModalBody(eventItem) {
     eventItem.ticket ||
     eventItem.tickets;
   const ticketUrl = safeHttpUrl(rawTicketUrl);
-  const actions = el("div", { className: "event-modal-actions" });
+  const actions = el("div", { className: "event-modal-actions afisha-modal-actions" });
   if (ticketUrl) {
     const link = el("a", { className: "btn primary event-ticket-btn", text: "Билеты / регистрация" });
     link.href = ticketUrl;
@@ -781,9 +783,9 @@ function buildEventModalBody(eventItem) {
     actions.appendChild(button);
   }
 
+  left.appendChild(actions);
   wrapper.appendChild(left);
   wrapper.appendChild(right);
-  wrapper.appendChild(actions);
   return wrapper;
 }
 
@@ -791,8 +793,10 @@ function buildArtistModalBody(artist) {
   const wrapper = el("div", { className: "event-modal-wrap artist-modal-wrap" });
 
   const left = el("div", { className: "card event-modal-left" });
+  const posterSlot = el("div", { className: "event-modal-poster-slot" });
   const mediaClass = artist.poster ? "media square cover" : "media square";
-  left.appendChild(createMedia(artist.poster || "logo.png", artist.name, mediaClass));
+  posterSlot.appendChild(createMedia(artist.poster || "logo.png", artist.name, mediaClass));
+  left.appendChild(posterSlot);
 
   const right = el("div", { className: "card pad event-modal-right" });
 
@@ -800,7 +804,6 @@ function buildArtistModalBody(artist) {
   right.appendChild(bio);
 
   const actions = el("div", { className: "event-modal-actions" });
-  actions.style.gap = "10px";
 
   const bandcamp = el("button", { className: "btn event-ticket-btn", text: "Bandcamp" });
   bandcamp.type = "button";
@@ -812,9 +815,9 @@ function buildArtistModalBody(artist) {
   soundcloud.addEventListener("click", () => alert("SoundCloud (поставишь ссылку)"));
   actions.appendChild(soundcloud);
 
+  left.appendChild(actions);
   wrapper.appendChild(left);
   wrapper.appendChild(right);
-  wrapper.appendChild(actions);
   return wrapper;
 }
 
@@ -822,7 +825,9 @@ function buildReleaseModalBody(release) {
   const wrapper = el("div", { className: "event-modal-wrap" });
 
   const left = el("div", { className: "card event-modal-left" });
-  left.appendChild(createMedia(release.cover || release.poster || release.image || "logo.png", release.title, "media"));
+  const posterSlot = el("div", { className: "event-modal-poster-slot" });
+  posterSlot.appendChild(createMedia(release.cover || release.poster || release.image || "logo.png", release.title, "media"));
+  left.appendChild(posterSlot);
 
   const right = el("div", { className: "card pad event-modal-right" });
   right.appendChild(el("b", { text: "Треклист" }));
@@ -836,7 +841,6 @@ function buildReleaseModalBody(release) {
   right.appendChild(tracklist);
 
   const actions = el("div", { className: "event-modal-actions" });
-  actions.style.gap = "10px";
 
   const bandcamp = el("button", { className: "btn event-ticket-btn", text: "Bandcamp" });
   bandcamp.type = "button";
@@ -848,9 +852,9 @@ function buildReleaseModalBody(release) {
   soundcloud.addEventListener("click", () => alert("SoundCloud (поставишь ссылку)"));
   actions.appendChild(soundcloud);
 
+  left.appendChild(actions);
   wrapper.appendChild(left);
   wrapper.appendChild(right);
-  wrapper.appendChild(actions);
   return wrapper;
 }
 
@@ -881,13 +885,15 @@ function getMerchImageUrls(item) {
 }
 
 function buildMerchModalBody(item) {
-  const wrapper = el("div", { className: "event-modal-wrap" });
+  const wrapper = el("div", { className: "event-modal-wrap merch-modal-wrap" });
 
   const left = el("div", { className: "card event-modal-left" });
   const imageSources = getMerchImageUrls(item);
   const imageUrls = imageSources.map(resolveImageSrc);
+  const posterSlot = el("div", { className: "event-modal-poster-slot" });
   const carouselContainer = el("div", { className: "merch-modal-carousel-wrap" });
-  left.appendChild(carouselContainer);
+  posterSlot.appendChild(carouselContainer);
+  left.appendChild(posterSlot);
   createCarousel(carouselContainer, {
     urls: imageUrls,
     intervalMs: 5000,
@@ -895,24 +901,23 @@ function buildMerchModalBody(item) {
     carouselClass: "carousel merch-modal-carousel"
   });
 
-  const right = el("div", { className: "card pad event-modal-right" });
+  const right = el("div", { className: "card pad event-modal-right merch-modal-right" });
   // Описание из Supabase: колонка desc или description
   const descText = (item.desc != null && String(item.desc).trim() !== "")
     ? String(item.desc)
     : (item.description != null && String(item.description).trim() !== "")
       ? String(item.description)
       : "Футболки — Марина Бибик, принты — Лофер";
-  const desc = el("div", { className: "muted", text: descText });
-  desc.style.marginTop = "8px";
+  const desc = el("div", { className: "merch-modal-desc", text: descText });
   right.appendChild(desc);
 
-  const actions = el("div", { className: "event-modal-actions" });
+  const actions = el("div", { className: "event-modal-actions merch-modal-actions" });
   const preorderUrl = (item.preorder_url != null && String(item.preorder_url).trim() !== "")
     ? String(item.preorder_url).trim()
     : (item.preorderUrl != null && String(item.preorderUrl).trim() !== "")
       ? String(item.preorderUrl).trim()
       : "";
-  const button = el("button", { className: "btn primary event-ticket-btn", text: "Предзаказ" });
+  const button = el("button", { className: "btn primary merch-preorder-btn", text: "Предзаказ" });
   button.type = "button";
   if (preorderUrl) {
     button.addEventListener("click", () => window.open(preorderUrl, "_blank", "noopener"));
@@ -921,9 +926,9 @@ function buildMerchModalBody(item) {
   }
   actions.appendChild(button);
 
+  left.appendChild(actions);
   wrapper.appendChild(left);
   wrapper.appendChild(right);
-  wrapper.appendChild(actions);
   return wrapper;
 }
 
