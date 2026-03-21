@@ -2,9 +2,9 @@
 
 Статический фронтенд с **Supabase** (БД, Auth, Storage) и отдельной админ-панелью. Сборка и локальный запуск через **Vite**; деплой — GitHub Pages или любой статический хостинг.
 
-**Репозиторий:** [github.com/deliacorona-web/npo.melody](https://github.com/deliacorona-web/npo.melody)
+**Репозиторий:** [github.com/nywebint-sketch/npo-melody](https://github.com/nywebint-sketch/npo-melody)
 
-Чтобы пушить в **другой** репозиторий на GitHub:
+Чтобы указать другой remote:
 
 ```bash
 git remote set-url origin https://github.com/<логин>/<имя-репо>.git
@@ -36,8 +36,8 @@ git push -u origin main
 1. **Клонировать репозиторий**
 
    ```bash
-   git clone https://github.com/deliacorona-web/npo.melody.git
-   cd npo.melody
+   git clone https://github.com/nywebint-sketch/npo-melody.git
+   cd npo-melody
    ```
 
    Либо скачать ZIP с GitHub и перейти в папку проекта.
@@ -75,8 +75,8 @@ npm run build
 2. Выложить содержимое `dist/` (ветка `gh-pages`, Actions или `git subtree push` — см. историю коммитов / настройки репозитория).
 3. В **Settings → Pages**: источник — ветка `gh-pages`, папка `/ (root)`.
 
-Типичный URL: `https://deliacorona-web.github.io/npo.melody/`  
-Админка: `https://deliacorona-web.github.io/npo.melody/admin.html`
+Типичный URL: `https://nywebint-sketch.github.io/npo-melody/`  
+Админка: `https://nywebint-sketch.github.io/npo-melody/admin.html`
 
 Подробнее про кастомный домен и DNS — см. ниже (раздел «Нормальный адрес»).
 
