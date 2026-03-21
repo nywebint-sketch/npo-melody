@@ -25,6 +25,16 @@ const fmtDateShort = (iso) => {
   return `${d.getDate()} ${monthsRu[d.getMonth()]}`;
 };
 
+const recordsCountRu = (n) => {
+  const num = Number(n);
+  const x = Math.abs(num) % 100;
+  const d = x % 10;
+  if (x > 10 && x < 20) return `${num} записей`;
+  if (d === 1) return `${num} запись`;
+  if (d >= 2 && d <= 4) return `${num} записи`;
+  return `${num} записей`;
+};
+
 const sortAsc = (arr, key) => [...arr].sort((a, b) => new Date(a[key]) - new Date(b[key]));
 
 let data = {
@@ -33,8 +43,55 @@ let data = {
   releases: [],
   podcasts: [],
   streams: [],
-  merch: []
+  merch: [],
+  /** true если показаны примеры записей (в БД таблица streams пуста или недоступна) */
+  streamsAreDemo: false
 };
+
+/** Примеры для блока «Архив», пока в Supabase нет строк в streams */
+const FALLBACK_STREAMS = [
+  { id: "__demo_stream_1", title: "NPO Radio — ночной сет (фрагмент)", date: "15.03.2026" },
+  { id: "__demo_stream_2", title: "Live из клуба — warmup", date: "08.03.2026" },
+  { id: "__demo_stream_3", title: "Архив: гостевой микс", date: "01.03.2026" }
+];
+
+const streamsAuthOk = () => Boolean(clubSession?.email);
+
+async function loadStreamsData() {
+  if (!window.dbLayer) {
+    data.streams = FALLBACK_STREAMS;
+    data.streamsAreDemo = true;
+    return;
+  }
+  const streams = await window.dbLayer.getStreams();
+  data.streams = streams;
+  data.streamsAreDemo = false;
+  if (!data.streams.length) {
+    data.streams = FALLBACK_STREAMS;
+    data.streamsAreDemo = true;
+  }
+}
+
+function clearStreamsData() {
+  data.streams = [];
+  data.streamsAreDemo = false;
+}
+
+function updateStreamsHints() {
+  const locked = !streamsAuthOk();
+  const liveHint = $("#streamsLiveHint");
+  const archHint = $("#streamsArchiveHint");
+  [liveHint, archHint].forEach((hint) => {
+    if (!hint) return;
+    let sub = hint.querySelector(".streams-hint-sub");
+    if (!sub) {
+      sub = el("div", { className: "streams-hint-sub muted" });
+      hint.appendChild(sub);
+    }
+    sub.textContent = locked ? "Нужен вход в аккаунт" : "";
+    sub.hidden = !locked;
+  });
+}
 
 const BOOKING_ADMIN_ENDPOINT = "https://httpbin.org/post";
 const BOOKING_COOLDOWN_MS = 60 * 1000;
@@ -180,6 +237,8 @@ function renderClubAccess() {
       el.setAttribute("hidden", "");
     }
   });
+
+  updateStreamsHints();
 }
 
 function setClubStatus(message) {
@@ -259,6 +318,8 @@ function initClubAuth() {
         { title: 'Members Promo Code', description: 'Скидка 15% на мерч и закрытые дропы.' }
       ];
       renderExclusiveItems(mockExclusive);
+      await loadStreamsData();
+      renderStreams();
       renderClubAccess();
       setClubStatus("Регистрация успешна. Эксклюзив открыт.");
       closeModal();
@@ -290,6 +351,8 @@ function initClubAuth() {
         { title: 'Members Promo Code', description: 'Скидка 15% на мерч и закрытые дропы.' }
       ];
       renderExclusiveItems(mockExclusive);
+      await loadStreamsData();
+      renderStreams();
       renderClubAccess();
       closeModal();
     } catch (err) {
@@ -304,11 +367,13 @@ function initClubAuth() {
       // ignore
     }
     clubSession = null;
+    clearStreamsData();
+    renderStreams();
+    closeStreamsLivePanel();
+    closeStreamsArchivePanel();
     renderClubAccess();
     setClubStatus("Ты вышел из аккаунта.");
   });
-
-  refreshClubSession();
 }
 
 function setupOpenCard(node, type, id) {
@@ -421,22 +486,12 @@ function renderReleases() {
   wrap.replaceChildren();
 
   [...data.releases].sort((a, b) => b.date.localeCompare(a.date)).forEach((release) => {
-    const card = el("div", { className: "card" });
+    const card = el("div", { className: "card release-card" });
     card.appendChild(createMedia(release.cover || release.poster || release.image || "logo.png", release.title, "media square"));
 
-    const pad = el("div", { className: "pad" });
-
-    const title = el("b", { text: release.title });
-    title.style.maxWidth = "100%";
-    title.style.overflow = "hidden";
-    title.style.textOverflow = "ellipsis";
-    title.style.whiteSpace = "nowrap";
-
-    pad.appendChild(title);
-
-    const date = el("div", { className: "muted", text: release.date });
-    date.style.marginTop = "6px";
-    pad.appendChild(date);
+    const pad = el("div", { className: "pad release-card-body" });
+    pad.appendChild(el("b", { className: "release-card-title", text: release.title }));
+    pad.appendChild(el("div", { className: "muted release-card-date", text: release.date }));
 
     card.appendChild(pad);
     setupOpenCard(card, "release", release.id);
@@ -448,6 +503,43 @@ function renderStreams() {
   const wrap = $("#streamsList");
   if (!wrap) return;
   wrap.replaceChildren();
+
+  if (!streamsAuthOk()) {
+    const box = el("div", { className: "card pad streams-live-locked" });
+    const lead = el("p", {
+      className: "streams-live-locked-lead",
+      text: "Раздел Live и архив трансляций доступны только участникам с аккаунтом."
+    });
+    const sub = el("p", {
+      className: "muted streams-live-locked-sub",
+      text: "Войдите или зарегистрируйтесь — кнопка «Вход» в шапке или ниже."
+    });
+    box.appendChild(lead);
+    box.appendChild(sub);
+    const btn = el("button", { className: "btn primary auth-open-button", text: "Войти или зарегистрироваться" });
+    btn.type = "button";
+    box.appendChild(btn);
+    wrap.appendChild(box);
+
+    const archiveCount = $("#streamsArchiveCount");
+    if (archiveCount) archiveCount.textContent = "—";
+
+    const now = new Date();
+    const next = sortAsc(data.events, "date").filter((e) => new Date(e.date) >= now)[0];
+    const streamNext = $("#streamNext");
+    if (streamNext) {
+      streamNext.textContent = next ? `Следующий эфир: ${next.title} · ${fmtDT(next.date)}` : "Следующий эфир: —";
+    }
+    return;
+  }
+
+  if (data.streamsAreDemo) {
+    const note = el("div", {
+      className: "muted streams-archive-note",
+      text: "В базе пока нет записей — ниже примеры. Добавь строки в таблицу streams в Supabase (SQL Editor) или через админку, когда появится редактор."
+    });
+    wrap.appendChild(note);
+  }
 
   data.streams.forEach((stream) => {
     const row = el("div", { className: "card pad" });
@@ -466,6 +558,9 @@ function renderStreams() {
     setupOpenCard(row, "stream", stream.id);
     wrap.appendChild(row);
   });
+
+  const archiveCount = $("#streamsArchiveCount");
+  if (archiveCount) archiveCount.textContent = recordsCountRu(data.streams.length);
 
   const now = new Date();
   const next = sortAsc(data.events, "date").filter((e) => new Date(e.date) >= now)[0];
@@ -506,12 +601,120 @@ const openModal = ({ title, sub, body }) => {
   if (mTitle) mTitle.textContent = title || "—";
   if (mSub) mSub.textContent = sub || "";
   if (mBody) mBody.replaceChildren(body || document.createTextNode(""));
+  if (mBody) {
+    mBody.scrollTop = 0;
+    requestAnimationFrame(() => {
+      mBody.scrollTop = 0;
+    });
+  }
   if (modal) modal.style.display = "flex";
 };
 
 const closeModal = () => {
   if (modal) modal.style.display = "none";
 };
+
+const streamsLivePanel = $("#streamsLivePanel");
+const streamsLiveHint = $("#streamsLiveHint");
+const streamsArchivePanel = $("#streamsArchivePanel");
+const streamsArchiveHint = $("#streamsArchiveHint");
+
+function openStreamsLivePanel() {
+  if (streamsLivePanel) streamsLivePanel.hidden = false;
+  if (streamsLiveHint) streamsLiveHint.hidden = true;
+}
+
+function closeStreamsLivePanel() {
+  if (streamsLivePanel) streamsLivePanel.hidden = true;
+  if (streamsLiveHint) streamsLiveHint.hidden = false;
+}
+
+function promptStreamsAuth() {
+  setClubStatus("Войдите в аккаунт, чтобы открыть Live и архив трансляций.");
+  openAuthModal();
+}
+
+function openStreamsArchivePanel() {
+  if (streamsArchivePanel) streamsArchivePanel.hidden = false;
+  if (streamsArchiveHint) streamsArchiveHint.hidden = true;
+}
+
+function closeStreamsArchivePanel() {
+  if (streamsArchivePanel) streamsArchivePanel.hidden = true;
+  if (streamsArchiveHint) streamsArchiveHint.hidden = false;
+}
+
+function bindHintPressHandlers(hint) {
+  if (!hint) return;
+  hint.addEventListener("pointerdown", () => hint.classList.add("is-pressed"));
+  ["pointerup", "pointerleave", "pointercancel", "blur"].forEach((evt) => {
+    hint.addEventListener(evt, () => hint.classList.remove("is-pressed"));
+  });
+  hint.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter" || ev.key === " ") {
+      ev.preventDefault();
+      hint.click();
+    }
+  });
+}
+
+function bindStreamsLiveOpeners() {
+  const headerLive = document.querySelector('header.topbar .right a.btn[href="#streams"]');
+  $("#streamsLiveCloseBtn")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    closeStreamsLivePanel();
+  });
+  $("#streamsArchiveCloseBtn")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    closeStreamsArchivePanel();
+  });
+
+  bindHintPressHandlers(streamsLiveHint);
+  bindHintPressHandlers(streamsArchiveHint);
+
+  const scrollToStreams = () => {
+    document.getElementById("streams")?.scrollIntoView({ behavior: "smooth" });
+    try {
+      history.replaceState(null, "", "#streams");
+    } catch {
+      window.location.hash = "streams";
+    }
+  };
+
+  streamsLiveHint?.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (!streamsAuthOk()) {
+      scrollToStreams();
+      promptStreamsAuth();
+      return;
+    }
+    openStreamsLivePanel();
+    scrollToStreams();
+  });
+  headerLive?.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (!streamsAuthOk()) {
+      scrollToStreams();
+      promptStreamsAuth();
+      return;
+    }
+    openStreamsLivePanel();
+    scrollToStreams();
+  });
+
+  streamsArchiveHint?.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (!streamsAuthOk()) {
+      scrollToStreams();
+      promptStreamsAuth();
+      return;
+    }
+    openStreamsArchivePanel();
+    scrollToStreams();
+  });
+}
 
 const appendDivider = (parent) => parent.appendChild(el("div", { className: "divider" }));
 
@@ -574,7 +777,7 @@ function buildEventModalBody(eventItem) {
 }
 
 function buildArtistModalBody(artist) {
-  const wrapper = el("div", { className: "event-modal-wrap" });
+  const wrapper = el("div", { className: "event-modal-wrap artist-modal-wrap" });
 
   const left = el("div", { className: "card event-modal-left" });
   const mediaClass = artist.poster ? "media square cover" : "media square";
@@ -724,7 +927,10 @@ function buildProfileModalBody() {
     headingWrap.appendChild(el("b", { text: "Эксклюзив" }));
     block.appendChild(headingWrap);
     appendDivider(block);
-    block.appendChild(exclusiveContent.cloneNode(true));
+    const exclusiveClone = exclusiveContent.cloneNode(true);
+    exclusiveClone.removeAttribute("hidden");
+    exclusiveClone.style.display = "";
+    block.appendChild(exclusiveClone);
     wrap.appendChild(block);
   }
 
@@ -738,6 +944,10 @@ function buildProfileModalBody() {
       await window.dbLayer.logout();
     } catch {}
     clubSession = null;
+    clearStreamsData();
+    renderStreams();
+    closeStreamsLivePanel();
+    closeStreamsArchivePanel();
     renderClubAccess();
     setClubStatus("Ты вышел из аккаунта.");
     closeModal();
@@ -871,6 +1081,10 @@ document.addEventListener("click", (e) => {
   }
 
   if (type === "stream") {
+    if (!streamsAuthOk()) {
+      promptStreamsAuth();
+      return;
+    }
     const stream = data.streams.find((x) => x.id === id);
     if (!stream) return;
     openModal({ title: stream.title, sub: stream.date, body: buildStreamModalBody(stream) });
@@ -1042,15 +1256,45 @@ window.addEventListener("resize", () => {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     closeMobileMenu();
+    if (streamsLivePanel && !streamsLivePanel.hidden) {
+      closeStreamsLivePanel();
+    } else if (streamsArchivePanel && !streamsArchivePanel.hidden) {
+      closeStreamsArchivePanel();
+    }
     closeModal();
   }
 });
+
+function showToast(message, { duration = 4500 } = {}) {
+  let host = document.getElementById("siteToastHost");
+  if (!host) {
+    host = document.createElement("div");
+    host.id = "siteToastHost";
+    host.className = "site-toast-host";
+    document.body.appendChild(host);
+  }
+  const node = document.createElement("div");
+  node.className = "site-toast";
+  node.setAttribute("role", "status");
+  node.textContent = message;
+  host.appendChild(node);
+  requestAnimationFrame(() => node.classList.add("site-toast--visible"));
+  let tmr = window.setTimeout(() => {
+    node.classList.remove("site-toast--visible");
+    window.setTimeout(() => node.remove(), 220);
+  }, duration);
+  node.addEventListener("click", () => {
+    window.clearTimeout(tmr);
+    node.classList.remove("site-toast--visible");
+    window.setTimeout(() => node.remove(), 220);
+  });
+}
 
 document.addEventListener("click", (e) => {
   const link = e.target.closest("[data-placeholder-link]");
   if (link) {
     e.preventDefault();
-    alert(link.dataset.placeholderLink || "Поставь ссылку");
+    showToast(link.dataset.placeholderLink || "Поставь ссылку");
   }
 });
 
@@ -1085,21 +1329,25 @@ const initApp = async () => {
   renderSkeletonGrid("#merchGrid", 4);
 
   if (window.dbLayer) {
-    await window.dbLayer.syncDefaultData();
-    const [events, artists, releases, podcasts, streams, merch] = await Promise.all([
+    const [events, artists, releases, podcasts, merch] = await Promise.all([
       window.dbLayer.getEvents(),
       window.dbLayer.getArtists(),
       window.dbLayer.getReleases(),
       window.dbLayer.getPodcasts(),
-      window.dbLayer.getStreams(),
       window.dbLayer.getMerch()
     ]);
     data.events = events;
     data.artists = artists;
     data.releases = releases;
     data.podcasts = podcasts;
-    data.streams = streams;
     data.merch = merch;
+    if (streamsAuthOk()) {
+      await loadStreamsData();
+    } else {
+      clearStreamsData();
+    }
+  } else {
+    clearStreamsData();
   }
 
   const yearNode = $("#year");
@@ -1110,7 +1358,6 @@ const initApp = async () => {
   renderReleases();
   renderStreams();
   renderMerch();
-  initClubAuth();
 
   // Пример карусели изображений (можно заменить urls на свой массив)
   const carouselContainer = document.getElementById("carouselContainer");
@@ -1126,5 +1373,14 @@ const initApp = async () => {
   }
 };
 
-document.addEventListener("DOMContentLoaded", initApp);
+document.addEventListener("DOMContentLoaded", async () => {
+  closeModal();
+  if (window.dbLayer) {
+    await window.dbLayer.syncDefaultData();
+    await refreshClubSession();
+  }
+  bindStreamsLiveOpeners();
+  await initApp();
+  initClubAuth();
+});
 

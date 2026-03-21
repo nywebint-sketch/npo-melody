@@ -11,8 +11,25 @@
   <meta name="description"
     content="НПО Мелодия — клуб / лейбл / трансляции. Афиша, артисты, релизы, подкасты, live, мерч, контакты.">
 
+  <!-- Базовый URL сайта: при своём домене замени href во всех meta ниже + canonical -->
+  <link rel="canonical" href="https://deliacorona-web.github.io/npomelody_v5.0/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:site_name" content="НПО Мелодия">
+  <meta property="og:title" content="НПО Мелодия">
+  <meta property="og:description"
+    content="НПО Мелодия — клуб / лейбл / трансляции. Афиша, артисты, релизы, подкасты, live, мерч, контакты.">
+  <meta property="og:url" content="https://deliacorona-web.github.io/npomelody_v5.0/">
+  <meta property="og:image"
+    content="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="НПО Мелодия">
+  <meta name="twitter:description"
+    content="НПО Мелодия — клуб / лейбл / трансляции. Афиша, артисты, релизы, подкасты, live, мерч, контакты.">
+  <meta name="twitter:image"
+    content="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png">
+
   <link rel="icon" href="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" type="image/png">
-  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="hero-fullscreen">
@@ -77,18 +94,24 @@
           </div>
         </div>
 
-        <div class="grid g4" id="eventsGrid"></div>
+        <div class="card catalog-block">
+          <div class="pad catalog-block__pad">
+            <div class="grid g4" id="eventsGrid"></div>
+          </div>
+        </div>
       </div>
     </section>
 
     <section id="artists">
       <div class="container">
         <div class="head">
-          <h2>Артисты</h2>
+          <div>
+            <h2>Артисты</h2>
+          </div>
         </div>
 
-        <div class="card">
-          <div class="pad">
+        <div class="card catalog-block">
+          <div class="pad catalog-block__pad">
             <div class="grid g4" id="artistsGrid"></div>
           </div>
         </div>
@@ -104,7 +127,11 @@
           </div>
         </div>
 
-        <div class="grid g4" id="merchGrid"></div>
+        <div class="card catalog-block">
+          <div class="pad catalog-block__pad">
+            <div class="grid g4" id="merchGrid"></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -116,26 +143,70 @@
           </div>
         </div>
 
-        <div class="grid g2">
-          <div class="card">
-            <div class="pad">
-              <div class="row sp">
-                <b>Live</b>
+        <div class="card catalog-block">
+          <div class="pad catalog-block__pad">
+            <div class="grid g2 streams-live-grid">
+              <div class="streams-live-col">
+                <div
+                  id="streamsLiveHint"
+                  class="card pad open-card streams-live-open-row"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Live"
+                >
+                  <div class="row sp">
+                    <b>Live</b>
+                    <span class="tag">→</span>
+                  </div>
+                </div>
+                <div id="streamsLivePanel" class="card streams-live-panel" hidden>
+                  <div class="modal-header streams-live-panel-header">
+                    <div class="modal-header-text">
+                      <div class="modal-title">Live</div>
+                    </div>
+                    <button class="btn ghost modal-close" id="streamsLiveCloseBtn" type="button" aria-label="Закрыть">
+                      <svg class="modal-close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                        <path d="M6 6l12 12M18 6L6 18"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="pad">
+                    <div class="media wide"><img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" alt="НПО Мелодия — обложка раздела Live"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="streams-live-col">
+                <div
+                  id="streamsArchiveHint"
+                  class="card pad open-card streams-live-open-row"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Архив"
+                >
+                  <div class="row sp">
+                    <b>Архив</b>
+                    <span class="tag">→</span>
+                  </div>
+                </div>
+                <div id="streamsArchivePanel" class="card streams-live-panel streams-archive-panel" hidden>
+                  <div class="modal-header streams-live-panel-header">
+                    <div class="modal-header-text">
+                      <div class="modal-title">Архив</div>
+                      <div id="streamsArchiveCount" class="modal-sub">—</div>
+                    </div>
+                    <button class="btn ghost modal-close" id="streamsArchiveCloseBtn" type="button" aria-label="Закрыть">
+                      <svg class="modal-close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+                        <path d="M6 6l12 12M18 6L6 18"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="pad streams-archive-panel-body">
+                    <div class="grid" id="streamsList"></div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="divider" style="margin:0;"></div>
-            <div class="pad">
-              <div class="media wide"><img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" alt=""></div>
-            </div>
-          </div>
-
-          <div class="card pad">
-            <div class="row sp">
-              <b>Архив</b>
-              <span class="tag">3 записи</span>
-            </div>
-            <div class="divider"></div>
-            <div class="grid" id="streamsList"></div>
           </div>
         </div>
       </div>
@@ -149,8 +220,8 @@
           </div>
         </div>
 
-        <div class="card">
-          <div class="pad">
+        <div class="card catalog-block">
+          <div class="pad catalog-block__pad">
             <div class="grid g4" id="releasesGrid"></div>
           </div>
         </div>
@@ -166,8 +237,10 @@
           </div>
         </div>
 
-        <div class="grid g2">
-          <div class="card pad">
+        <div class="card catalog-block">
+          <div class="pad catalog-block__pad">
+            <div class="grid g2">
+              <div class="card pad">
             <b>Аккаунт участника</b>
             <div class="divider"></div>
 
@@ -196,9 +269,9 @@
             </div>
 
             <div id="authStatus" class="muted auth-status">Доступ к эксклюзиву закрыт.</div>
-          </div>
+              </div>
 
-          <div class="card pad">
+              <div class="card pad">
             <div class="row sp">
               <b>Эксклюзив</b>
               <span class="tag" id="exclusiveBadge">закрыт</span>
@@ -224,6 +297,8 @@
               </div>
             </div>
           </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -236,19 +311,23 @@
           </div>
         </div>
 
-        <div class="grid g2">
-          <div class="card pad">
-            <b>НПО Мелодия</b>
-            <div class="divider"></div>
-            <div class="row"><span class="tag">Адрес</span><span class="muted">Москва, 3-я улица Ямского Поля, 2к5А</span></div>
-            <div style="height:10px"></div>
-            <div class="row"><span class="tag">Букинг</span><span class="muted">booking@npo-melodiya.ru</span></div>
-            <div class="divider"></div>
-            <div class="row">
-              <a class="btn" href="#" data-placeholder-link="Поставь ссылку">Telegram</a>
-              <a class="btn" href="https://www.instagram.com/npo_melody/" target="_blank"
-                rel="noopener noreferrer">Instagram</a>
-              <a class="btn" href="#" data-placeholder-link="Поставь ссылку">SoundCloud</a>
+        <div class="card catalog-block">
+          <div class="pad catalog-block__pad">
+            <div class="grid g2">
+              <div class="card pad">
+                <b>НПО Мелодия</b>
+                <div class="divider"></div>
+                <div class="row"><span class="tag">Адрес</span><span class="muted">Москва, 3-я улица Ямского Поля, 2к5А</span></div>
+                <div style="height:10px"></div>
+                <div class="row"><span class="tag">Букинг</span><span class="muted">booking@npo-melodiya.ru</span></div>
+                <div class="divider"></div>
+                <div class="row">
+                  <a class="btn" href="#" data-placeholder-link="Поставь ссылку">Telegram</a>
+                  <a class="btn" href="https://www.instagram.com/npo_melody/" target="_blank"
+                    rel="noopener noreferrer">Instagram</a>
+                  <a class="btn" href="#" data-placeholder-link="Поставь ссылку">SoundCloud</a>
+                </div>
+              </div>
             </div>
           </div>
         </div>

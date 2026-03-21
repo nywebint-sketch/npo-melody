@@ -34,6 +34,7 @@
       --focus-offset: 2px;
       --pad: 16px;
       --pad-sm: 12px;
+      --container-pad-x: 16px;
       --btn-primary-inverted-fg: var(--bg);
     }
 
@@ -84,11 +85,6 @@
       background: var(--bg-overlay);
     }
 
-    #streams,
-    a[href="#streams"] {
-      display: none !important;
-    }
-
     a {
       color: inherit;
       text-decoration: none
@@ -104,7 +100,7 @@
     .container {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 0 18px
+      padding: 0 var(--container-pad-x);
     }
 
     .topbar {
@@ -215,8 +211,8 @@
     .mobile-menu {
       position: fixed;
       top: 78px;
-      left: 12px;
-      right: 12px;
+      left: var(--container-pad-x);
+      right: var(--container-pad-x);
       z-index: 80;
       border: 1px solid var(--border);
       border-radius: 16px;
@@ -414,7 +410,9 @@
       align-items: flex-end;
       justify-content: center;
       gap: 14px;
-      margin-bottom: 18px
+      margin-bottom: 18px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     main section .head h2 {
@@ -455,11 +453,54 @@
 
     .grid {
       display: grid;
-      gap: 14px
+      gap: 14px;
+      min-width: 0;
+      width: 100%;
     }
 
     .g2 {
       grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+
+    .streams-live-col {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .streams-hint-sub {
+      font-size: 13px;
+      line-height: 1.35;
+      margin-top: 6px;
+    }
+
+    .streams-live-locked {
+      max-width: 520px;
+    }
+
+    .streams-live-locked-lead {
+      margin: 0 0 10px;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .streams-live-locked-sub {
+      margin: 0 0 16px;
+      line-height: 1.45;
+    }
+
+    /* Как строки в #streamsList: карточка + кликабельный open-card */
+    .streams-live-open-row b {
+      max-width: 72%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Шапка с крестиком как у модалки (#modal .modal-header) */
+    .streams-live-panel .streams-live-panel-header {
+      border-top-left-radius: var(--radius);
+      border-top-right-radius: var(--radius);
     }
 
     .g3 {
@@ -479,11 +520,38 @@
       box-shadow: none;
     }
 
-    /* Убрать серые подложки с обёрток разделов (артисты, релизы) */
-    .card:has(.pad > #artistsGrid),
-    .card:has(.pad > #releasesGrid) {
+    /* Оболочка catalog-block — без второй серой подложки, только отступ .pad */
+    .card.catalog-block {
       background: transparent;
       backdrop-filter: none;
+    }
+
+    /* Каталоги (афиша / артисты / мерч / релизы): сетка строго в колонке контейнера, без смещения влево */
+    .catalog-block {
+      width: 100%;
+      max-width: 100%;
+      margin-inline: 0;
+      box-sizing: border-box;
+    }
+
+    .catalog-block__pad {
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .grid[id$="Grid"]>*,
+    .catalog-block__pad>.grid>* {
+      min-width: 0;
+    }
+
+    /* Старая вёрстка: сетка сразу в .container без .card — выравниваем отступ как у соседних блоков */
+    .container>#merchGrid {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      padding-inline: var(--pad);
     }
 
     .open-card {
@@ -529,14 +597,17 @@
     .open-card:hover .catalog-title,
     .open-card:hover .artist-card-name,
     .open-card:hover .merch-card-title,
+    .open-card:hover .release-card-title,
     .open-card:hover .catalog-meta,
     .open-card:active .catalog-title,
     .open-card:active .artist-card-name,
     .open-card:active .merch-card-title,
+    .open-card:active .release-card-title,
     .open-card:active .catalog-meta,
     .open-card.is-pressed .catalog-title,
     .open-card.is-pressed .artist-card-name,
     .open-card.is-pressed .merch-card-title,
+    .open-card.is-pressed .release-card-title,
     .open-card.is-pressed .catalog-meta {
       font-weight: 900;
     }
@@ -547,7 +618,8 @@
       padding: 12px;
     }
 
-    #artistsGrid .artist-card .artist-card-name {
+    #artistsGrid .artist-card .artist-card-name,
+    #releasesGrid .release-card .release-card-title {
       display: block;
       width: 100%;
       white-space: nowrap;
@@ -555,6 +627,12 @@
       text-overflow: ellipsis;
       line-height: 1.2;
       text-align: center;
+    }
+
+    #releasesGrid .release-card .release-card-date {
+      margin-top: 6px;
+      text-align: center;
+      line-height: 1.2;
     }
 
     #artistsGrid .artist-name {
@@ -977,35 +1055,42 @@
       display: block;
     }
 
-    /* Релизы: без рамки, на всю ширину — компактная сетка как у артистов/мерча */
+    /* Карточки релизов: те же размеры и стиль, что у артистов (квадратная обложка, тело карточки) */
     #releasesGrid {
       align-items: start;
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
-    /* Релизы: без рамки, на всю ширину */
-    #releasesGrid .open-card .media {
+    #releasesGrid .release-card {
+      height: auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #releasesGrid .release-card .media {
       width: 100%;
-      max-width: 100%;
+      aspect-ratio: 1/1;
+      overflow: hidden;
       padding: 0;
       border: none;
       background: transparent;
-      overflow: hidden;
       display: block;
-      aspect-ratio: unset;
+      flex: none;
     }
 
-    #releasesGrid .open-card .media img {
+    #releasesGrid .release-card .media img {
       width: 100%;
-      height: auto;
+      height: 100%;
+      object-fit: cover;
       display: block;
-      object-fit: contain;
-      max-width: 100%;
-      vertical-align: top;
     }
 
-    #releasesGrid .open-card .pad {
-      text-align: center;
+    #releasesGrid .release-card .release-card-body {
+      padding: 12px;
+      min-height: 0;
+      flex: none;
+      display: block;
     }
 
     #merchGrid .open-card .pad {
@@ -1200,12 +1285,29 @@
       backdrop-filter: blur(8px);
     }
 
+    /* Модалка артиста — уже общей афиши, чтобы карточка не растягивалась на весь экран */
+    @media (min-width: 521px) {
+      #modal.modal-overlay:has(.artist-modal-wrap) .modal-inner {
+        width: min(580px, calc(100vw - 36px));
+        max-width: min(580px, calc(100vw - 36px));
+        max-height: 82vh;
+        max-height: min(82vh, 100dvh);
+      }
+
+      #modal.modal-overlay:has(.artist-modal-wrap) .modal-body {
+        max-height: calc(82vh - 76px);
+        max-height: calc(min(82vh, 100dvh) - 76px);
+      }
+    }
+
     .modal-inner {
-      width: min(920px, 100%);
-      max-width: 100vw;
+      width: min(920px, calc(100vw - 36px));
+      max-width: min(920px, calc(100vw - 36px));
       max-height: 86vh;
+      max-height: min(86vh, 100dvh);
       display: flex;
       flex-direction: column;
+      justify-content: flex-start;
       overflow-x: hidden;
       overflow-y: hidden;
       border: 1px solid var(--border);
@@ -1215,28 +1317,48 @@
     }
 
     .modal-header {
-      display: grid;
-      grid-template-columns: 300px 1fr 56px;
+      display: flex;
+      flex-direction: row;
       align-items: center;
+      justify-content: center;
       position: relative;
-      padding: 18px 20px;
+      padding: 14px 56px 14px 16px;
       border-bottom: 1px solid var(--border);
-      min-height: 72px;
+      min-height: 64px;
       flex-shrink: 0;
+      box-sizing: border-box;
     }
 
     .modal-header-text {
-      grid-column: 1;
+      flex: 1 1 auto;
       min-width: 0;
+      max-width: min(560px, 78vw);
+      margin: 0 auto;
       text-align: center;
-      justify-self: center;
     }
 
-    .modal-header .btn.ghost {
-      grid-column: 3;
-      justify-self: end;
-      position: static;
-      transform: none;
+    /* У края шапки, по центру по вертикали padding-box — не пересекает border-bottom */
+    .modal-header .btn.ghost.modal-close {
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      z-index: 2;
+      margin: 0;
+      transform: translateY(-50%) !important;
+      color: var(--text);
+      background: transparent;
+      border-color: var(--border);
+      transition: background .12s ease, border-color .12s ease, color .12s ease;
+    }
+
+    /* Явная инверсия: не зависит от --surface-hover / --text-hover (в dark они белый/чёрный и ломали крест) */
+    .modal-header .btn.modal-close:hover,
+    .modal-header .btn.modal-close:active,
+    .modal-header .btn.modal-close:focus-visible {
+      transform: translateY(-50%) !important;
+      background: #0a0a0a !important;
+      color: #fff !important;
+      border-color: #0a0a0a !important;
     }
 
     .modal-close {
@@ -1257,9 +1379,9 @@
       flex-shrink: 0;
     }
 
-    .modal-header .btn.ghost:hover,
-    .modal-header .btn.ghost:active {
-      transform: translateY(-50%);
+    .modal-header .btn.ghost:hover:not(.modal-close),
+    .modal-header .btn.ghost:active:not(.modal-close) {
+      transform: none;
       background: var(--surface-hover) !important;
       color: var(--text-hover) !important;
       border-color: var(--border-hover) !important;
@@ -1277,10 +1399,29 @@
       display: none;
     }
 
+    /* overflow-anchor: none — меньше скачков прокрутки в моб. Safari; dvh — реальная высота окна */
     .modal-body {
       background: transparent;
       color: var(--text);
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: calc(86vh - 76px);
+      max-height: calc(min(86vh, 100dvh) - 76px);
       overflow-y: auto;
+      overflow-x: hidden;
+      overflow-anchor: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .profile-modal-wrap {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .profile-modal-exclusive {
+      min-width: 0;
     }
 
     .modal-inner {
@@ -1476,10 +1617,6 @@
     }
 
     @media (max-width: 1200px) {
-      .container {
-        padding: 0 16px
-      }
-
       .g4 {
         grid-template-columns: repeat(3, minmax(0, 1fr))
       }
@@ -1502,6 +1639,11 @@
 
       .g4 {
         grid-template-columns: repeat(2, minmax(0, 1fr))
+      }
+
+      /* Афиша: на планшетах/небольших окнах — 3 в ряд (остальные .g4 остаются по 2) */
+      #eventsGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       #artistsGrid,
@@ -1688,13 +1830,15 @@
       }
 
       #artistsGrid .artist-card .media,
-      #merchGrid .merch-card .media {
+      #merchGrid .merch-card .media,
+      #releasesGrid .release-card .media {
         padding: 0;
         aspect-ratio: 1/1;
       }
 
       #artistsGrid .artist-card .artist-card-body,
-      #merchGrid .merch-card .merch-card-body {
+      #merchGrid .merch-card .merch-card-body,
+      #releasesGrid .release-card .release-card-body {
         padding: 12px;
         min-height: 0;
       }
@@ -1716,14 +1860,10 @@
       }
 
       #artistsGrid,
+      #merchGrid,
       #releasesGrid,
-      #merchGrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 8px;
-      }
-
       #eventsGrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
         gap: 8px;
       }
 
@@ -1783,10 +1923,17 @@
 
     @media (max-width: 768px) {
 
+      .modal-header {
+        padding: 12px 52px 12px 12px;
+      }
+
       .modal-header-text {
-        grid-column: 1 / -1;
-        justify-self: center;
-        text-align: center;
+        max-width: min(480px, 86vw);
+      }
+
+      .modal-body {
+        max-height: calc(86vh - 72px);
+        max-height: calc(min(86vh, 100dvh) - 72px);
       }
 
       /* Карточка афиши: как на скрине — изображение сверху на всю ширину, подпись под ним */
@@ -1825,7 +1972,7 @@
       }
 
       #eventsGrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
       }
 
@@ -1850,13 +1997,31 @@
         width: 100%;
       }
 
-      #mBody .event-modal-left .media img {
-        max-width: 100%;
-        width: 100%;
-        height: auto;
+      /* Постер/фото: как на десктопе — ограничение по высоте, иначе на узком экране съедает всё окно */
+      #mBody .event-modal-left .media {
+        max-height: min(48dvh, 360px);
+        overflow: hidden;
+        align-items: center;
       }
 
-      #mBody .modal-body {
+      #mBody .event-modal-left .media img {
+        max-width: 100%;
+        max-height: min(48dvh, 360px);
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        margin: 0 auto;
+      }
+
+      #mBody .event-modal-left .merch-modal-carousel-wrap {
+        max-height: min(48dvh, 360px);
+      }
+
+      .merch-modal-carousel .carousel-slide img {
+        max-height: min(48dvh, 360px);
+      }
+
+      #mBody.modal-body {
         min-width: 0;
         overflow-x: hidden;
       }
@@ -1887,8 +2052,50 @@
     }
 
     @media (max-width: 520px) {
-      .container {
-        padding: 0 14px
+      .modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+      }
+
+      #modal.modal-overlay:has(.artist-modal-wrap) .modal-inner {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .modal-inner {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: min(92vh, 100dvh);
+        min-height: 0;
+      }
+
+      .modal-header {
+        padding: 12px 52px 12px 10px;
+      }
+
+      .modal-header-text {
+        max-width: min(100%, calc(100vw - 120px));
+        text-align: center;
+      }
+
+      .modal-body {
+        max-height: calc(92vh - 76px);
+        max-height: calc(min(92vh, 100dvh) - 76px);
+      }
+
+      /* Ещё компактнее на очень узких экранах */
+      #mBody .event-modal-left .media,
+      #mBody .event-modal-left .media img {
+        max-height: min(40dvh, 300px);
+      }
+
+      #mBody .event-modal-left .merch-modal-carousel-wrap {
+        max-height: min(40dvh, 300px);
+      }
+
+      .merch-modal-carousel .carousel-slide img {
+        max-height: min(40dvh, 300px);
       }
 
       .g4 {
@@ -1922,13 +2129,10 @@
 
       /* Keep compact grids on very small screens */
       #artistsGrid,
+      #merchGrid,
       #releasesGrid,
-      #merchGrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      }
-
       #eventsGrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
       }
 
       /* Афиша: постер не обрезать в квадрат, отображение как на скрине */
@@ -2243,4 +2447,55 @@
 .merch-modal-carousel .carousel-dot-active,
 .merch-modal-carousel .carousel-dot:hover {
   background: var(--text);
+}
+
+/* Всплывающее уведомление (заглушки ссылок и т.п.) */
+.site-toast-host {
+  position: fixed;
+  left: 50%;
+  bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: 12000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  max-width: min(92vw, 420px);
+}
+
+.site-toast {
+  pointer-events: auto;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--modal-bg);
+  color: var(--text);
+  border: 1px solid var(--stroke);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .18);
+  font-size: 0.95em;
+  line-height: 1.4;
+  text-align: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.site-toast--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-toast {
+    transition: none;
+  }
+}
+
+.streams-archive-note {
+  font-size: 0.92em;
+  line-height: 1.45;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--stroke);
+  margin-bottom: 10px;
 }
