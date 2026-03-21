@@ -1664,8 +1664,8 @@
       padding: 10px 12px !important;
     }
 
-    /* Описание афиши — без второй подложки (#mBody .event-modal-right перебивает .card) */
-    #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right {
+    /* Правая колонка (афиша / артист / релиз — не мерч): без второй подложки поверх фона модалки */
+    #mBody .event-modal-wrap:not(.merch-modal-wrap) .event-modal-right {
       background: transparent;
       backdrop-filter: none;
     }
@@ -2095,6 +2095,15 @@
 
     @media (max-width: 768px) {
 
+      /* Модалка по центру + safe-area на всём мобильном диапазоне (не только ≤520px; иначе кэш/ширина давали «лист снизу») */
+      #modal.modal-overlay {
+        align-items: center;
+        justify-content: center;
+        padding: max(12px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px))
+          max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+        box-sizing: border-box;
+      }
+
       .modal-header {
         padding: 12px 52px 12px 12px;
       }
@@ -2272,14 +2281,6 @@
     }
 
     @media (max-width: 520px) {
-      /* Центрируем окно: flex-end прижимал лист к низу и давал ощущение «съезжания» при смене dvh / safe-area */
-      .modal-overlay {
-        padding: max(12px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px))
-          max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
-        align-items: center;
-        justify-content: center;
-        box-sizing: border-box;
-      }
 
       #modal.modal-overlay:has(.artist-modal-wrap) .modal-inner {
         width: 100%;
