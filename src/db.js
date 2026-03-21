@@ -7,10 +7,21 @@ const STORAGE_BUCKET = 'images';
 
 let supabaseClt = null;
 
+const clearStaleAuth = (client) => {
+  client.auth.getUser().then(({ error }) => {
+    if (!error) return;
+    const msg = String(error.message || '');
+    if (msg.includes('Invalid Refresh Token') || msg.includes('Refresh Token Not Found')) {
+      client.auth.signOut({ scope: 'local' }).catch(() => {});
+    }
+  });
+};
+
 const initSupabase = () => {
   if (!window.supabase) return null;
   if (!supabaseClt) {
     supabaseClt = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    clearStaleAuth(supabaseClt);
   }
   return supabaseClt;
 };
