@@ -1309,21 +1309,6 @@
       backdrop-filter: blur(8px);
     }
 
-    /* Модалка артиста — уже общей афиши, чтобы карточка не растягивалась на весь экран */
-    @media (min-width: 521px) {
-      #modal.modal-overlay:has(.artist-modal-wrap) .modal-inner {
-        width: min(580px, calc(100vw - 36px));
-        max-width: min(580px, calc(100vw - 36px));
-        max-height: 82vh;
-        max-height: min(82vh, 100dvh);
-      }
-
-      #modal.modal-overlay:has(.artist-modal-wrap) .modal-body {
-        max-height: calc(82vh - 76px);
-        max-height: calc(min(82vh, 100dvh) - 76px);
-      }
-    }
-
     .modal-inner {
       width: min(920px, calc(100vw - 36px));
       max-width: min(920px, calc(100vw - 36px));
@@ -1354,8 +1339,8 @@
       box-sizing: border-box;
     }
 
-    /* Модалка артиста: без линии между шапкой и постером */
-    #modal.modal-overlay:has(.artist-modal-wrap) .modal-header {
+    /* Карточки с постером (#mBody): без линии между шапкой и контентом */
+    #modal.modal-overlay:has(.event-modal-wrap) .modal-header {
       border-bottom: none;
     }
 
@@ -1648,6 +1633,18 @@
       box-sizing: border-box;
     }
 
+    /* Артист: Bandcamp / SoundCloud под постером — по центру ширины картинки */
+    .artist-modal-wrap .event-modal-actions {
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* Афиша: кнопка билетов сразу под постером, без растягивания колонки (иначе margin-top: auto) */
+    .afisha-modal-wrap .afisha-modal-actions {
+      margin-top: 0;
+      padding-top: 4px;
+    }
+
     .merch-modal-wrap .merch-preorder-btn {
       display: inline-flex;
       justify-content: center;
@@ -1683,6 +1680,11 @@
       gap: 6px;
       min-height: 0;
       padding: 10px 12px !important;
+    }
+
+    .afisha-modal-wrap .event-modal-right.afisha-modal-right {
+      padding-top: 4px !important;
+      gap: 4px;
     }
 
     /* Правая колонка (афиша / артист / релиз — не мерч): без второй подложки поверх фона модалки */

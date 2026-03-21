@@ -739,12 +739,10 @@ function buildEventModalBody(eventItem) {
 
   const right = el("div", { className: "card pad event-modal-right afisha-modal-right" });
   const about = el("div", { className: "muted", text: eventItem.about || "—" });
-  about.style.marginTop = "8px";
   right.appendChild(about);
 
-  appendDivider(right);
   const lineup = el("div", { className: "muted" });
-  lineup.style.marginTop = "8px";
+  lineup.style.marginTop = "4px";
   (eventItem.lineup || []).forEach((name, idx) => {
     if (idx > 0) lineup.appendChild(document.createElement("br"));
     lineup.appendChild(document.createTextNode(name));
