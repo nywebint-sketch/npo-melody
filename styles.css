@@ -2152,6 +2152,7 @@
         grid-template-columns: 1fr;
         grid-template-rows: auto auto auto;
         min-width: 0;
+        align-content: start;
       }
 
       .event-modal-wrap .event-modal-left {
@@ -2184,6 +2185,7 @@
       .event-modal-wrap.afisha-modal-wrap {
         grid-template-columns: 1fr;
         grid-template-rows: auto auto auto;
+        align-content: start;
       }
 
       .merch-modal-wrap .event-modal-poster-slot,
@@ -2270,9 +2272,13 @@
     }
 
     @media (max-width: 520px) {
+      /* Центрируем окно: flex-end прижимал лист к низу и давал ощущение «съезжания» при смене dvh / safe-area */
       .modal-overlay {
-        padding: 0;
-        align-items: flex-end;
+        padding: max(12px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px))
+          max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
       }
 
       #modal.modal-overlay:has(.artist-modal-wrap) .modal-inner {
