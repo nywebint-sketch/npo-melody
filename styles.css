@@ -1774,6 +1774,20 @@
     }
 
     @media (min-width: 769px) {
+      #modal.modal-overlay:has(.afisha-modal-wrap) {
+        padding-left: 30px;
+        padding-right: 30px;
+      }
+
+      #modal.modal-overlay:has(.afisha-modal-wrap) .modal-header {
+        padding-left: 60px;
+        padding-right: 60px;
+      }
+
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody.pad {
+        padding: 8px 24px 14px !important;
+      }
+
       #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .event-modal-left .media {
         max-height: min(78vh, 720px);
         overflow: hidden;
