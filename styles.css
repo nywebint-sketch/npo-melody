@@ -1633,8 +1633,8 @@
       }
 
       #modal.modal-overlay:has(.live-stream-modal-wrap) .modal-inner {
-        width: min(760px, calc(100vw - 36px));
-        max-width: min(760px, calc(100vw - 36px));
+        width: min(960px, calc(100vw - 36px));
+        max-width: min(960px, calc(100vw - 36px));
       }
     }
 
@@ -1646,6 +1646,27 @@
       /* Растягиваем колонки на одну высоту — иначе при длинном тексте слева кнопка «уезжает вверх» */
       align-items: stretch;
       gap: 10px;
+    }
+
+    /* Live: одна колонка — видео сверху на всю ширину, текст под ним */
+    .event-modal-wrap.live-stream-modal-wrap.live-stream-modal-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .live-stream-modal-stack .live-stream-modal-media {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .live-stream-modal-stack .live-stream-modal-details.event-modal-right {
+      grid-column: auto;
+      grid-row: auto;
+      width: 100%;
+      max-width: none;
     }
 
     .merch-modal-wrap .event-modal-left,
@@ -1698,10 +1719,66 @@
       background: #000;
     }
 
-    @media (min-width: 521px) {
-      #mBody .live-stream-modal-wrap .event-modal-left {
-        max-width: min(420px, 46vw);
-      }
+    .live-stream-modal-wrap .live-modal-placeholder-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #0a0a0a;
+      overflow: hidden;
+    }
+
+    .live-stream-modal-wrap .live-modal-placeholder {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .live-stream-modal-wrap .live-modal-placeholder-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .live-stream-modal-wrap .live-modal-placeholder-caption {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      padding: 12px 14px;
+      z-index: 1;
+      font-size: 0.88rem;
+      line-height: 1.35;
+      color: rgba(255, 255, 255, 0.92);
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.75);
+      box-sizing: border-box;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, transparent 55%);
+    }
+
+    /*
+     * Live: #mBody .event-modal-left .media задаёт aspect-ratio: unset — для видео-слота задаём 16:9.
+     */
+    #mBody .live-stream-modal-wrap .live-stream-modal-media .media.live-modal-iframe-wrap,
+    #mBody .live-stream-modal-wrap .live-stream-modal-media .media.live-modal-video-file-wrap,
+    #mBody .live-stream-modal-wrap .live-stream-modal-media .media.live-modal-placeholder-wrap {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      min-height: 0;
+      height: auto;
+      padding: 0;
+      background: #0a0a0a;
+      border: none;
+      overflow: hidden;
+    }
+
+    #mBody .live-stream-modal-wrap .live-stream-modal-media .media.live-modal-video-file-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .merch-modal-wrap .event-modal-right,
@@ -1713,7 +1790,7 @@
     }
 
     #mBody .merch-modal-wrap .event-modal-left,
-    #mBody .afisha-modal-wrap .event-modal-left,
+    #mBody .afisha-modal-wrap:not(.live-stream-modal-wrap) .event-modal-left,
     #mBody .artist-modal-wrap .event-modal-left {
       max-width: 240px;
       width: 100%;
@@ -1857,7 +1934,7 @@
       border-color: var(--btn-close-hover-border) !important;
     }
 
-    #mBody .event-modal-left {
+    #mBody .event-modal-wrap:not(.live-stream-modal-wrap) .event-modal-left {
       width: 100%;
       max-width: 300px;
       margin: 0;
@@ -1866,6 +1943,20 @@
       border: none;
       box-shadow: none;
       outline: none;
+    }
+
+    #mBody .live-stream-modal-wrap.live-stream-modal-stack .live-stream-modal-details.afisha-modal-right {
+      padding-top: 0 !important;
+      margin-top: 0;
+    }
+
+    #mBody .live-stream-modal-wrap .live-stream-modal-details.afisha-modal-right .muted {
+      margin-top: 0;
+      font-weight: 500;
+      font-size: clamp(14px, 0.875rem, 18px);
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+      color: var(--text-muted);
     }
 
     #mBody .event-modal-left .media {

@@ -731,8 +731,12 @@ function bindStreamsSectionPanels() {
 
 const appendDivider = (parent) => parent.appendChild(el("div", { className: "divider" }));
 
-function buildEventModalRightColumn(eventItem) {
+function buildEventModalRightColumn(eventItem, { sectionTitle = null } = {}) {
   const right = el("div", { className: "card pad event-modal-right afisha-modal-right" });
+  if (sectionTitle) {
+    right.appendChild(el("b", { text: sectionTitle }));
+    appendDivider(right);
+  }
   const about = el("div", { className: "muted", text: eventItem.about || "—" });
   right.appendChild(about);
 
@@ -816,7 +820,26 @@ function appendLiveStreamMediaSlot(posterSlot, eventItem) {
     return;
   }
 
-  posterSlot.appendChild(createMedia(eventItem.poster || "logo.png", eventItem.title, "media"));
+  /* Без ссылки на видео — не дублируем «постерную» карточку афиши: слот 16:9 как у плеера */
+  const wrap = el("div", { className: "media live-modal-placeholder-wrap" });
+  const box = el("div", { className: "live-modal-placeholder" });
+  const rawPoster = String(eventItem.poster || "").trim();
+  if (rawPoster && rawPoster !== "logo.png" && rawPoster !== "smile.png") {
+    const bg = document.createElement("img");
+    bg.className = "live-modal-placeholder-bg";
+    bg.src = resolveImageSrc(rawPoster);
+    bg.alt = "";
+    bg.decoding = "async";
+    bg.loading = "lazy";
+    box.appendChild(bg);
+  }
+  const cap = el("div", {
+    className: "live-modal-placeholder-caption",
+    text: "Видео эфира будет здесь"
+  });
+  box.appendChild(cap);
+  wrap.appendChild(box);
+  posterSlot.appendChild(wrap);
 }
 
 function buildEventModalBody(eventItem) {
@@ -833,18 +856,21 @@ function buildEventModalBody(eventItem) {
   return wrapper;
 }
 
-/** Модалка Live: тот же каркас, что афиша, слева — видео (если есть stream_url) или постер */
+/** Модалка Live: видео/плейсхолдер на всю ширину, описание под ним (без билетов) */
 function buildLiveStreamModalBody(eventItem) {
-  const wrapper = el("div", { className: "event-modal-wrap afisha-modal-wrap live-stream-modal-wrap" });
+  const wrapper = el("div", {
+    className: "event-modal-wrap live-stream-modal-wrap live-stream-modal-stack"
+  });
 
-  const left = el("div", { className: "card event-modal-left" });
+  const mediaWrap = el("div", { className: "live-stream-modal-media" });
   const posterSlot = el("div", { className: "event-modal-poster-slot" });
   appendLiveStreamMediaSlot(posterSlot, eventItem);
-  left.appendChild(posterSlot);
+  mediaWrap.appendChild(posterSlot);
+  wrapper.appendChild(mediaWrap);
 
-  left.appendChild(buildEventModalTicketActions(eventItem));
-  wrapper.appendChild(left);
-  wrapper.appendChild(buildEventModalRightColumn(eventItem));
+  const details = buildEventModalRightColumn(eventItem);
+  details.classList.add("live-stream-modal-details");
+  wrapper.appendChild(details);
   return wrapper;
 }
 
