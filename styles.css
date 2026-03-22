@@ -425,10 +425,7 @@
 
     section {
       padding: 56px 0;
-    }
-
-    /* Якорь #streams / #live под фиксированным топбаром */
-    #streams {
+      /* Якорная прокрутка: раздел начинается под фиксированным топбаром (78px), без обрезки заголовка */
       scroll-margin-top: 90px;
     }
 
@@ -2124,7 +2121,7 @@
         padding-top: 68px
       }
 
-      #streams {
+      main section {
         scroll-margin-top: 78px;
       }
 

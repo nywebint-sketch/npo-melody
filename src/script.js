@@ -296,7 +296,7 @@ async function refreshClubSession() {
     const mockExclusive = [
       { title: 'Early Access: NPO VA 002', description: 'Превью треков + закрытый pre-save.' },
       { title: 'Private Stream Archive', description: 'Закрытые записи из ночных сетов.' },
-      { title: 'Members Promo Code', description: 'Скидка 15% на мерч и закрытые дропы.' }
+      { title: 'Members Promo Code', description: 'Скидка 15% в шопе и на закрытые дропы.' }
     ];
     renderExclusiveItems(mockExclusive);
     renderClubAccess();
@@ -347,7 +347,7 @@ function initClubAuth() {
       const mockExclusive = [
         { title: 'Early Access: NPO VA 002', description: 'Превью треков + закрытый pre-save.' },
         { title: 'Private Stream Archive', description: 'Закрытые записи из ночных сетов.' },
-        { title: 'Members Promo Code', description: 'Скидка 15% на мерч и закрытые дропы.' }
+        { title: 'Members Promo Code', description: 'Скидка 15% в шопе и на закрытые дропы.' }
       ];
       renderExclusiveItems(mockExclusive);
       renderStreams();
@@ -379,7 +379,7 @@ function initClubAuth() {
       const mockExclusive = [
         { title: 'Early Access: NPO VA 002', description: 'Превью треков + закрытый pre-save.' },
         { title: 'Private Stream Archive', description: 'Закрытые записи из ночных сетов.' },
-        { title: 'Members Promo Code', description: 'Скидка 15% на мерч и закрытые дропы.' }
+        { title: 'Members Promo Code', description: 'Скидка 15% в шопе и на закрытые дропы.' }
       ];
       renderExclusiveItems(mockExclusive);
       renderStreams();
@@ -465,7 +465,7 @@ function resolveImageSrc(imgSrc) {
   return defaultLogo;
 }
 
-/** Мерч в Storage лежит в images/microdropych/; короткие имена («vtroem.jpeg», «vtroem») собираем в полный URL. */
+/** Изображения товаров шопа в Storage: images/microdropych/; короткие имена («vtroem.jpeg», «vtroem») собираем в полный URL. */
 function resolveMerchImageSrc(raw) {
   const defaultLogo = "https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png";
   const s = String(raw || "").trim();
@@ -704,8 +704,11 @@ function bindHintPressHandlers(hint) {
   });
 }
 
+/** Верх раздела у верхней границы окна; отступ под фиксированный топбар — в CSS (scroll-margin-top). */
+const scrollOptsSectionNav = { behavior: "smooth", block: "start", inline: "nearest" };
+
 function scrollToStreamsSection() {
-  document.getElementById("streams")?.scrollIntoView({ behavior: "smooth" });
+  document.getElementById("streams")?.scrollIntoView(scrollOptsSectionNav);
   try {
     history.replaceState(null, "", "#streams");
   } catch {
@@ -714,12 +717,37 @@ function scrollToStreamsSection() {
 }
 
 function scrollToExclusiveSection() {
-  document.getElementById("exclusive")?.scrollIntoView({ behavior: "smooth" });
+  document.getElementById("exclusive")?.scrollIntoView(scrollOptsSectionNav);
   try {
     history.replaceState(null, "", "#exclusive");
   } catch {
     window.location.hash = "exclusive";
   }
+}
+
+/** Клики по пунктам меню: прокрутка к началу раздела без «хвостов» соседних блоков (см. scroll-margin-top в CSS). */
+function bindSectionNavScroll() {
+  const links = document.querySelectorAll(
+    '.nav a[href^="#"], #mobileMenu a[href^="#"], header.topbar .right a[href^="#"]'
+  );
+  links.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      const href = link.getAttribute("href");
+      if (!href || href === "#") return;
+      if (href === "#profile") return;
+      if (href === "#streams") return;
+      const id = href.slice(1);
+      const target = document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView(scrollOptsSectionNav);
+      try {
+        history.replaceState(null, "", href);
+      } catch {
+        window.location.hash = href;
+      }
+    });
+  });
 }
 
 function bindStreamsSectionPanels() {
@@ -1494,6 +1522,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await refreshClubSession();
   }
   bindStreamsSectionPanels();
+  bindSectionNavScroll();
   await initApp();
   initClubAuth();
 });

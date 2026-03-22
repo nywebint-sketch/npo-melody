@@ -93,7 +93,7 @@ navItems.forEach((item) => {
       podcasts: 'Подкасты',
       streams: 'Стримы',
       live: 'Live',
-      merch: 'Мерч'
+      merch: 'Шоп'
     };
     pageTitle.textContent = titles[view] || view;
 
@@ -138,7 +138,7 @@ async function loadDashboard() {
         <p style="font-size:32px;font-weight:bold;margin:10px 0;">${liveItems.length}</p>
       </div>
       <div class="card pad" style="background:rgba(255,255,255,0.05)">
-        <h3>Товаров (Мерч)</h3>
+        <h3>Товаров (шоп)</h3>
         <p style="font-size:32px;font-weight:bold;margin:10px 0;">${merch.length}</p>
       </div>
     </div>
@@ -823,11 +823,11 @@ async function deleteLiveById(id) {
   }
 }
 
-// --- МЕРЧ ---
+// --- Шоп (таблица merch) ---
 
 async function loadMerchView() {
   addBtn.style.display = 'block';
-  addBtn.onclick = () => alert('Редактор мерча пока в разработке');
+  addBtn.onclick = () => alert('Редактор шопа пока в разработке');
 
   const merch = await db.getMerch();
   const rows = merch.map((m) => `
