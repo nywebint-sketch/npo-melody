@@ -23,14 +23,15 @@
       --button-bg: rgba(0, 0, 0, .08);
       --button-text: var(--text);
       --overlay: rgba(0, 0, 0, .55);
-      --header-bg: transparent;
+      --header-bg: #ffffff;
+      --modal-header-bg: #ffffff;
       --bg-overlay: rgba(255, 255, 255, .76);
       --surface-hover: #111;
       --text-hover: #fff;
       --border-hover: transparent;
       --radius: 18px;
       --max: 1180px;
-      --modal-bg: rgba(255, 255, 255, .97);
+      --modal-bg: #ffffff;
       --focus-offset: 2px;
       --pad: 16px;
       --pad-sm: 12px;
@@ -115,7 +116,9 @@
       inset: 0 0 auto 0;
       z-index: 50;
       height: 78px;
-      backdrop-filter: blur(12px);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background-color: var(--header-bg);
       background: var(--header-bg);
       border-bottom: 1px solid var(--border);
       box-shadow: none;
@@ -1152,6 +1155,10 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
+      background: transparent;
+      backdrop-filter: none;
+      border: none;
+      box-shadow: none;
     }
 
     #artistsGrid .artist-card .media {
@@ -1195,6 +1202,10 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
+      background: transparent;
+      backdrop-filter: none;
+      border: none;
+      box-shadow: none;
     }
 
     #releasesGrid .release-card .media {
@@ -1435,6 +1446,7 @@
       overflow-x: hidden;
       overflow-y: hidden;
       border: 1px solid var(--border);
+      background-color: var(--modal-bg);
       background: var(--modal-bg);
       box-shadow: 0 24px 64px rgba(0, 0, 0, .18);
       box-sizing: border-box;
@@ -1446,12 +1458,16 @@
       align-items: center;
       justify-content: center;
       position: relative;
+      z-index: 1;
+      isolation: isolate;
       /* Симметричные поля — заголовок по центру карточки (крестик absolute справа) */
       padding: 14px 56px;
       border-bottom: 1px solid var(--border);
       min-height: 64px;
       flex-shrink: 0;
       box-sizing: border-box;
+      background-color: var(--modal-header-bg);
+      background: var(--modal-header-bg);
     }
 
     /* Карточки с постером (#mBody): без линии между шапкой и контентом */
@@ -1556,7 +1572,8 @@
 
     .modal-inner {
       color: var(--text);
-      background: var(--modal-bg)
+      background-color: var(--modal-bg);
+      background: var(--modal-bg);
     }
 
     /* Карточка афиши при раскрытии: чёрный текст на белом (в стиле сайта) */
@@ -2811,6 +2828,8 @@
         --button-bg: rgba(255, 255, 255, .06);
         --button-text: var(--text);
         --overlay: rgba(0, 0, 0, .7);
+        --header-bg: #000000;
+        --modal-header-bg: #000000;
         --bg-overlay: rgba(0, 0, 0, .82);
         --surface-hover: #fff;
         --text-hover: #000;
