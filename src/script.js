@@ -758,16 +758,23 @@ function buildEventModalRightColumn(eventItem, { sectionTitle = null } = {}) {
     right.appendChild(el("b", { text: sectionTitle }));
     appendDivider(right);
   }
-  const about = el("div", { className: "muted", text: eventItem.about || "—" });
-  right.appendChild(about);
+  const aboutText = String(eventItem.about ?? "").trim();
+  if (aboutText) {
+    right.appendChild(el("div", { className: "muted", text: aboutText }));
+  }
 
-  const lineup = el("div", { className: "muted" });
-  lineup.style.marginTop = "4px";
-  (eventItem.lineup || []).forEach((name, idx) => {
-    if (idx > 0) lineup.appendChild(document.createElement("br"));
-    lineup.appendChild(document.createTextNode(name));
-  });
-  right.appendChild(lineup);
+  const lineupNames = (Array.isArray(eventItem.lineup) ? eventItem.lineup : []).filter(
+    (name) => String(name ?? "").trim() !== ""
+  );
+  if (lineupNames.length) {
+    const lineup = el("div", { className: "muted" });
+    lineup.style.marginTop = aboutText ? "4px" : "0";
+    lineupNames.forEach((name, idx) => {
+      if (idx > 0) lineup.appendChild(document.createElement("br"));
+      lineup.appendChild(document.createTextNode(String(name)));
+    });
+    right.appendChild(lineup);
+  }
 
   if (eventItem.address) {
     appendDivider(right);
