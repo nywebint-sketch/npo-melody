@@ -3032,9 +3032,9 @@
 .merch-modal-carousel .carousel-arrow:hover,
 .merch-modal-carousel .carousel-arrow:active,
 .merch-modal-carousel .carousel-arrow:focus-visible {
-  background: var(--btn-close-hover-bg);
-  color: var(--btn-close-hover-text);
-  border-color: var(--btn-close-hover-border);
+  background: var(--btn-close-idle-bg);
+  color: var(--btn-close-idle-text);
+  border-color: var(--btn-close-idle-border);
 }
 
 .merch-modal-carousel .carousel-arrow span {
