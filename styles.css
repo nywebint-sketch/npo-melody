@@ -2261,11 +2261,10 @@
 
       #mBody .event-modal-left .merch-modal-carousel .carousel-track-wrap {
         max-height: min(48dvh, 360px);
+        width: min(100%, calc(min(48dvh, 360px) * 0.8));
+        margin-left: auto;
+        margin-right: auto;
         overflow: hidden;
-      }
-
-      .merch-modal-carousel .carousel-slide img {
-        max-height: min(48dvh, 360px);
       }
 
       #mBody.modal-body {
@@ -2354,11 +2353,10 @@
 
       #mBody .event-modal-left .merch-modal-carousel .carousel-track-wrap {
         max-height: min(40dvh, 300px);
+        width: min(100%, calc(min(40dvh, 300px) * 0.8));
+        margin-left: auto;
+        margin-right: auto;
         overflow: hidden;
-      }
-
-      .merch-modal-carousel .carousel-slide img {
-        max-height: min(40dvh, 300px);
       }
 
       .g4 {
@@ -2633,27 +2631,33 @@
 .merch-modal-carousel .carousel-track-wrap {
   overflow: hidden;
   width: 100%;
+  max-width: 100%;
+  /* Как у карточек афиши / мерча в сетке: постер 4:5 */
+  aspect-ratio: 4/5;
 }
 
 .merch-modal-carousel .carousel-track {
   display: flex;
   transition: transform 0.3s ease;
   width: 100%;
+  height: 100%;
 }
 
 .merch-modal-carousel .carousel-slide {
   flex: 0 0 100%;
   width: 100%;
   min-width: 0;
+  min-height: 0;
+  height: 100%;
   box-sizing: border-box;
 }
 
 .merch-modal-carousel .carousel-slide img {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
-  object-fit: contain;
-  vertical-align: top;
+  object-fit: cover;
+  object-position: center;
   max-width: 100%;
 }
 
@@ -2708,13 +2712,13 @@
 .merch-modal-carousel .carousel-dots {
   display: flex;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 0;
+  gap: 4px;
+  padding: 6px 0;
 }
 
 .merch-modal-carousel .carousel-dot {
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
   padding: 0;
   border: none;
   border-radius: 50%;
