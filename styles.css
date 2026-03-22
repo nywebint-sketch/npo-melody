@@ -624,17 +624,23 @@
       line-height: 1.45;
     }
 
+    .streams-hint-row .row.sp {
+      flex-wrap: nowrap;
+      align-items: center;
+    }
+
     .streams-hint-row b {
-      max-width: 72%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      flex: 1;
+      min-width: 0;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
     }
 
     .streams-hint-row .tag {
       border: none;
       background: transparent;
       padding: 0;
+      flex-shrink: 0;
     }
 
     /* Шапка с крестиком — те же классы, что у #modal */
