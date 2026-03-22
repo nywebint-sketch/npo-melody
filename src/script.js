@@ -461,9 +461,15 @@ function renderArtists() {
   if (!wrap) return;
   wrap.replaceChildren();
 
+  const ARTIST_ORDER = ["wei", "laty", "rha", "and"];
+  const orderIndex = (name) => {
+    const i = ARTIST_ORDER.indexOf(String(name).toLowerCase());
+    return i === -1 ? ARTIST_ORDER.length : i;
+  };
   const list = [...data.artists].sort((a, b) => {
-    if (a.name === "WEI" && b.name !== "WEI") return -1;
-    if (b.name === "WEI" && a.name !== "WEI") return 1;
+    const ia = orderIndex(a.name);
+    const ib = orderIndex(b.name);
+    if (ia !== ib) return ia - ib;
     return a.name.localeCompare(b.name);
   });
 
