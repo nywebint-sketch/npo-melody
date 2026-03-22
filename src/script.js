@@ -48,7 +48,8 @@ let data = {
   artists: [],
   releases: [],
   podcasts: [],
-  merch: []
+  merch: [],
+  live: []
 };
 
 let clubSession = null;
@@ -555,13 +556,18 @@ function renderStreamsLive() {
   }
 
   const now = new Date();
-  const upcoming = sortAsc(data.events, "date").filter((e) => new Date(e.date) >= now);
+  const upcoming = sortAsc(data.live, "date").filter((e) => new Date(e.date) >= now);
 
   if (!upcoming.length) {
+    const total = data.live.length;
+    const emptyText =
+      total === 0
+        ? "Пока нет эфиров. Добавьте их в админ-панели: раздел «Live» (название, дата в будущем, при необходимости ссылка на трансляцию)."
+        : "Нет предстоящих эфиров: все запланированные даты уже в прошлом. Задайте новую дату в админке или добавьте эфир.";
     wrap.appendChild(
       el("div", {
         className: "muted streams-live-empty",
-        text: "Нет предстоящих событий в афише."
+        text: emptyText
       })
     );
     if (liveCount) liveCount.textContent = recordsCountRu(0);
@@ -583,7 +589,7 @@ function renderStreamsLive() {
 
 function renderStreams() {
   const now = new Date();
-  const next = sortAsc(data.events, "date").filter((e) => new Date(e.date) >= now)[0];
+  const next = sortAsc(data.live, "date").filter((e) => new Date(e.date) >= now)[0];
   const streamNext = $("#streamNext");
   if (streamNext) {
     streamNext.textContent = next ? `Следующий эфир: ${next.title} · ${fmtDT(next.date)}` : "Следующий эфир: —";
@@ -1128,7 +1134,7 @@ document.addEventListener("click", (e) => {
   }
 
   if (type === "live-event") {
-    const eventItem = data.events.find((x) => String(x.id) === String(id));
+    const eventItem = data.live.find((x) => String(x.id) === String(id));
     if (eventItem) openLiveStreamModal(eventItem);
     return;
   }
@@ -1420,18 +1426,20 @@ const initApp = async () => {
   renderSkeletonGrid("#merchGrid", 4);
 
   if (window.dbLayer) {
-    const [events, artists, releases, podcasts, merch] = await Promise.all([
+    const [events, artists, releases, podcasts, merch, liveItems] = await Promise.all([
       window.dbLayer.getEvents(),
       window.dbLayer.getArtists(),
       window.dbLayer.getReleases(),
       window.dbLayer.getPodcasts(),
-      window.dbLayer.getMerch()
+      window.dbLayer.getMerch(),
+      window.dbLayer.getLiveItems ? window.dbLayer.getLiveItems() : Promise.resolve([])
     ]);
     data.events = events;
     data.artists = artists;
     data.releases = releases;
     data.podcasts = podcasts;
     data.merch = merch;
+    data.live = Array.isArray(liveItems) ? liveItems : [];
   }
 
   const yearNode = $("#year");

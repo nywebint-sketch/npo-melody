@@ -95,6 +95,17 @@ const getStreams = async () => withClient(async (client) => {
   return safeArray(data, error);
 }, []);
 
+const getLiveItems = async () => withClient(async (client) => {
+  const { data, error } = await client.from('live_items').select('*').order('date', { ascending: true });
+  return safeArray(data, error);
+}, []);
+
+const getLiveItemsAdmin = async () =>
+  withClient(async (client) => {
+    const { data, error } = await client.from('live_items').select('*').order('created_at', { ascending: false });
+    return safeArray(data, error);
+  }, []);
+
 const getMerch = async () => withClient(async (client) => {
   const { data, error } = await client.from('merch').select('*').order('title', { ascending: true });
   return safeArray(data, error);
@@ -222,15 +233,36 @@ const deleteArtist = async (id) => withClient(async (client) => {
   return true;
 }, false);
 
+const createLiveItem = async (payload) => withClient(async (client) => {
+  const { data, error } = await client.from('live_items').insert(payload).select().single();
+  if (error) throw error;
+  return data;
+}, null);
+
+const addLiveItem = createLiveItem;
+
+const updateLiveItem = async (id, payload) => withClient(async (client) => {
+  const { data, error } = await client.from('live_items').update(payload).eq('id', id).select().single();
+  if (error) throw error;
+  return data;
+}, null);
+
+const deleteLiveItem = async (id) => withClient(async (client) => {
+  const { error } = await client.from('live_items').delete().eq('id', id);
+  if (error) throw error;
+  return true;
+}, false);
+
 const syncDefaultData = async () => true;
 
 const api = {
   initSupabase,
-  getEvents, getEventsAdmin, getArtists, getReleases, getPodcasts, getStreams, getMerch,
+  getEvents, getEventsAdmin, getArtists, getReleases, getPodcasts, getStreams, getLiveItems, getLiveItemsAdmin, getMerch,
   getSession, login, register, logout, syncDefaultData,
   getUsers, checkIsAdmin, updateUserRole, uploadImage,
   createEvent, updateEvent, deleteEvent, addEvent,
-  createArtist, updateArtist, deleteArtist, addArtist
+  createArtist, updateArtist, deleteArtist, addArtist,
+  createLiveItem, updateLiveItem, deleteLiveItem, addLiveItem
 };
 
 window.dbLayer = api;
@@ -238,10 +270,11 @@ window.dbLayer = api;
 export {
   initSupabase,
   getEvents, getEventsAdmin,
-  getArtists, getReleases, getPodcasts, getStreams, getMerch,
+  getArtists, getReleases, getPodcasts, getStreams, getLiveItems, getLiveItemsAdmin, getMerch,
   getSession, login, register, logout, syncDefaultData,
   getUsers, checkIsAdmin, updateUserRole, uploadImage,
   createEvent, updateEvent, deleteEvent, addEvent,
-  createArtist, updateArtist, deleteArtist, addArtist
+  createArtist, updateArtist, deleteArtist, addArtist,
+  createLiveItem, updateLiveItem, deleteLiveItem, addLiveItem
 };
 

@@ -92,6 +92,7 @@ navItems.forEach((item) => {
       releases: 'Релизы',
       podcasts: 'Подкасты',
       streams: 'Стримы',
+      live: 'Live',
       merch: 'Мерч'
     };
     pageTitle.textContent = titles[view] || view;
@@ -103,6 +104,7 @@ navItems.forEach((item) => {
     if (view === 'releases') loadReleasesView();
     if (view === 'podcasts') loadPodcastsView();
     if (view === 'streams') loadStreamsView();
+    if (view === 'live') loadLiveView();
     if (view === 'merch') loadMerchView();
   });
 });
@@ -115,6 +117,7 @@ async function loadDashboard() {
   const events = await db.getEvents();
   const artists = await db.getArtists();
   const merch = await db.getMerch();
+  const liveItems = await db.getLiveItems();
 
   viewContainer.innerHTML = `
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
@@ -129,6 +132,10 @@ async function loadDashboard() {
       <div class="card pad" style="background:rgba(255,255,255,0.05)">
         <h3>Артистов</h3>
         <p style="font-size:32px;font-weight:bold;margin:10px 0;">${artists.length}</p>
+      </div>
+      <div class="card pad" style="background:rgba(255,255,255,0.05)">
+        <h3>Live (эфиры)</h3>
+        <p style="font-size:32px;font-weight:bold;margin:10px 0;">${liveItems.length}</p>
       </div>
       <div class="card pad" style="background:rgba(255,255,255,0.05)">
         <h3>Товаров (Мерч)</h3>
@@ -648,6 +655,174 @@ async function loadStreamsView() {
   `;
 }
 
+// --- LIVE (эфиры на главной) ---
+
+async function loadLiveView() {
+  addBtn.style.display = 'block';
+  addBtn.textContent = '+ Добавить эфир';
+  addBtn.onclick = () => openLiveEditor();
+
+  const items = await db.getLiveItemsAdmin();
+  items.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+  const rows = items.map((item) => `
+    <tr>
+      <td><b>${item.title}</b></td>
+      <td>${item.date?.replace ? item.date.replace('T', ' ') : item.date}</td>
+      <td>${item.place || '—'}</td>
+      <td>
+        <div class="actions">
+          <button type="button" class="btn-sm" data-admin-action="edit-live-item" data-id="${item.id}">Изменить</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  viewContainer.innerHTML = `
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Название</th><th>Дата</th><th>Площадка</th><th>Действия</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+const toDatetimeLocalInput = (iso) => {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
+async function openLiveEditor(id = null) {
+  let live = {
+    title: '',
+    date: '',
+    place: 'НПО Мелодия',
+    about: '',
+    lineup: [],
+    poster: 'logo.png',
+    stream_url: ''
+  };
+  let isEdit = false;
+
+  if (id) {
+    const items = await db.getLiveItemsAdmin();
+    const found = items.find((x) => x.id === id);
+    if (found) {
+      const lineupRaw = found.lineup;
+      const lineupArr = Array.isArray(lineupRaw) ? lineupRaw : [];
+      live = {
+        ...live,
+        ...found,
+        lineup: lineupArr,
+        stream_url: found.stream_url || found.streamUrl || '',
+        date: toDatetimeLocalInput(found.date)
+      };
+    }
+    isEdit = true;
+  }
+
+  editorTitle.textContent = isEdit ? 'Редактировать эфир (Live)' : 'Новый эфир (Live)';
+  const submitLabel = isEdit ? 'Сохранить' : 'Добавить эфир';
+
+  editorBody.innerHTML = `
+    <form id="editorForm" class="editor-form">
+      <div class="form-group">
+        <label>Название</label>
+        <input type="text" name="title" value="${live.title}" required>
+      </div>
+      <div class="form-group">
+        <label>Дата и время</label>
+        <input type="datetime-local" name="date" value="${live.date}" required>
+      </div>
+      <div class="form-group">
+        <label>Площадка</label>
+        <input type="text" name="place" value="${live.place || ''}">
+      </div>
+      <div class="form-group">
+        <label>Ссылка на трансляцию (YouTube, Vimeo, Rutube, mp4)</label>
+        <input type="url" name="stream_url" value="${live.stream_url || ''}" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label>Описание</label>
+        <textarea name="about">${live.about || ''}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Лайнап (через запятую)</label>
+        <textarea name="lineup">${(live.lineup || []).join(', ')}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Обложка / постер</label>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+          ${live.poster ? `<img src="${live.poster}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">` : `<div style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:4px;"></div>`}
+          <input type="file" name="posterFile" accept="image/*" style="font-size:14px;">
+        </div>
+        <div class="muted" style="font-size:12px;">Оставьте пустым, чтобы не менять текущую картинку.</div>
+      </div>
+      <div class="editor-actions${isEdit ? ' editor-actions--spread' : ''}">
+        ${isEdit ? `<button type="button" class="btn-sm danger" data-admin-action="delete-live-item" data-id="${id}">Удалить</button>` : ''}
+        <div class="editor-actions-main">
+          <button type="button" class="btn ghost" data-admin-action="close-modal">Отмена</button>
+          <button type="submit" class="btn primary" id="saveLiveBtn">${submitLabel}</button>
+        </div>
+      </div>
+    </form>
+  `;
+
+  adminModal.style.display = 'flex';
+
+  document.getElementById('editorForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('saveLiveBtn');
+    btn.textContent = 'Сохранение...';
+    btn.disabled = true;
+
+    const fd = new FormData(e.target);
+    const file = fd.get('posterFile');
+    let posterUrl = live.poster || 'logo.png';
+
+    if (file && file.size > 0) {
+      try {
+        posterUrl = await db.uploadImage(file);
+      } catch (err) {
+        alert('Ошибка при загрузке картинки!');
+        btn.textContent = submitLabel;
+        btn.disabled = false;
+        return;
+      }
+    }
+
+    const data = {
+      title: fd.get('title'),
+      date: fd.get('date'),
+      place: (fd.get('place') || '').trim() || null,
+      about: fd.get('about'),
+      lineup: String(fd.get('lineup') || '').split(',').map((s) => s.trim()).filter(Boolean),
+      poster: posterUrl,
+      stream_url: (fd.get('stream_url') || '').trim()
+    };
+
+    if (isEdit) {
+      await db.updateLiveItem(id, data);
+    } else {
+      await db.addLiveItem(data);
+    }
+
+    adminModal.style.display = 'none';
+    loadLiveView();
+  });
+}
+
+async function deleteLiveById(id) {
+  if (confirm('Точно удалить?')) {
+    await db.deleteLiveItem(id);
+    loadLiveView();
+    if (adminModal) adminModal.style.display = 'none';
+  }
+}
+
 // --- МЕРЧ ---
 
 async function loadMerchView() {
@@ -705,6 +880,9 @@ if (adminPanel) {
       } else if (action === 'edit-artist' && id) {
         ev.preventDefault();
         void openArtistEditor(id);
+      } else if (action === 'edit-live-item' && id) {
+        ev.preventDefault();
+        void openLiveEditor(id);
       }
     },
     true
@@ -723,6 +901,7 @@ if (adminModal) {
     }
     if (action === 'delete-event' && id) void deleteEventById(id);
     if (action === 'delete-artist' && id) void deleteArtistById(id);
+    if (action === 'delete-live-item' && id) void deleteLiveById(id);
   });
 }
 
