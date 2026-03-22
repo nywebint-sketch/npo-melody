@@ -304,7 +304,8 @@ async function openEventEditor(id = null) {
     tags: [],
     // Ссылка на билеты может храниться в разных колонках — нормализуем
     ticketUrl: '',
-    ticket_url: ''
+    ticket_url: '',
+    stream_url: ''
   };
   let isEdit = false;
 
@@ -320,7 +321,12 @@ async function openEventEditor(id = null) {
         found.ticket ||
         found.tickets ||
         '';
-      event = { ...event, ...found, ticketUrl: ticket };
+      event = {
+        ...event,
+        ...found,
+        ticketUrl: ticket,
+        stream_url: found.stream_url || found.streamUrl || ''
+      };
     }
     isEdit = true;
   }
@@ -349,6 +355,10 @@ async function openEventEditor(id = null) {
       <div class="form-group">
         <label>Ссылка на билеты (https://...)</label>
         <input type="url" name="ticket_url" value="${event.ticketUrl || ''}" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label>Ссылка на трансляцию (YouTube, Vimeo, Rutube, mp4 — для кнопки «Смотреть» в Live)</label>
+        <input type="url" name="stream_url" value="${event.stream_url || event.streamUrl || ''}" placeholder="https://...">
       </div>
       <div class="form-group">
         <label>Описание</label>
@@ -408,7 +418,8 @@ async function openEventEditor(id = null) {
       place: event.place,
       poster: posterUrl,
       // Пишем в snake_case колонку Supabase
-      ticket_url: (fd.get('ticket_url') || '').trim()
+      ticket_url: (fd.get('ticket_url') || '').trim(),
+      stream_url: (fd.get('stream_url') || '').trim()
     };
 
     if (isEdit) {

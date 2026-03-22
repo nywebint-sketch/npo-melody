@@ -427,6 +427,24 @@
       padding: 56px 0;
     }
 
+    /* Якорь #streams / #live под фиксированным топбаром */
+    #streams {
+      scroll-margin-top: 90px;
+    }
+
+    #streams .head {
+      margin-bottom: 8px;
+    }
+
+    #streams .catalog-block__pad.pad {
+      padding-top: 8px;
+    }
+
+    #streams #streamsLiveCount:empty {
+      margin: 0;
+      min-height: 0;
+    }
+
     .head {
       display: flex;
       align-items: flex-end;
@@ -496,6 +514,37 @@
       width: 100%;
     }
 
+    /* Live: как афиша / релизы — без второй серой «панели», только оболочка catalog-block */
+    #streams .streams-live-meta {
+      margin: 0 0 14px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    #streams .streams-live-grid {
+      gap: 10px;
+    }
+
+    #streams #streamsLiveList > .streams-hint-row.open-card {
+      background: transparent !important;
+      backdrop-filter: none;
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+
+    #streams #streamsLiveList > .streams-live-locked {
+      background: transparent !important;
+      backdrop-filter: none;
+      border: none;
+      border-radius: var(--radius);
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      box-shadow: none;
+    }
+
     .streams-hint-sub {
       font-size: 13px;
       line-height: 1.35;
@@ -504,16 +553,14 @@
 
     .streams-live-locked {
       max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
     }
 
     .streams-live-locked-lead {
-      margin: 0 0 10px;
-      font-size: 15px;
-      line-height: 1.45;
-    }
-
-    .streams-live-locked-sub {
       margin: 0 0 16px;
+      font-size: 15px;
       line-height: 1.45;
     }
 
@@ -544,21 +591,7 @@
       letter-spacing: 0.02em;
     }
 
-    /* Строки списка Live: заголовок курсивом, дата в рамке моноширинной */
-    .streams-panel-body .grid .streams-item-row {
-      background: var(--surface-2);
-    }
-
-    .streams-item-title {
-      font-style: italic;
-      font-weight: 600;
-    }
-
-    .streams-panel-body .streams-item-row .tag {
-      font-family: ui-monospace, "Cascadia Mono", "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
-      font-style: italic;
-      font-weight: 500;
-    }
+    /* Строки списка Live — как «Эксклюзив»: .streams-hint-row + .open-card */
 
     .streams-live-empty {
       padding: 4px 0;
@@ -1583,6 +1616,11 @@
         width: min(640px, calc(100vw - 36px));
         max-width: min(640px, calc(100vw - 36px));
       }
+
+      #modal.modal-overlay:has(.live-stream-modal-wrap) .modal-inner {
+        width: min(760px, calc(100vw - 36px));
+        max-width: min(760px, calc(100vw - 36px));
+      }
     }
 
     .event-modal-wrap.merch-modal-wrap,
@@ -1611,6 +1649,44 @@
     .artist-modal-wrap .event-modal-poster-slot {
       min-width: 0;
       width: 100%;
+    }
+
+    .live-stream-modal-wrap .live-modal-iframe-wrap,
+    .live-stream-modal-wrap .live-modal-video-file-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #0a0a0a;
+      overflow: hidden;
+    }
+
+    .live-stream-modal-wrap .live-modal-iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .live-stream-modal-wrap .live-modal-video-file-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .live-stream-modal-wrap .live-modal-video-file {
+      width: 100%;
+      height: 100%;
+      max-height: 62vh;
+      object-fit: contain;
+      vertical-align: top;
+      background: #000;
+    }
+
+    @media (min-width: 521px) {
+      #mBody .live-stream-modal-wrap .event-modal-left {
+        max-width: min(420px, 46vw);
+      }
     }
 
     .merch-modal-wrap .event-modal-right,
@@ -1940,6 +2016,10 @@
 
       main {
         padding-top: 68px
+      }
+
+      #streams {
+        scroll-margin-top: 78px;
       }
 
       .mobile-menu {

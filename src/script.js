@@ -55,27 +55,6 @@ let clubSession = null;
 
 const streamsAuthOk = () => Boolean(clubSession?.email);
 
-/** Для авторизованных — Эксклюзив и Live сразу после главного изображения (сначала эксклюзив); иначе — перед релизами. */
-function updateStreamsSectionOrder() {
-  const home = $("#home");
-  const streams = $("#streams");
-  const releases = $("#releases");
-  const exclusive = $("#exclusive");
-  if (!home || !streams || !releases) return;
-
-  if (streamsAuthOk()) {
-    if (exclusive) {
-      home.insertAdjacentElement("afterend", exclusive);
-      exclusive.insertAdjacentElement("afterend", streams);
-    } else {
-      home.insertAdjacentElement("afterend", streams);
-    }
-  } else {
-    releases.insertAdjacentElement("beforebegin", streams);
-    if (exclusive) streams.insertAdjacentElement("beforebegin", exclusive);
-  }
-}
-
 const BOOKING_ADMIN_ENDPOINT = "https://httpbin.org/post";
 const BOOKING_COOLDOWN_MS = 60 * 1000;
 const BOOKING_MIN_FILL_MS = 3000;
@@ -100,6 +79,65 @@ const safeHttpUrl = (value) => {
     return url.protocol === "http:" || url.protocol === "https:" ? url.href : "";
   } catch {
     return "";
+  }
+};
+
+/** Ссылка на видео/трансляцию для блока Live (Supabase: stream_url и др.) */
+const getEventStreamUrl = (eventItem) => {
+  if (!eventItem) return "";
+  const raw =
+    eventItem.stream_url ||
+    eventItem.streamUrl ||
+    eventItem.video_url ||
+    eventItem.videoUrl ||
+    eventItem.live_url ||
+    eventItem.liveUrl ||
+    eventItem.embed_url ||
+    eventItem.embedUrl ||
+    "";
+  return safeHttpUrl(String(raw).trim());
+};
+
+const STREAM_VIDEO_EXT = /\.(mp4|webm|ogg)(\?|$)/i;
+
+/** Преобразует публичную ссылку в iframe-embed или прямой URL для HTML5 video */
+const streamUrlToEmbed = (href) => {
+  if (!href) return { kind: "none", embed: "", video: "" };
+  try {
+    const u = new URL(href);
+    const host = u.hostname.replace(/^www\./, "");
+
+    if (host === "youtu.be") {
+      const id = u.pathname.replace(/^\//, "").split("/")[0];
+      if (id) return { kind: "iframe", embed: `https://www.youtube.com/embed/${encodeURIComponent(id)}`, video: "" };
+    }
+    if (host === "youtube.com" || host === "youtube-nocookie.com" || host === "m.youtube.com") {
+      if (u.pathname.startsWith("/embed/")) return { kind: "iframe", embed: u.href.split(/[?#]/)[0], video: "" };
+      const v = u.searchParams.get("v");
+      if (v) return { kind: "iframe", embed: `https://www.youtube.com/embed/${encodeURIComponent(v)}`, video: "" };
+      const shorts = u.pathname.match(/\/shorts\/([^/?]+)/);
+      if (shorts) return { kind: "iframe", embed: `https://www.youtube.com/embed/${encodeURIComponent(shorts[1])}`, video: "" };
+    }
+    if (host.endsWith("vimeo.com")) {
+      const m = u.pathname.match(/\/(\d+)/);
+      if (m) return { kind: "iframe", embed: `https://player.vimeo.com/video/${m[1]}`, video: "" };
+    }
+    if (host.endsWith("rutube.ru")) {
+      const m = u.pathname.match(/\/video\/([a-f0-9]{32})/i);
+      if (m) return { kind: "iframe", embed: `https://rutube.ru/play/embed/${m[1]}`, video: "" };
+    }
+
+    if (STREAM_VIDEO_EXT.test(u.pathname) || STREAM_VIDEO_EXT.test(href)) {
+      return { kind: "video", embed: "", video: href };
+    }
+
+    if (/\/embed\//i.test(u.pathname) || host.startsWith("player.")) {
+      return { kind: "iframe", embed: href, video: "" };
+    }
+
+    return { kind: "none", embed: "", video: "" };
+  } catch {
+    return { kind: "none", embed: "", video: "" };
   }
 };
 
@@ -178,10 +216,8 @@ function renderClubAccess() {
   if (authMember) authMember.style.display = userIsAuthenticated ? "block" : "none";
   if (memberName) memberName.textContent = clubSession?.name || clubSession?.email || "участник";
 
-  if (exclusiveSection) {
-    if (userIsAuthenticated) exclusiveSection.removeAttribute("hidden");
-    else exclusiveSection.setAttribute("hidden", "");
-  }
+  /* Раздел «Эксклюзив» временно скрыт на сайте; контент для модалки профиля по-прежнему заполняется при входе. */
+  if (exclusiveSection) exclusiveSection.setAttribute("hidden", "");
   if (exclusiveContent) exclusiveContent.style.display = userIsAuthenticated ? "" : "none";
 
   if (authStatus) {
@@ -219,8 +255,6 @@ function renderClubAccess() {
       el.setAttribute("hidden", "");
     }
   });
-
-  updateStreamsSectionOrder();
 }
 
 function setClubStatus(message) {
@@ -506,22 +540,17 @@ function renderStreamsLive() {
   const liveCount = $("#streamsLiveCount");
 
   if (!streamsAuthOk()) {
-    const box = el("div", { className: "card pad streams-live-locked" });
+    const box = el("div", { className: "pad streams-live-locked" });
     const lead = el("p", {
       className: "streams-live-locked-lead",
       text: "Блок Live доступен только участникам с аккаунтом."
     });
-    const sub = el("p", {
-      className: "muted streams-live-locked-sub",
-      text: "Войдите или зарегистрируйтесь — кнопка «Вход» в шапке или ниже."
-    });
     box.appendChild(lead);
-    box.appendChild(sub);
     const btn = el("button", { className: "btn primary auth-open-button", text: "Войти или зарегистрироваться" });
     btn.type = "button";
     box.appendChild(btn);
     wrap.appendChild(box);
-    if (liveCount) liveCount.textContent = "—";
+    if (liveCount) liveCount.textContent = "";
     return;
   }
 
@@ -540,20 +569,12 @@ function renderStreamsLive() {
   }
 
   upcoming.forEach((eventItem) => {
-    const row = el("div", { className: "card pad streams-item-row" });
+    const row = el("div", { className: "card pad streams-hint-row" });
     const content = el("div", { className: "row sp" });
-
-    const title = el("b", { className: "streams-item-title", text: eventItem.title });
-    title.style.maxWidth = "72%";
-    title.style.overflow = "hidden";
-    title.style.textOverflow = "ellipsis";
-    title.style.whiteSpace = "nowrap";
-
-    content.appendChild(title);
-    content.appendChild(createTag(fmtDateDots(eventItem.date)));
+    content.appendChild(el("b", { text: eventItem.title }));
+    content.appendChild(el("span", { className: "tag", text: "→" }));
     row.appendChild(content);
-
-    setupOpenCard(row, "event", eventItem.id);
+    setupOpenCard(row, "live-event", eventItem.id);
     wrap.appendChild(row);
   });
 
@@ -621,6 +642,8 @@ const openModal = ({ title, sub, body }) => {
 };
 
 const closeModal = () => {
+  mBody?.querySelector(".live-modal-iframe")?.setAttribute("src", "");
+  mBody?.querySelector(".live-modal-video-file")?.removeAttribute("src");
   if (modal) modal.style.display = "none";
 };
 
@@ -708,14 +731,7 @@ function bindStreamsSectionPanels() {
 
 const appendDivider = (parent) => parent.appendChild(el("div", { className: "divider" }));
 
-function buildEventModalBody(eventItem) {
-  const wrapper = el("div", { className: "event-modal-wrap afisha-modal-wrap" });
-
-  const left = el("div", { className: "card event-modal-left" });
-  const posterSlot = el("div", { className: "event-modal-poster-slot" });
-  posterSlot.appendChild(createMedia(eventItem.poster || "logo.png", eventItem.title, "media"));
-  left.appendChild(posterSlot);
-
+function buildEventModalRightColumn(eventItem) {
   const right = el("div", { className: "card pad event-modal-right afisha-modal-right" });
   const about = el("div", { className: "muted", text: eventItem.about || "—" });
   right.appendChild(about);
@@ -736,6 +752,10 @@ function buildEventModalBody(eventItem) {
     right.appendChild(addressEl);
   }
 
+  return right;
+}
+
+function buildEventModalTicketActions(eventItem) {
   // Поддерживаем разные варианты имени поля с ссылкой на билеты,
   // чтобы работать и с camelCase, и с snake_case колонками в Supabase.
   const rawTicketUrl =
@@ -759,10 +779,72 @@ function buildEventModalBody(eventItem) {
     button.addEventListener("click", () => alert("Тут будет ссылка на билеты/регистрацию"));
     actions.appendChild(button);
   }
+  return actions;
+}
 
-  left.appendChild(actions);
+function appendLiveStreamMediaSlot(posterSlot, eventItem) {
+  const streamUrl = getEventStreamUrl(eventItem);
+  const { kind, embed, video } = streamUrlToEmbed(streamUrl);
+
+  if (kind === "iframe" && embed) {
+    const wrap = el("div", { className: "media live-modal-iframe-wrap" });
+    const iframe = document.createElement("iframe");
+    iframe.className = "live-modal-iframe";
+    iframe.src = embed;
+    iframe.setAttribute("title", "Трансляция");
+    iframe.setAttribute(
+      "allow",
+      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+    );
+    iframe.setAttribute("allowfullscreen", "");
+    iframe.loading = "lazy";
+    wrap.appendChild(iframe);
+    posterSlot.appendChild(wrap);
+    return;
+  }
+
+  if (kind === "video" && video) {
+    const wrap = el("div", { className: "media live-modal-video-file-wrap" });
+    const v = document.createElement("video");
+    v.className = "live-modal-video-file";
+    v.controls = true;
+    v.playsInline = true;
+    v.setAttribute("preload", "metadata");
+    v.src = video;
+    wrap.appendChild(v);
+    posterSlot.appendChild(wrap);
+    return;
+  }
+
+  posterSlot.appendChild(createMedia(eventItem.poster || "logo.png", eventItem.title, "media"));
+}
+
+function buildEventModalBody(eventItem) {
+  const wrapper = el("div", { className: "event-modal-wrap afisha-modal-wrap" });
+
+  const left = el("div", { className: "card event-modal-left" });
+  const posterSlot = el("div", { className: "event-modal-poster-slot" });
+  posterSlot.appendChild(createMedia(eventItem.poster || "logo.png", eventItem.title, "media"));
+  left.appendChild(posterSlot);
+
+  left.appendChild(buildEventModalTicketActions(eventItem));
   wrapper.appendChild(left);
-  wrapper.appendChild(right);
+  wrapper.appendChild(buildEventModalRightColumn(eventItem));
+  return wrapper;
+}
+
+/** Модалка Live: тот же каркас, что афиша, слева — видео (если есть stream_url) или постер */
+function buildLiveStreamModalBody(eventItem) {
+  const wrapper = el("div", { className: "event-modal-wrap afisha-modal-wrap live-stream-modal-wrap" });
+
+  const left = el("div", { className: "card event-modal-left" });
+  const posterSlot = el("div", { className: "event-modal-poster-slot" });
+  appendLiveStreamMediaSlot(posterSlot, eventItem);
+  left.appendChild(posterSlot);
+
+  left.appendChild(buildEventModalTicketActions(eventItem));
+  wrapper.appendChild(left);
+  wrapper.appendChild(buildEventModalRightColumn(eventItem));
   return wrapper;
 }
 
@@ -973,6 +1055,15 @@ const openEventModal = (eventItem) => {
   });
 };
 
+const openLiveStreamModal = (eventItem) => {
+  if (!eventItem) return;
+  openModal({
+    title: eventItem.title,
+    sub: `${fmtDT(eventItem.date)} · ${eventItem.place || "—"}`,
+    body: buildLiveStreamModalBody(eventItem)
+  });
+};
+
 $("#mClose")?.addEventListener("click", closeModal);
 modal?.addEventListener("click", (e) => {
   if (e.target === modal) closeModal();
@@ -1007,6 +1098,12 @@ document.addEventListener("click", (e) => {
 
   if (type === "event") {
     openEventModal(data.events.find((x) => x.id === id));
+    return;
+  }
+
+  if (type === "live-event") {
+    const eventItem = data.events.find((x) => String(x.id) === String(id));
+    if (eventItem) openLiveStreamModal(eventItem);
     return;
   }
 
