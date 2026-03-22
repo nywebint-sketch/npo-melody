@@ -577,7 +577,9 @@ function renderMerch() {
 
   data.merch.forEach((item) => {
     const card = el("div", { className: "card merch-card" });
-    card.appendChild(createMedia(item.image || item.poster || item.cover || "logo.png", item.title, "media square"));
+    const thumbUrls = getMerchImageUrls(item);
+    const thumbSrc = thumbUrls[0] || "logo.png";
+    card.appendChild(createMedia(thumbSrc, item.title, "media square"));
 
     const pad = el("div", { className: "pad merch-card-body" });
     pad.appendChild(el("b", { className: "merch-card-title", text: item.title }));
@@ -877,7 +879,10 @@ function getMerchImageUrls(item) {
       list = null;
     }
   }
-  if (Array.isArray(list) && list.length > 0) return list;
+  if (Array.isArray(list) && list.length > 0) {
+    const cleaned = list.map((u) => String(u || "").trim()).filter(Boolean);
+    if (cleaned.length) return cleaned;
+  }
   const single = item.image || item.poster || item.cover || "logo.png";
   return [single];
 }

@@ -10,6 +10,9 @@
  * @param {string} [options.carouselClass='carousel'] - класс корневого элемента карусели
  * @returns {{ goTo: (index: number) => void, destroy: () => void }} API для перехода по индексу и уничтожения
  */
+const DEFAULT_CAROUSEL_FALLBACK =
+  "https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png";
+
 function createCarousel(container, options = {}) {
   const urls = options.urls || [];
   const intervalMs = Math.max(1000, options.intervalMs ?? 5000);
@@ -43,6 +46,18 @@ function createCarousel(container, options = {}) {
     img.src = url;
     img.alt = `Слайд ${i + 1}`;
     img.loading = i === 0 ? "eager" : "lazy";
+    img.addEventListener("error", function onImgError() {
+      img.removeEventListener("error", onImgError);
+      if (i > 0 && urls[0] && img.src !== urls[0]) {
+        img.src = urls[0];
+        img.addEventListener("error", function onSecondError() {
+          img.removeEventListener("error", onSecondError);
+          img.src = DEFAULT_CAROUSEL_FALLBACK;
+        });
+      } else {
+        img.src = DEFAULT_CAROUSEL_FALLBACK;
+      }
+    });
     slide.appendChild(img);
     track.appendChild(slide);
     return slide;

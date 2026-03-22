@@ -696,6 +696,15 @@
       white-space: nowrap;
     }
 
+    #contacts .row .tag {
+      background: transparent;
+      border: none;
+      padding: 0;
+      font-size: inherit;
+      font-weight: 560;
+      letter-spacing: normal;
+    }
+
     .row {
       display: flex;
       gap: 10px;
