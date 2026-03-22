@@ -250,6 +250,60 @@
       border-color: var(--border-hover);
     }
 
+    /* Как у ссылок в мобильном меню */
+    .mobile-menu .nav-club-logout {
+      -webkit-appearance: none;
+      appearance: none;
+      display: block;
+      width: 100%;
+      margin: 0;
+      box-sizing: border-box;
+      padding: 11px 12px;
+      border-radius: 12px;
+      font: inherit;
+      font-size: 16px;
+      letter-spacing: .02em;
+      text-align: left;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .mobile-menu .nav-club-logout:hover,
+    .mobile-menu .nav-club-logout:active {
+      color: var(--text-hover);
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+    }
+
+    /* Как у .nav a */
+    .nav .nav-club-logout {
+      -webkit-appearance: none;
+      appearance: none;
+      margin: 0;
+      box-sizing: border-box;
+      font: inherit;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: .02em;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-muted);
+      transition: background .25s ease, color .25s ease, border-color .25s ease;
+    }
+
+    .nav .nav-club-logout:hover,
+    .nav .nav-club-logout:active {
+      color: var(--text-hover);
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+    }
+
     body.menu-open .mobile-menu {
       transform: translateY(0);
       opacity: 1;
@@ -2700,7 +2754,8 @@
         padding: 5px 8px
       }
 
-      .mobile-menu a {
+      .mobile-menu a,
+      .mobile-menu .nav-club-logout {
         font-size: 13px
       }
     }
@@ -2724,6 +2779,7 @@
     .brand-mark,
     .mobile-menu,
     .mobile-menu a,
+    .mobile-menu .nav-club-logout,
     .nav a,
     .input,
     textarea,

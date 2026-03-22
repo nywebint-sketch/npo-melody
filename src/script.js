@@ -271,6 +271,12 @@ function renderClubAccess() {
       el.setAttribute("hidden", "");
     }
   });
+
+  $$(".nav-club-logout").forEach((el) => {
+    el.style.display = userIsAuthenticated ? "" : "none";
+    if (userIsAuthenticated) el.removeAttribute("hidden");
+    else el.setAttribute("hidden", "");
+  });
 }
 
 function setClubStatus(message) {
@@ -1063,46 +1069,6 @@ function buildMerchModalBody(item) {
   return wrapper;
 }
 
-function buildProfileModalBody() {
-  const wrap = el("div", { className: "profile-modal-wrap" });
-
-  const exclusiveContent = $("#exclusiveContent");
-  if (exclusiveContent && exclusiveContent.children.length) {
-    const block = el("div", { className: "profile-modal-exclusive" });
-    const headingWrap = el("div");
-    headingWrap.style.textAlign = "center";
-    headingWrap.appendChild(el("b", { text: "Эксклюзив" }));
-    block.appendChild(headingWrap);
-    appendDivider(block);
-    const exclusiveClone = exclusiveContent.cloneNode(true);
-    exclusiveClone.removeAttribute("hidden");
-    exclusiveClone.style.display = "";
-    block.appendChild(exclusiveClone);
-    wrap.appendChild(block);
-  }
-
-  const footer = el("div", { className: "profile-modal-footer" });
-  footer.style.marginTop = "24px";
-  footer.style.paddingTop = "16px";
-  footer.style.borderTop = "1px solid rgba(255,255,255,0.1)";
-  const logoutBtn = el("button", { className: "btn", text: "Выйти", type: "button" });
-  logoutBtn.addEventListener("click", async () => {
-    try {
-      await window.dbLayer.logout();
-    } catch {}
-    clubSession = null;
-    renderStreams();
-    closeExclusivePanel();
-    renderClubAccess();
-    setClubStatus("Ты вышел из аккаунта.");
-    closeModal();
-  });
-  footer.appendChild(logoutBtn);
-  wrap.appendChild(footer);
-
-  return wrap;
-}
-
 let authModalContent = null;
 
 function openAuthModal() {
@@ -1116,16 +1082,6 @@ function openAuthModal() {
     authModalContent.appendChild(authGuest);
   }
   openModal({ title: "Вход / Регистрация", sub: "", body: authModalContent });
-}
-
-function openProfileModal() {
-  if (!clubSession) return;
-  const userName = clubSession?.name || clubSession?.email || "Профиль";
-  openModal({
-    title: userName,
-    sub: "",
-    body: buildProfileModalBody()
-  });
 }
 
 const openEventModal = (eventItem) => {
@@ -1151,15 +1107,28 @@ modal?.addEventListener("click", (e) => {
   if (e.target === modal) closeModal();
 });
 
-// Профиль: по клику — модалка; неавторизованным в том же месте показываем «Вход», по клику — модалка входа
+// Вход: ссылка «Вход» / кнопки .auth-open-button открывают модалку входа (неавторизованным)
 document.addEventListener("click", (e) => {
-  const profileTrigger = e.target.closest(".profile-button, a[href='#profile']");
-  if (profileTrigger && clubSession) {
+  const navLogout = e.target.closest(".nav-club-logout");
+  if (navLogout) {
     e.preventDefault();
-    openProfileModal();
+    (async () => {
+      try {
+        await window.dbLayer.logout();
+      } catch {
+        // ignore
+      }
+      clubSession = null;
+      renderStreams();
+      closeExclusivePanel();
+      renderClubAccess();
+      setClubStatus("Ты вышел из аккаунта.");
+      closeMobileMenu();
+    })();
     return;
   }
-  if (profileTrigger && !clubSession) {
+  const profileLink = e.target.closest("a[href='#profile']");
+  if (profileLink && !clubSession) {
     e.preventDefault();
     openAuthModal();
     return;
