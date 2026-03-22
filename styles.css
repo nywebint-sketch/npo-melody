@@ -484,11 +484,16 @@
       grid-template-columns: repeat(2, minmax(0, 1fr))
     }
 
-    /* Секция #streams: две колонки Live / Архив */
     .streams-col {
       min-width: 0;
       display: flex;
       flex-direction: column;
+    }
+
+    /* Одна строка «Эксклюзив» на всю ширину блока */
+    .streams-exclusive-block {
+      min-width: 0;
+      width: 100%;
     }
 
     .streams-hint-sub {
@@ -512,7 +517,6 @@
       line-height: 1.45;
     }
 
-    /* Строка-заглушка: как строки архива (#streamsList) */
     .streams-hint-row b {
       max-width: 72%;
       overflow: hidden;
@@ -524,6 +528,41 @@
     .streams-panel .streams-panel-header {
       border-top-left-radius: var(--radius);
       border-top-right-radius: var(--radius);
+    }
+
+    .streams-panel-header--no-close {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .streams-panel-header .modal-sub {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    /* Строки списка Live: заголовок курсивом, дата в рамке моноширинной */
+    .streams-panel-body .grid .streams-item-row {
+      background: var(--surface-2);
+    }
+
+    .streams-item-title {
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    .streams-panel-body .streams-item-row .tag {
+      font-family: ui-monospace, "Cascadia Mono", "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .streams-live-empty {
+      padding: 4px 0;
+      line-height: 1.45;
     }
 
     .g3 {
@@ -1084,24 +1123,6 @@
 
     .media.wide {
       aspect-ratio: 16/9
-    }
-
-    /* YouTube: после .media — иначе display:flex перебивает и блок с abspos iframe схлопывается */
-    .media.streams-live-embed {
-      display: block;
-      padding: 0;
-      position: relative;
-      overflow: hidden;
-      background: #000;
-      border-bottom: none;
-    }
-
-    .media.streams-live-embed iframe {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
     }
 
     .media img {
@@ -1970,20 +1991,6 @@
         object-position: center 24%;
       }
 
-      #streams .head {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      #streams .head>div {
-        width: 100%;
-        min-width: 0;
-      }
-
-      #streams .head .row {
-        width: 100%;
-      }
-
       #streamNext {
         width: 100%;
         display: flex;
@@ -2061,7 +2068,7 @@
       }
 
       #podcastsGrid,
-      #streamsList {
+      #streamsLiveList {
         gap: 8px;
       }
 
@@ -2822,12 +2829,4 @@
   .site-toast {
     transition: none;
   }
-}
-
-.streams-archive-note {
-  font-size: 0.92em;
-  line-height: 1.45;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--stroke);
-  margin-bottom: 10px;
 }

@@ -135,86 +135,63 @@
       </div>
     </section>
 
-    <section id="streams">
+    <section id="exclusive" hidden>
       <div class="container">
-        <div class="head">
-          <div>
-            <h2>Live</h2>
-          </div>
-        </div>
-
         <div class="card catalog-block">
           <div class="pad catalog-block__pad">
-            <div class="grid g2 streams-section-grid">
+            <div class="streams-exclusive-block">
               <div class="streams-col">
                 <div
-                  id="streamsLiveHint"
+                  id="exclusiveHint"
                   class="card pad open-card streams-hint-row"
                   role="button"
                   tabindex="0"
                   aria-expanded="false"
-                  aria-controls="streamsLivePanel"
-                  aria-label="Новое"
+                  aria-controls="exclusivePanel"
+                  aria-label="Эксклюзив"
                 >
                   <div class="row sp">
-                    <b>Новое</b>
+                    <b>Эксклюзив</b>
                     <span class="tag">→</span>
                   </div>
                 </div>
-                <div id="streamsLivePanel" class="card streams-panel" role="region" aria-label="Новое" hidden aria-hidden="true">
+                <div id="exclusivePanel" class="card streams-panel" role="region" aria-label="Эксклюзив" hidden aria-hidden="true">
                   <div class="modal-header streams-panel-header">
                     <div class="modal-header-text">
-                      <div class="modal-title">Новое</div>
+                      <div class="modal-title">Эксклюзив</div>
                     </div>
-                    <button class="btn ghost modal-close" id="streamsLiveCloseBtn" type="button" aria-label="Закрыть">
+                    <button class="btn ghost modal-close" id="exclusiveCloseBtn" type="button" aria-label="Закрыть">
                       <svg class="modal-close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
                         <path d="M6 6l12 12M18 6L6 18"/>
                       </svg>
                     </button>
                   </div>
                   <div class="pad streams-panel-body">
-                    <div class="media wide streams-live-embed">
-                      <iframe
-                        src="https://www.youtube.com/embed/AzPVj-1ehHI"
-                        title="NPO Мелодия — Live на YouTube"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen
-                        referrerpolicy="strict-origin-when-cross-origin"
-                      ></iframe>
-                    </div>
+                    <div id="exclusiveContent" class="exclusive-list"></div>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
+    <section id="streams">
+      <div class="container">
+        <div class="card catalog-block">
+          <div class="pad catalog-block__pad">
+            <div class="streams-exclusive-block">
               <div class="streams-col">
-                <div
-                  id="streamsArchiveHint"
-                  class="card pad open-card streams-hint-row"
-                  role="button"
-                  tabindex="0"
-                  aria-expanded="false"
-                  aria-controls="streamsArchivePanel"
-                  aria-label="Архив"
-                >
-                  <div class="row sp">
-                    <b>Архив</b>
-                    <span class="tag">→</span>
-                  </div>
-                </div>
-                <div id="streamsArchivePanel" class="card streams-panel" role="region" aria-label="Архив" hidden aria-hidden="true">
-                  <div class="modal-header streams-panel-header">
+                <div id="streamsLivePanel" class="card streams-panel" role="region" aria-label="Live">
+                  <div class="modal-header streams-panel-header streams-panel-header--no-close">
                     <div class="modal-header-text">
-                      <div class="modal-title">Архив</div>
-                      <div id="streamsArchiveCount" class="modal-sub">—</div>
+                      <div class="modal-title">Live</div>
+                      <div id="streamsLiveCount" class="modal-sub">—</div>
                     </div>
-                    <button class="btn ghost modal-close" id="streamsArchiveCloseBtn" type="button" aria-label="Закрыть">
-                      <svg class="modal-close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
-                        <path d="M6 6l12 12M18 6L6 18"/>
-                      </svg>
-                    </button>
                   </div>
                   <div class="pad streams-panel-body">
-                    <div class="grid" id="streamsList"></div>
+                    <div class="grid" id="streamsLiveList"></div>
                   </div>
                 </div>
               </div>
@@ -251,8 +228,7 @@
 
         <div class="card catalog-block">
           <div class="pad catalog-block__pad">
-            <div class="grid g2">
-              <div class="card pad">
+            <div class="card pad">
             <b>Аккаунт участника</b>
             <div class="divider"></div>
 
@@ -281,34 +257,6 @@
             </div>
 
             <div id="authStatus" class="muted auth-status">Доступ к эксклюзиву закрыт.</div>
-              </div>
-
-              <div class="card pad">
-            <div class="row sp">
-              <b>Эксклюзив</b>
-              <span class="tag" id="exclusiveBadge">закрыт</span>
-            </div>
-            <div class="divider"></div>
-
-            <div id="exclusiveLocked" class="muted">
-              Зарегистрируйся или войди, чтобы открыть закрытые релизы, архивы и ранний доступ к анонсам.
-            </div>
-
-            <div id="exclusiveContent" class="exclusive-list" hidden>
-              <div class="card pad">
-                <b>Early Access: NPO VA 002</b>
-                <div class="muted" style="margin-top:6px;">Превью треков + закрытый pre-save.</div>
-              </div>
-              <div class="card pad">
-                <b>Private Stream Archive</b>
-                <div class="muted" style="margin-top:6px;">Закрытые записи из ночных сетов.</div>
-              </div>
-              <div class="card pad">
-                <b>Members Promo Code</b>
-                <div class="muted" style="margin-top:6px;">Скидка 15% на мерч и закрытые дропы.</div>
-              </div>
-            </div>
-          </div>
             </div>
           </div>
         </div>

@@ -25,6 +25,12 @@ const fmtDateShort = (iso) => {
   return `${d.getDate()} ${monthsRu[d.getMonth()]}`;
 };
 
+const fmtDateDots = (iso) => {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return `${pad2(d.getDate())}.${pad2(d.getMonth() + 1)}.${d.getFullYear()}`;
+};
+
 const recordsCountRu = (n) => {
   const num = Number(n);
   const x = Math.abs(num) % 100;
@@ -42,57 +48,32 @@ let data = {
   artists: [],
   releases: [],
   podcasts: [],
-  streams: [],
-  merch: [],
-  /** true если показаны примеры записей (в БД таблица streams пуста или недоступна) */
-  streamsAreDemo: false
+  merch: []
 };
-
-/** Примеры для блока «Архив», пока в Supabase нет строк в streams */
-const FALLBACK_STREAMS = [
-  { id: "__demo_stream_1", title: "NPO Radio — ночной сет (фрагмент)", date: "15.03.2026" },
-  { id: "__demo_stream_2", title: "Live из клуба — warmup", date: "08.03.2026" },
-  { id: "__demo_stream_3", title: "Архив: гостевой микс", date: "01.03.2026" }
-];
 
 let clubSession = null;
 
 const streamsAuthOk = () => Boolean(clubSession?.email);
 
-async function loadStreamsData() {
-  if (!window.dbLayer) {
-    data.streams = FALLBACK_STREAMS;
-    data.streamsAreDemo = true;
-    return;
-  }
-  const streams = await window.dbLayer.getStreams();
-  data.streams = streams;
-  data.streamsAreDemo = false;
-  if (!data.streams.length) {
-    data.streams = FALLBACK_STREAMS;
-    data.streamsAreDemo = true;
-  }
-}
+/** Для авторизованных — Эксклюзив и Live сразу после главного изображения (сначала эксклюзив); иначе — перед релизами. */
+function updateStreamsSectionOrder() {
+  const home = $("#home");
+  const streams = $("#streams");
+  const releases = $("#releases");
+  const exclusive = $("#exclusive");
+  if (!home || !streams || !releases) return;
 
-function clearStreamsData() {
-  data.streams = [];
-  data.streamsAreDemo = false;
-}
-
-function updateStreamsHints() {
-  const locked = !streamsAuthOk();
-  const liveHint = $("#streamsLiveHint");
-  const archHint = $("#streamsArchiveHint");
-  [liveHint, archHint].forEach((hint) => {
-    if (!hint) return;
-    let sub = hint.querySelector(".streams-hint-sub");
-    if (!sub) {
-      sub = el("div", { className: "streams-hint-sub muted" });
-      hint.appendChild(sub);
+  if (streamsAuthOk()) {
+    if (exclusive) {
+      home.insertAdjacentElement("afterend", exclusive);
+      exclusive.insertAdjacentElement("afterend", streams);
+    } else {
+      home.insertAdjacentElement("afterend", streams);
     }
-    sub.textContent = locked ? "Нужен вход в аккаунт" : "";
-    sub.hidden = !locked;
-  });
+  } else {
+    releases.insertAdjacentElement("beforebegin", streams);
+    if (exclusive) streams.insertAdjacentElement("beforebegin", exclusive);
+  }
 }
 
 const BOOKING_ADMIN_ENDPOINT = "https://httpbin.org/post";
@@ -188,9 +169,8 @@ function renderClubAccess() {
   const authMember = $("#authMember");
   const memberName = $("#memberName");
   const authStatus = $("#authStatus");
-  const exclusiveLocked = $("#exclusiveLocked");
   const exclusiveContent = $("#exclusiveContent");
-  const exclusiveBadge = $("#exclusiveBadge");
+  const exclusiveSection = $("#exclusive");
 
   const userIsAuthenticated = Boolean(clubSession?.email);
 
@@ -198,9 +178,11 @@ function renderClubAccess() {
   if (authMember) authMember.style.display = userIsAuthenticated ? "block" : "none";
   if (memberName) memberName.textContent = clubSession?.name || clubSession?.email || "участник";
 
-  if (exclusiveLocked) exclusiveLocked.style.display = userIsAuthenticated ? "none" : "block";
-  if (exclusiveContent) exclusiveContent.style.display = userIsAuthenticated ? "block" : "none";
-  if (exclusiveBadge) exclusiveBadge.textContent = userIsAuthenticated ? "открыт" : "закрыт";
+  if (exclusiveSection) {
+    if (userIsAuthenticated) exclusiveSection.removeAttribute("hidden");
+    else exclusiveSection.setAttribute("hidden", "");
+  }
+  if (exclusiveContent) exclusiveContent.style.display = userIsAuthenticated ? "" : "none";
 
   if (authStatus) {
     authStatus.textContent = userIsAuthenticated
@@ -238,7 +220,7 @@ function renderClubAccess() {
     }
   });
 
-  updateStreamsHints();
+  updateStreamsSectionOrder();
 }
 
 function setClubStatus(message) {
@@ -318,7 +300,6 @@ function initClubAuth() {
         { title: 'Members Promo Code', description: 'Скидка 15% на мерч и закрытые дропы.' }
       ];
       renderExclusiveItems(mockExclusive);
-      await loadStreamsData();
       renderStreams();
       renderClubAccess();
       setClubStatus("Регистрация успешна. Эксклюзив открыт.");
@@ -351,7 +332,6 @@ function initClubAuth() {
         { title: 'Members Promo Code', description: 'Скидка 15% на мерч и закрытые дропы.' }
       ];
       renderExclusiveItems(mockExclusive);
-      await loadStreamsData();
       renderStreams();
       renderClubAccess();
       closeModal();
@@ -367,10 +347,8 @@ function initClubAuth() {
       // ignore
     }
     clubSession = null;
-    clearStreamsData();
     renderStreams();
-    closeStreamsLivePanel();
-    closeStreamsArchivePanel();
+    closeExclusivePanel();
     renderClubAccess();
     setClubStatus("Ты вышел из аккаунта.");
   });
@@ -467,6 +445,8 @@ function renderEvents() {
     setupOpenCard(card, "event", eventItem.id);
     wrap.appendChild(card);
   });
+
+  if (streamsAuthOk()) renderStreamsLive();
 }
 
 function renderArtists() {
@@ -518,16 +498,18 @@ function renderReleases() {
   });
 }
 
-function renderStreams() {
-  const wrap = $("#streamsList");
+function renderStreamsLive() {
+  const wrap = $("#streamsLiveList");
   if (!wrap) return;
   wrap.replaceChildren();
+
+  const liveCount = $("#streamsLiveCount");
 
   if (!streamsAuthOk()) {
     const box = el("div", { className: "card pad streams-live-locked" });
     const lead = el("p", {
       className: "streams-live-locked-lead",
-      text: "Раздел Live и архив трансляций доступны только участникам с аккаунтом."
+      text: "Блок Live доступен только участникам с аккаунтом."
     });
     const sub = el("p", {
       className: "muted streams-live-locked-sub",
@@ -539,54 +521,53 @@ function renderStreams() {
     btn.type = "button";
     box.appendChild(btn);
     wrap.appendChild(box);
-
-    const archiveCount = $("#streamsArchiveCount");
-    if (archiveCount) archiveCount.textContent = "—";
-
-    const now = new Date();
-    const next = sortAsc(data.events, "date").filter((e) => new Date(e.date) >= now)[0];
-    const streamNext = $("#streamNext");
-    if (streamNext) {
-      streamNext.textContent = next ? `Следующий эфир: ${next.title} · ${fmtDT(next.date)}` : "Следующий эфир: —";
-    }
+    if (liveCount) liveCount.textContent = "—";
     return;
   }
 
-  if (data.streamsAreDemo) {
-    const note = el("div", {
-      className: "muted streams-archive-note",
-      text: "В базе пока нет записей — ниже примеры. Добавь строки в таблицу streams в Supabase (SQL Editor) или через админку, когда появится редактор."
-    });
-    wrap.appendChild(note);
+  const now = new Date();
+  const upcoming = sortAsc(data.events, "date").filter((e) => new Date(e.date) >= now);
+
+  if (!upcoming.length) {
+    wrap.appendChild(
+      el("div", {
+        className: "muted streams-live-empty",
+        text: "Нет предстоящих событий в афише."
+      })
+    );
+    if (liveCount) liveCount.textContent = recordsCountRu(0);
+    return;
   }
 
-  data.streams.forEach((stream) => {
-    const row = el("div", { className: "card pad" });
+  upcoming.forEach((eventItem) => {
+    const row = el("div", { className: "card pad streams-item-row" });
     const content = el("div", { className: "row sp" });
 
-    const title = el("b", { text: stream.title });
+    const title = el("b", { className: "streams-item-title", text: eventItem.title });
     title.style.maxWidth = "72%";
     title.style.overflow = "hidden";
     title.style.textOverflow = "ellipsis";
     title.style.whiteSpace = "nowrap";
 
     content.appendChild(title);
-    content.appendChild(createTag(stream.date));
+    content.appendChild(createTag(fmtDateDots(eventItem.date)));
     row.appendChild(content);
 
-    setupOpenCard(row, "stream", stream.id);
+    setupOpenCard(row, "event", eventItem.id);
     wrap.appendChild(row);
   });
 
-  const archiveCount = $("#streamsArchiveCount");
-  if (archiveCount) archiveCount.textContent = recordsCountRu(data.streams.length);
+  if (liveCount) liveCount.textContent = recordsCountRu(upcoming.length);
+}
 
+function renderStreams() {
   const now = new Date();
   const next = sortAsc(data.events, "date").filter((e) => new Date(e.date) >= now)[0];
   const streamNext = $("#streamNext");
   if (streamNext) {
     streamNext.textContent = next ? `Следующий эфир: ${next.title} · ${fmtDT(next.date)}` : "Следующий эфир: —";
   }
+  renderStreamsLive();
 }
 
 function renderMerch() {
@@ -643,44 +624,26 @@ const closeModal = () => {
   if (modal) modal.style.display = "none";
 };
 
-const streamsLivePanel = $("#streamsLivePanel");
-const streamsLiveHint = $("#streamsLiveHint");
-const streamsArchivePanel = $("#streamsArchivePanel");
-const streamsArchiveHint = $("#streamsArchiveHint");
+const exclusivePanel = $("#exclusivePanel");
+const exclusiveHint = $("#exclusiveHint");
 
-/** Live / Архив: одна схема — строка-заглушка + панель с шапкой как у #modal */
-function setStreamsPanelOpen(which, open) {
-  const hint = which === "live" ? streamsLiveHint : streamsArchiveHint;
-  const panel = which === "live" ? streamsLivePanel : streamsArchivePanel;
-  if (panel) {
-    panel.hidden = !open;
-    panel.setAttribute("aria-hidden", open ? "false" : "true");
+function setExclusivePanelOpen(open) {
+  if (exclusivePanel) {
+    exclusivePanel.hidden = !open;
+    exclusivePanel.setAttribute("aria-hidden", open ? "false" : "true");
   }
-  if (hint) {
-    hint.hidden = open;
-    hint.setAttribute("aria-expanded", open ? "true" : "false");
+  if (exclusiveHint) {
+    exclusiveHint.hidden = open;
+    exclusiveHint.setAttribute("aria-expanded", open ? "true" : "false");
   }
 }
 
-function openStreamsLivePanel() {
-  setStreamsPanelOpen("live", true);
+function openExclusivePanel() {
+  setExclusivePanelOpen(true);
 }
 
-function closeStreamsLivePanel() {
-  setStreamsPanelOpen("live", false);
-}
-
-function promptStreamsAuth() {
-  setClubStatus("Войдите в аккаунт, чтобы открыть Live и архив трансляций.");
-  openAuthModal();
-}
-
-function openStreamsArchivePanel() {
-  setStreamsPanelOpen("archive", true);
-}
-
-function closeStreamsArchivePanel() {
-  setStreamsPanelOpen("archive", false);
+function closeExclusivePanel() {
+  setExclusivePanelOpen(false);
 }
 
 function bindHintPressHandlers(hint) {
@@ -706,11 +669,13 @@ function scrollToStreamsSection() {
   }
 }
 
-function requireStreamsAuthOrPrompt() {
-  if (streamsAuthOk()) return true;
-  scrollToStreamsSection();
-  promptStreamsAuth();
-  return false;
+function scrollToExclusiveSection() {
+  document.getElementById("exclusive")?.scrollIntoView({ behavior: "smooth" });
+  try {
+    history.replaceState(null, "", "#exclusive");
+  } catch {
+    window.location.hash = "exclusive";
+  }
 }
 
 function bindStreamsSectionPanels() {
@@ -718,41 +683,26 @@ function bindStreamsSectionPanels() {
     'header.topbar a[href="#streams"], #mobileMenu a[href="#streams"]'
   );
 
-  $("#streamsLiveCloseBtn")?.addEventListener("click", (e) => {
+  $("#exclusiveCloseBtn")?.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
-    closeStreamsLivePanel();
-  });
-  $("#streamsArchiveCloseBtn")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    closeStreamsArchivePanel();
+    closeExclusivePanel();
   });
 
-  bindHintPressHandlers(streamsLiveHint);
-  bindHintPressHandlers(streamsArchiveHint);
-
-  streamsLiveHint?.addEventListener("click", (e) => {
-    e.preventDefault();
-    if (!requireStreamsAuthOrPrompt()) return;
-    openStreamsLivePanel();
-    scrollToStreamsSection();
-  });
+  bindHintPressHandlers(exclusiveHint);
 
   liveNavLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
-      if (!requireStreamsAuthOrPrompt()) return;
-      openStreamsLivePanel();
       scrollToStreamsSection();
     });
   });
 
-  streamsArchiveHint?.addEventListener("click", (e) => {
+  exclusiveHint?.addEventListener("click", (e) => {
     e.preventDefault();
-    if (!requireStreamsAuthOrPrompt()) return;
-    openStreamsArchivePanel();
-    scrollToStreamsSection();
+    if (!streamsAuthOk()) return;
+    openExclusivePanel();
+    scrollToExclusiveSection();
   });
 }
 
@@ -885,18 +835,6 @@ function buildReleaseModalBody(release) {
   return wrapper;
 }
 
-function buildStreamModalBody(stream) {
-  const card = el("div", { className: "card pad" });
-  card.appendChild(el("b", { text: "Воспроизведение" }));
-  appendDivider(card);
-  card.appendChild(createMedia(stream.cover || stream.poster || stream.image || "logo.png", stream.title, "media wide"));
-
-  const hint = el("div", { className: "muted", text: "Тут будет YouTube/Vimeo embed." });
-  hint.style.marginTop = "10px";
-  card.appendChild(hint);
-  return card;
-}
-
 function getMerchImageUrls(item) {
   let list = item.images;
   if (typeof list === "string") {
@@ -989,10 +927,8 @@ function buildProfileModalBody() {
       await window.dbLayer.logout();
     } catch {}
     clubSession = null;
-    clearStreamsData();
     renderStreams();
-    closeStreamsLivePanel();
-    closeStreamsArchivePanel();
+    closeExclusivePanel();
     renderClubAccess();
     setClubStatus("Ты вышел из аккаунта.");
     closeModal();
@@ -1122,17 +1058,6 @@ document.addEventListener("click", (e) => {
     body.appendChild(right);
 
     openModal({ title: podcast.title, sub: podcast.date, body });
-    return;
-  }
-
-  if (type === "stream") {
-    if (!streamsAuthOk()) {
-      promptStreamsAuth();
-      return;
-    }
-    const stream = data.streams.find((x) => x.id === id);
-    if (!stream) return;
-    openModal({ title: stream.title, sub: stream.date, body: buildStreamModalBody(stream) });
     return;
   }
 
@@ -1301,10 +1226,8 @@ window.addEventListener("resize", () => {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     closeMobileMenu();
-    if (streamsLivePanel && !streamsLivePanel.hidden) {
-      closeStreamsLivePanel();
-    } else if (streamsArchivePanel && !streamsArchivePanel.hidden) {
-      closeStreamsArchivePanel();
+    if (exclusivePanel && !exclusivePanel.hidden) {
+      closeExclusivePanel();
     }
     closeModal();
   }
@@ -1370,7 +1293,7 @@ const initApp = async () => {
   renderSkeletonGrid("#eventsGrid", 6);
   renderSkeletonGrid("#artistsGrid", ARTISTS_VISIBLE);
   renderSkeletonGrid("#releasesGrid", 4);
-  renderSkeletonGrid("#streamsList", 4, "row");
+  renderSkeletonGrid("#streamsLiveList", 4, "row");
   renderSkeletonGrid("#merchGrid", 4);
 
   if (window.dbLayer) {
@@ -1386,13 +1309,6 @@ const initApp = async () => {
     data.releases = releases;
     data.podcasts = podcasts;
     data.merch = merch;
-    if (streamsAuthOk()) {
-      await loadStreamsData();
-    } else {
-      clearStreamsData();
-    }
-  } else {
-    clearStreamsData();
   }
 
   const yearNode = $("#year");
