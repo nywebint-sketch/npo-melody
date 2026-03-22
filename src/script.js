@@ -83,6 +83,19 @@ const safeHttpUrl = (value) => {
   }
 };
 
+/** Убирает кавычки/невидимые символы; добавляет https:// для youtu.be и youtube.com без схемы */
+const normalizeStreamUrlInput = (raw) => {
+  let s = String(raw ?? "").trim();
+  s = s.replace(/[\u200B-\u200D\uFEFF]/g, "");
+  s = s.replace(/^['"\u201C\u201D\u201E\u00AB\u00BB]+|['"\u201C\u201D\u201E\u00AB\u00BB]+$/g, "");
+  if (!s) return "";
+  if (/^https?:\/\//i.test(s)) return s;
+  if (/^(youtu\.be\/|(?:www\.)?youtube\.com\/|m\.youtube\.com\/)/i.test(s)) {
+    return `https://${s}`;
+  }
+  return s;
+};
+
 /** Ссылка на видео/трансляцию для блока Live (Supabase: stream_url и др.) */
 const getEventStreamUrl = (eventItem) => {
   if (!eventItem) return "";
@@ -96,20 +109,22 @@ const getEventStreamUrl = (eventItem) => {
     eventItem.embed_url ||
     eventItem.embedUrl ||
     "";
-  return safeHttpUrl(String(raw).trim());
+  return safeHttpUrl(normalizeStreamUrlInput(raw));
 };
 
 const STREAM_VIDEO_EXT = /\.(mp4|webm|ogg)(\?|$)/i;
 
 /** Преобразует публичную ссылку в iframe-embed или прямой URL для HTML5 video */
 const streamUrlToEmbed = (href) => {
-  if (!href) return { kind: "none", embed: "", video: "" };
+  const normalized = normalizeStreamUrlInput(href);
+  if (!normalized) return { kind: "none", embed: "", video: "" };
   try {
-    const u = new URL(href);
+    const u = new URL(normalized);
     const host = u.hostname.replace(/^www\./, "");
 
     if (host === "youtu.be") {
-      const id = u.pathname.replace(/^\//, "").split("/")[0];
+      const seg = u.pathname.replace(/^\//, "").split("/").filter(Boolean)[0] || "";
+      const id = decodeURIComponent(seg).replace(/\/$/, "");
       if (id) return { kind: "iframe", embed: `https://www.youtube.com/embed/${encodeURIComponent(id)}`, video: "" };
     }
     if (host === "youtube.com" || host === "youtube-nocookie.com" || host === "m.youtube.com") {
@@ -128,12 +143,12 @@ const streamUrlToEmbed = (href) => {
       if (m) return { kind: "iframe", embed: `https://rutube.ru/play/embed/${m[1]}`, video: "" };
     }
 
-    if (STREAM_VIDEO_EXT.test(u.pathname) || STREAM_VIDEO_EXT.test(href)) {
-      return { kind: "video", embed: "", video: href };
+    if (STREAM_VIDEO_EXT.test(u.pathname) || STREAM_VIDEO_EXT.test(normalized)) {
+      return { kind: "video", embed: "", video: normalized };
     }
 
     if (/\/embed\//i.test(u.pathname) || host.startsWith("player.")) {
-      return { kind: "iframe", embed: href, video: "" };
+      return { kind: "iframe", embed: normalized, video: "" };
     }
 
     return { kind: "none", embed: "", video: "" };
@@ -807,7 +822,7 @@ function appendLiveStreamMediaSlot(posterSlot, eventItem) {
       "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
     );
     iframe.setAttribute("allowfullscreen", "");
-    iframe.loading = "lazy";
+    iframe.referrerPolicy = "strict-origin-when-cross-origin";
     wrap.appendChild(iframe);
     posterSlot.appendChild(wrap);
     return;
