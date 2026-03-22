@@ -620,24 +620,20 @@
 
     .open-card:hover .catalog-title,
     .open-card:hover .artist-card-name,
-    .open-card:hover .merch-card-title,
     .open-card:hover .release-card-title,
     .open-card:hover .catalog-meta,
     .open-card:active .catalog-title,
     .open-card:active .artist-card-name,
-    .open-card:active .merch-card-title,
     .open-card:active .release-card-title,
     .open-card:active .catalog-meta,
     .open-card.is-pressed .catalog-title,
     .open-card.is-pressed .artist-card-name,
-    .open-card.is-pressed .merch-card-title,
     .open-card.is-pressed .release-card-title,
     .open-card.is-pressed .catalog-meta {
       font-weight: 900;
     }
 
     #artistsGrid .open-card .pad,
-    #merchGrid .open-card .pad,
     #releasesGrid .open-card .pad {
       padding: 12px;
     }
@@ -1050,42 +1046,9 @@
       display: block;
     }
 
-    /* Карточки мерча: как у артистов — без рамки вокруг изображения */
     #merchGrid {
       align-items: start;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    #merchGrid .merch-card {
-      height: auto;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-    }
-
-    #merchGrid .merch-card .media {
-      width: 100%;
-      aspect-ratio: 1/1;
-      overflow: hidden;
-      padding: 0;
-      border: none;
-      background: transparent;
-      display: block;
-      flex: none;
-    }
-
-    #merchGrid .merch-card .media img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    #merchGrid .merch-card .merch-card-body {
-      padding: 12px;
-      min-height: 0;
-      flex: none;
-      display: block;
     }
 
     /* Карточки релизов: те же размеры и стиль, что у артистов (квадратная обложка, тело карточки) */
@@ -1126,14 +1089,6 @@
       display: block;
     }
 
-    #merchGrid .open-card .pad {
-      text-align: center;
-    }
-
-    #merchGrid .open-card .pad .row {
-      justify-content: center;
-    }
-
     .media.square {
       aspect-ratio: 1/1
     }
@@ -1158,8 +1113,9 @@
       object-fit: cover;
     }
 
-    /* Карточки афиши: только постер + название до hover; без подложек; изображения не инвертируются */
-    #eventsGrid .event-card {
+    /* Карточки афиши и мерча: постер 4:5, строка название + дата/цена */
+    #eventsGrid .event-card,
+    #merchGrid .event-card {
       box-sizing: border-box;
       width: 100%;
       max-width: 100%;
@@ -1173,19 +1129,26 @@
     }
 
     #eventsGrid .event-card:hover,
-    #eventsGrid .event-card:active {
+    #eventsGrid .event-card:active,
+    #merchGrid .event-card:hover,
+    #merchGrid .event-card:active {
       background: var(--surface-hover);
     }
 
     #eventsGrid .event-card:hover .event-card-title,
     #eventsGrid .event-card:hover .event-card-date,
     #eventsGrid .event-card:active .event-card-title,
-    #eventsGrid .event-card:active .event-card-date {
+    #eventsGrid .event-card:active .event-card-date,
+    #merchGrid .event-card:hover .event-card-title,
+    #merchGrid .event-card:hover .event-card-date,
+    #merchGrid .event-card:active .event-card-title,
+    #merchGrid .event-card:active .event-card-date {
       color: var(--text-hover) !important;
       font-weight: 900;
     }
 
-    #eventsGrid .event-card .pad {
+    #eventsGrid .event-card .pad,
+    #merchGrid .event-card .pad {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
@@ -1197,30 +1160,38 @@
     }
 
     #eventsGrid .event-card:hover .pad,
-    #eventsGrid .event-card:active .pad {
+    #eventsGrid .event-card:active .pad,
+    #merchGrid .event-card:hover .pad,
+    #merchGrid .event-card:active .pad {
       background: transparent;
     }
 
-    #eventsGrid .event-card .event-card-title {
+    #eventsGrid .event-card .event-card-title,
+    #merchGrid .event-card .event-card-title {
       text-align: center;
       flex: 1;
       min-width: 0;
       color: var(--text);
     }
 
-    #eventsGrid .event-card .event-card-date {
+    #eventsGrid .event-card .event-card-date,
+    #merchGrid .event-card .event-card-date {
       text-align: right;
       flex-shrink: 0;
       color: var(--text-muted);
     }
 
     #eventsGrid .event-card .event-card-title,
-    #eventsGrid .event-card .event-card-date {
+    #eventsGrid .event-card .event-card-date,
+    #merchGrid .event-card .event-card-title,
+    #merchGrid .event-card .event-card-date {
       transition: font-weight .18s ease, color .25s ease;
     }
 
     #eventsGrid .event-poster,
-    #eventsGrid .event-media {
+    #eventsGrid .event-media,
+    #merchGrid .event-poster,
+    #merchGrid .event-media {
       width: 100%;
       max-width: 100%;
       aspect-ratio: 4/5;
@@ -1232,7 +1203,9 @@
     }
 
     #eventsGrid .event-poster img,
-    #eventsGrid .event-media img {
+    #eventsGrid .event-media img,
+    #merchGrid .event-poster img,
+    #merchGrid .event-media img {
       width: 100%;
       height: 100%;
       display: block;
@@ -2034,14 +2007,12 @@
       }
 
       #artistsGrid .artist-card .media,
-      #merchGrid .merch-card .media,
       #releasesGrid .release-card .media {
         padding: 0;
         aspect-ratio: 1/1;
       }
 
       #artistsGrid .artist-card .artist-card-body,
-      #merchGrid .merch-card .merch-card-body,
       #releasesGrid .release-card .release-card-body {
         padding: 12px;
         min-height: 0;
@@ -2086,8 +2057,9 @@
         word-break: break-word;
       }
 
-      /* Афиша на мобильной: как на скрине — постер целиком, карточка без рамки */
-      #eventsGrid .event-card {
+      /* Афиша и мерч на мобильной: постер целиком, карточка без рамки */
+      #eventsGrid .event-card,
+      #merchGrid .event-card {
         padding: 0;
         width: 100%;
         max-width: 100%;
@@ -2098,7 +2070,9 @@
       }
 
       #eventsGrid .event-poster,
-      #eventsGrid .event-media {
+      #eventsGrid .event-media,
+      #merchGrid .event-poster,
+      #merchGrid .event-media {
         aspect-ratio: unset !important;
         height: auto !important;
         overflow: hidden;
@@ -2111,7 +2085,9 @@
       }
 
       #eventsGrid .event-poster img,
-      #eventsGrid .event-media img {
+      #eventsGrid .event-media img,
+      #merchGrid .event-poster img,
+      #merchGrid .event-media img {
         width: 100%;
         height: auto;
         display: block;
@@ -2120,7 +2096,8 @@
         vertical-align: top;
       }
 
-      #eventsGrid .event-card .pad {
+      #eventsGrid .event-card .pad,
+      #merchGrid .event-card .pad {
         padding: 12px;
       }
     }
@@ -2161,7 +2138,9 @@
       }
 
       #eventsGrid .event-poster,
-      #eventsGrid .event-media {
+      #eventsGrid .event-media,
+      #merchGrid .event-poster,
+      #merchGrid .event-media {
         width: 100%;
         max-width: 100%;
         margin: 0;
@@ -2175,7 +2154,9 @@
       }
 
       #eventsGrid .event-poster img,
-      #eventsGrid .event-media img {
+      #eventsGrid .event-media img,
+      #merchGrid .event-poster img,
+      #merchGrid .event-media img {
         width: 100%;
         height: auto;
         display: block;
@@ -2184,7 +2165,8 @@
         vertical-align: top;
       }
 
-      #eventsGrid {
+      #eventsGrid,
+      #merchGrid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
       }
@@ -2416,9 +2398,11 @@
         grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
       }
 
-      /* Афиша: постер не обрезать в квадрат, отображение как на скрине */
+      /* Афиша и мерч: постер не обрезать в квадрат */
       #eventsGrid .event-poster,
-      #eventsGrid .event-media {
+      #eventsGrid .event-media,
+      #merchGrid .event-poster,
+      #merchGrid .event-media {
         aspect-ratio: unset !important;
         padding: 0 !important;
       }

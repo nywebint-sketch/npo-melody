@@ -595,7 +595,7 @@ function renderMerch() {
   wrap.replaceChildren();
 
   data.merch.forEach((item) => {
-    const card = el("div", { className: "card merch-card" });
+    const card = el("div", { className: "card event-card" });
     const thumbUrls = getMerchImageUrls(item);
     const posterRaw =
       item.poster != null && String(item.poster).trim() !== ""
@@ -606,14 +606,14 @@ function renderMerch() {
     const thumbSrc = posterRaw
       ? resolveMerchImageSrc(posterRaw)
       : (thumbUrls[0] || resolveMerchImageSrc("logo.png"));
-    card.appendChild(createMedia(thumbSrc, item.title, "media square"));
+    card.appendChild(createMedia(thumbSrc, item.title, "media event-media event-poster"));
 
-    const pad = el("div", { className: "pad merch-card-body" });
-    pad.appendChild(el("b", { className: "merch-card-title", text: item.title }));
-
-    const price = el("div", { className: "muted", text: item.price });
-    price.style.marginTop = "6px";
-    pad.appendChild(price);
+    const pad = el("div", { className: "pad" });
+    pad.appendChild(el("b", { className: "event-card-title", text: item.title }));
+    const priceText = item.price != null && String(item.price).trim() !== "" ? String(item.price).trim() : "";
+    if (priceText) {
+      pad.appendChild(el("div", { className: "event-card-date", text: priceText }));
+    }
 
     card.appendChild(pad);
     setupOpenCard(card, "merch", item.id);
