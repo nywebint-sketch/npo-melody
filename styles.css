@@ -1184,6 +1184,27 @@
       display: block;
     }
 
+    /* Артисты / релизы: под постером только текст, без серой подложки .open-card */
+    #artistsGrid .artist-card.open-card,
+    #releasesGrid .release-card.open-card {
+      background: transparent !important;
+      backdrop-filter: none;
+    }
+
+    #artistsGrid .artist-card.open-card:hover,
+    #artistsGrid .artist-card.open-card:active,
+    #artistsGrid .artist-card.open-card.is-pressed,
+    #releasesGrid .release-card.open-card:hover,
+    #releasesGrid .release-card.open-card:active,
+    #releasesGrid .release-card.open-card.is-pressed {
+      background: var(--surface-hover) !important;
+    }
+
+    #artistsGrid .artist-card .pad,
+    #releasesGrid .release-card .pad {
+      background: transparent;
+    }
+
     #merchGrid {
       align-items: start;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1719,6 +1740,48 @@
       #modal.modal-overlay:has(.live-stream-modal-wrap) .modal-inner {
         width: min(960px, calc(100vw - 36px));
         max-width: min(960px, calc(100vw - 36px));
+      }
+    }
+
+    /* Афиша: окно ближе к формату постера, узкие поля снаружи и у текста */
+    #modal.modal-overlay:has(.afisha-modal-wrap) {
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    #modal.modal-overlay:has(.afisha-modal-wrap) .modal-inner {
+      width: min(680px, calc(100vw - 16px));
+      max-width: min(680px, calc(100vw - 16px));
+    }
+
+    #modal.modal-overlay:has(.afisha-modal-wrap) .modal-header {
+      padding: 10px 48px;
+      min-height: 52px;
+    }
+
+    #modal.modal-overlay:has(.afisha-modal-wrap) #mBody.pad {
+      padding: 8px 8px 10px !important;
+    }
+
+    #modal.modal-overlay:has(.afisha-modal-wrap) .event-modal-right.afisha-modal-right {
+      padding: 6px 16px !important;
+      padding-top: 4px !important;
+      gap: 4px;
+    }
+
+    #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-left {
+      max-width: min(340px, 46vw);
+    }
+
+    @media (min-width: 769px) {
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .event-modal-left .media {
+        max-height: min(78vh, 720px);
+        overflow: hidden;
+      }
+
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .event-modal-left .media img {
+        max-height: min(78vh, 720px);
+        object-fit: contain;
       }
     }
 
@@ -2373,14 +2436,15 @@
         word-break: break-word;
       }
 
-      /* Афиша и мерч на мобильной: постер целиком, карточка без рамки */
+      /* Афиша и мерч на мобильной: постер целиком, подпись без серой плашки */
       #eventsGrid .event-card,
       #merchGrid .event-card {
         padding: 0;
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
-        background: var(--card);
+        background: transparent;
+        backdrop-filter: none;
         border: none;
         box-shadow: none;
       }
@@ -2415,6 +2479,7 @@
       #eventsGrid .event-card .pad,
       #merchGrid .event-card .pad {
         padding: 12px;
+        background: transparent;
       }
     }
 
@@ -2427,6 +2492,11 @@
         padding: max(12px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px))
           max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
         box-sizing: border-box;
+      }
+
+      #modal.modal-overlay:has(.afisha-modal-wrap) {
+        padding: max(8px, env(safe-area-inset-top, 0px)) max(8px, env(safe-area-inset-right, 0px))
+          max(8px, env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
       }
 
       .modal-header {
@@ -2523,6 +2593,24 @@
         box-sizing: border-box;
       }
 
+      /* Афиша: текст по ширине постера (те же пределы, что у .media img в этой модалке) */
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right {
+        max-width: min(100%, min(62dvh, 520px));
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+      }
+
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-actions {
+        max-width: min(100%, min(62dvh, 520px));
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
       /* Мерч / афиша / артист на мобилке: фото → текст → кнопка */
       .merch-modal-wrap .event-modal-left,
       .afisha-modal-wrap .event-modal-left,
@@ -2567,6 +2655,11 @@
         height: auto;
         object-fit: contain;
         margin: 0 auto;
+      }
+
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .event-modal-left .media,
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .event-modal-left .media img {
+        max-height: min(62dvh, 520px);
       }
 
       /* max-height только на треке — иначе обрезались точки под слайдами */
@@ -2674,6 +2767,19 @@
       #mBody .event-modal-left .media,
       #mBody .event-modal-left .media img {
         max-height: min(40dvh, 300px);
+      }
+
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .event-modal-left .media,
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .event-modal-left .media img {
+        max-height: min(56dvh, 460px);
+      }
+
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right {
+        max-width: min(100%, min(56dvh, 460px));
+      }
+
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-actions {
+        max-width: min(100%, min(56dvh, 460px));
       }
 
       #mBody .event-modal-left .merch-modal-carousel-wrap {
