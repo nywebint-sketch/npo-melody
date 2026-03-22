@@ -533,6 +533,15 @@
       box-shadow: none;
     }
 
+    /* Та же специфичность, что выше — иначе transparent !important перебивает .open-card:hover */
+    #streams #streamsLiveList > .streams-hint-row.open-card:hover,
+    #streams #streamsLiveList > .streams-hint-row.open-card:active,
+    #streams #streamsLiveList > .streams-hint-row.open-card.is-pressed {
+      background: var(--surface-hover) !important;
+      border-color: var(--border-hover) !important;
+      color: var(--text-hover) !important;
+    }
+
     #streams #streamsLiveList > .streams-live-locked {
       background: transparent !important;
       backdrop-filter: none;
@@ -569,6 +578,12 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    .streams-hint-row .tag {
+      border: none;
+      background: transparent;
+      padding: 0;
     }
 
     /* Шапка с крестиком — те же классы, что у #modal */
