@@ -692,13 +692,18 @@
       white-space: nowrap;
     }
 
-    #contacts .row .tag {
-      background: transparent;
-      border: none;
-      padding: 0;
-      font-size: inherit;
-      font-weight: 560;
-      letter-spacing: normal;
+    #contacts {
+      border-bottom: none;
+      padding-bottom: 0
+    }
+
+    /* Как между адресом и ©: 12px — убираем нижние поля карточки под соцсетями */
+    #contacts .card.catalog-block > .pad.catalog-block__pad {
+      padding-bottom: 0
+    }
+
+    #contacts .contacts-socials {
+      justify-content: center
     }
 
     .row {
@@ -1788,9 +1793,15 @@
     }
 
     footer {
-      padding: 24px 0 40px;
+      padding: 12px 0 40px;
       color: var(--muted);
-      font-size: 14px
+      font-size: 14px;
+      text-align: center
+    }
+
+    footer .footer-address {
+      margin-bottom: 12px;
+      text-align: center
     }
 
     @media (max-width: 1200px) {
