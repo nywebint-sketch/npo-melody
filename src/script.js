@@ -437,6 +437,19 @@ function resolveImageSrc(imgSrc) {
   return defaultLogo;
 }
 
+/** Мерч в Storage лежит в images/microdropych/; короткие имена («vtroem.jpeg», «vtroem») собираем в полный URL. */
+function resolveMerchImageSrc(raw) {
+  const defaultLogo = "https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png";
+  const s = String(raw || "").trim();
+  if (!s || s === "logo.png" || s === "smile.png") return defaultLogo;
+  if (/^https?:\/\//i.test(s)) return s;
+  if (!/[\\/]/.test(s)) {
+    const fn = /\.(jpe?g|png|webp|gif)$/i.test(s) ? s : `${s}.jpeg`;
+    return `${ASSET_PREFIX}microdropych/${fn}`;
+  }
+  return resolveImageSrc(s);
+}
+
 function renderEvents() {
   const wrap = $("#eventsGrid");
   if (!wrap) return;
@@ -584,7 +597,15 @@ function renderMerch() {
   data.merch.forEach((item) => {
     const card = el("div", { className: "card merch-card" });
     const thumbUrls = getMerchImageUrls(item);
-    const thumbSrc = thumbUrls[0] || "logo.png";
+    const posterRaw =
+      item.poster != null && String(item.poster).trim() !== ""
+        ? String(item.poster).trim()
+        : item.image != null && String(item.image).trim() !== ""
+          ? String(item.image).trim()
+          : null;
+    const thumbSrc = posterRaw
+      ? resolveMerchImageSrc(posterRaw)
+      : (thumbUrls[0] || resolveMerchImageSrc("logo.png"));
     card.appendChild(createMedia(thumbSrc, item.title, "media square"));
 
     const pad = el("div", { className: "pad merch-card-body" });
@@ -887,18 +908,17 @@ function getMerchImageUrls(item) {
   }
   if (Array.isArray(list) && list.length > 0) {
     const cleaned = list.map((u) => String(u || "").trim()).filter(Boolean);
-    if (cleaned.length) return cleaned;
+    if (cleaned.length) return cleaned.map(resolveMerchImageSrc);
   }
   const single = item.image || item.poster || item.cover || "logo.png";
-  return [single];
+  return [resolveMerchImageSrc(single)];
 }
 
 function buildMerchModalBody(item) {
   const wrapper = el("div", { className: "event-modal-wrap merch-modal-wrap" });
 
   const left = el("div", { className: "card event-modal-left" });
-  const imageSources = getMerchImageUrls(item);
-  const imageUrls = imageSources.map(resolveImageSrc);
+  const imageUrls = getMerchImageUrls(item);
   const posterSlot = el("div", { className: "event-modal-poster-slot" });
   const carouselContainer = el("div", { className: "merch-modal-carousel-wrap" });
   posterSlot.appendChild(carouselContainer);

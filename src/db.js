@@ -7,20 +7,37 @@ const STORAGE_BUCKET = 'images';
 
 let supabaseClt = null;
 
+/**
+ * GoTrue по умолчанию использует Navigator Locks для localStorage-сессии.
+ * Параллельные getSession/getUser (например при init) дают в консоли предупреждения
+ * «Lock … was not released» / «stolen». Для одной вкладки достаточно выполнять
+ * операции без глобальной блокировки (как в @supabase/auth-js lock: noop для RN).
+ */
+const authLockNoop = async (_name, _acquireTimeout, fn) => fn();
+
+const SUPABASE_OPTIONS = {
+  auth: {
+    lock: authLockNoop
+  }
+};
+
 const clearStaleAuth = (client) => {
-  client.auth.getUser().then(({ error }) => {
-    if (!error) return;
-    const msg = String(error.message || '');
-    if (msg.includes('Invalid Refresh Token') || msg.includes('Refresh Token Not Found')) {
-      client.auth.signOut({ scope: 'local' }).catch(() => {});
-    }
+  // После createClient внутри уже идёт инициализация сессии — отложим, чтобы не бить второй запрос в ту же миллисекунду.
+  queueMicrotask(() => {
+    client.auth.getUser().then(({ error }) => {
+      if (!error) return;
+      const msg = String(error.message || '');
+      if (msg.includes('Invalid Refresh Token') || msg.includes('Refresh Token Not Found')) {
+        client.auth.signOut({ scope: 'local' }).catch(() => {});
+      }
+    });
   });
 };
 
 const initSupabase = () => {
   if (!window.supabase) return null;
   if (!supabaseClt) {
-    supabaseClt = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    supabaseClt = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_OPTIONS);
     clearStaleAuth(supabaseClt);
   }
   return supabaseClt;
