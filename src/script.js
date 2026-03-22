@@ -565,7 +565,7 @@ function renderStreamsLive() {
     const box = el("div", { className: "pad streams-live-locked" });
     const lead = el("p", {
       className: "streams-live-locked-lead",
-      text: "Блок Live доступен только участникам с аккаунтом."
+      text: "доступно участникам с аккаунтом."
     });
     box.appendChild(lead);
     const btn = el("button", { className: "btn primary auth-open-button", text: "Войти или зарегистрироваться" });
