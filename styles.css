@@ -691,19 +691,6 @@
       white-space: nowrap;
     }
 
-    #contacts {
-      padding-bottom: 0
-    }
-
-    /* Как между адресом и ©: 12px — убираем нижние поля карточки под соцсетями */
-    #contacts .card.catalog-block > .pad.catalog-block__pad {
-      padding-bottom: 0
-    }
-
-    #contacts .contacts-socials {
-      justify-content: center
-    }
-
     .row {
       display: flex;
       gap: 10px;
@@ -1790,10 +1777,15 @@
     }
 
     footer {
-      padding: 12px 0 40px;
+      padding: clamp(80px, 22vh, 220px) 0 40px;
       color: var(--muted);
       font-size: 14px;
       text-align: center
+    }
+
+    footer .footer-socials {
+      justify-content: center;
+      margin-bottom: 18px
     }
 
     footer .footer-address {
@@ -2267,12 +2259,32 @@
         overflow: visible;
       }
 
+      /* Как у афиши в модалке: пропорции картинки, не жёсткий 4:5 + cover (иначе квадратные фото выглядят «квадратом») */
       #mBody .event-modal-left .merch-modal-carousel .carousel-track-wrap {
-        max-height: min(48dvh, 360px);
-        width: min(100%, calc(min(48dvh, 360px) * 0.8));
+        aspect-ratio: unset !important;
+        width: 100%;
+        max-width: 100%;
+        max-height: none;
+        height: auto;
         margin-left: auto;
         margin-right: auto;
         overflow: hidden;
+      }
+
+      #mBody .event-modal-left .merch-modal-carousel .carousel-track {
+        height: auto;
+      }
+
+      #mBody .event-modal-left .merch-modal-carousel .carousel-slide {
+        height: auto;
+      }
+
+      #mBody .event-modal-left .merch-modal-carousel .carousel-slide img {
+        width: 100%;
+        height: auto;
+        max-height: min(48dvh, 360px);
+        object-fit: contain;
+        object-position: center;
       }
 
       #mBody.modal-body {
@@ -2360,11 +2372,26 @@
       }
 
       #mBody .event-modal-left .merch-modal-carousel .carousel-track-wrap {
-        max-height: min(40dvh, 300px);
-        width: min(100%, calc(min(40dvh, 300px) * 0.8));
+        aspect-ratio: unset !important;
+        width: 100%;
+        max-width: 100%;
+        max-height: none;
+        height: auto;
         margin-left: auto;
         margin-right: auto;
         overflow: hidden;
+      }
+
+      #mBody .event-modal-left .merch-modal-carousel .carousel-track {
+        height: auto;
+      }
+
+      #mBody .event-modal-left .merch-modal-carousel .carousel-slide {
+        height: auto;
+      }
+
+      #mBody .event-modal-left .merch-modal-carousel .carousel-slide img {
+        max-height: min(40dvh, 300px);
       }
 
       .g4 {
