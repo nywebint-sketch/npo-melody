@@ -1086,6 +1086,24 @@
       aspect-ratio: 16/9
     }
 
+    /* YouTube: после .media — иначе display:flex перебивает и блок с abspos iframe схлопывается */
+    .media.streams-live-embed {
+      display: block;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+      background: #000;
+      border-bottom: none;
+    }
+
+    .media.streams-live-embed iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
     .media img {
       width: 100%;
       height: 100%;

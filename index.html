@@ -154,17 +154,17 @@
                   tabindex="0"
                   aria-expanded="false"
                   aria-controls="streamsLivePanel"
-                  aria-label="Live"
+                  aria-label="Новое"
                 >
                   <div class="row sp">
-                    <b>Live</b>
+                    <b>Новое</b>
                     <span class="tag">→</span>
                   </div>
                 </div>
-                <div id="streamsLivePanel" class="card streams-panel" role="region" aria-label="Live" hidden aria-hidden="true">
+                <div id="streamsLivePanel" class="card streams-panel" role="region" aria-label="Новое" hidden aria-hidden="true">
                   <div class="modal-header streams-panel-header">
                     <div class="modal-header-text">
-                      <div class="modal-title">Live</div>
+                      <div class="modal-title">Новое</div>
                     </div>
                     <button class="btn ghost modal-close" id="streamsLiveCloseBtn" type="button" aria-label="Закрыть">
                       <svg class="modal-close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
@@ -173,7 +173,15 @@
                     </button>
                   </div>
                   <div class="pad streams-panel-body">
-                    <div class="media wide"><img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" alt="НПО Мелодия — обложка раздела Live"></div>
+                    <div class="media wide streams-live-embed">
+                      <iframe
+                        src="https://www.youtube.com/embed/AzPVj-1ehHI"
+                        title="NPO Мелодия — Live на YouTube"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                        referrerpolicy="strict-origin-when-cross-origin"
+                      ></iframe>
+                    </div>
                   </div>
                 </div>
               </div>
