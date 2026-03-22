@@ -969,23 +969,12 @@ function buildArtistModalBody(artist) {
 }
 
 function buildReleaseModalBody(release) {
-  const wrapper = el("div", { className: "event-modal-wrap" });
+  const wrapper = el("div", { className: "event-modal-wrap release-modal-wrap" });
 
   const left = el("div", { className: "card event-modal-left" });
   const posterSlot = el("div", { className: "event-modal-poster-slot" });
   posterSlot.appendChild(createMedia(release.cover || release.poster || release.image || "logo.png", release.title, "media"));
   left.appendChild(posterSlot);
-
-  const right = el("div", { className: "card pad event-modal-right" });
-  right.appendChild(el("b", { text: "Треклист" }));
-  appendDivider(right);
-
-  const tracklist = el("div", { className: "muted" });
-  (release.tracklist || []).forEach((track, idx) => {
-    if (idx > 0) tracklist.appendChild(document.createElement("br"));
-    tracklist.appendChild(document.createTextNode(`• ${track}`));
-  });
-  right.appendChild(tracklist);
 
   const actions = el("div", { className: "event-modal-actions" });
 
@@ -1001,7 +990,6 @@ function buildReleaseModalBody(release) {
 
   left.appendChild(actions);
   wrapper.appendChild(left);
-  wrapper.appendChild(right);
   return wrapper;
 }
 

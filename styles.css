@@ -1689,6 +1689,24 @@
       padding-top: 6px;
     }
 
+    /* Релиз: без правой колонки «Треклист» — одна колонка по центру */
+    .event-modal-wrap.release-modal-wrap {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+      justify-items: center;
+    }
+
+    .event-modal-wrap.release-modal-wrap .event-modal-left {
+      grid-column: 1;
+      grid-row: 1;
+      justify-self: center;
+    }
+
+    .event-modal-wrap.release-modal-wrap .event-modal-actions {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
     /* Модалка мерча / афиша: компактное окно, колонка с фото по ширине картинки */
     @media (min-width: 521px) {
       #modal.modal-overlay:has(.merch-modal-wrap) .modal-inner,
@@ -2009,6 +2027,27 @@
       border: none;
       box-shadow: none;
       outline: none;
+    }
+
+    /* Релиз: одна колонка — постер и кнопки по центру (не justify-self: start от правила выше) */
+    #mBody .event-modal-wrap.release-modal-wrap .event-modal-left {
+      justify-self: center;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #mBody .event-modal-wrap.release-modal-wrap .event-modal-poster-slot {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    #mBody .event-modal-wrap.release-modal-wrap .event-modal-actions {
+      width: 100%;
+      justify-content: center;
     }
 
     #mBody .live-stream-modal-wrap.live-stream-modal-stack .live-stream-modal-details.afisha-modal-right {
@@ -2606,14 +2645,8 @@
 
     @media (max-width: 520px) {
 
-      #modal.modal-overlay:has(.artist-modal-wrap) .modal-inner {
-        width: 100%;
-        max-width: 100%;
-      }
-
+      /* Как на десктопе: карточка с отступами и скруглением, не на всю ширину экрана */
       .modal-inner {
-        width: 100%;
-        max-width: 100%;
         height: auto;
         max-height: min(92vh, 100dvh);
         min-height: 0;
