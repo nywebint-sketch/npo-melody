@@ -1389,7 +1389,7 @@ const initApp = async () => {
   if (carouselContainer) {
     createCarousel(carouselContainer, {
       urls: [
-        ASSET_PREFIX + "npo_print_source%20(1).png",
+        ASSET_PREFIX + "npo_print_source.png",
         ASSET_PREFIX + "logo.png"
       ].filter(Boolean),
       intervalMs: 5000,
