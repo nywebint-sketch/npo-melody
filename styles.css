@@ -114,21 +114,23 @@
       position: fixed;
       inset: 0 0 auto 0;
       z-index: 50;
-      height: 78px;
+      height: 88px;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       background: var(--header-bg);
       border-bottom: 1px solid var(--border);
       box-shadow: none;
+      overflow: visible;
     }
 
     .topbar .in {
-      height: 78px;
+      height: 88px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
       gap: 14px;
       flex-wrap: nowrap;
+      overflow: visible;
     }
 
     .topbar .in>* {
@@ -146,7 +148,7 @@
       flex-shrink: 0;
       position: static;
       gap: 0;
-      margin-left: 8px;
+      margin-left: 16px;
     }
 
     .brand-name {
@@ -161,8 +163,8 @@
     }
 
     .brand-mark {
-      width: 56px;
-      height: 56px;
+      width: 88px;
+      height: 88px;
       border: 1px solid transparent;
       background: transparent;
       border-radius: 12px;
@@ -239,7 +241,7 @@
 
     .mobile-menu-backdrop {
       position: fixed;
-      inset: 78px 0 0 0;
+      inset: 88px 0 0 0;
       background: rgba(0, 0, 0, .25);
       backdrop-filter: blur(4px);
       z-index: 79;
@@ -250,7 +252,7 @@
 
     .mobile-menu {
       position: fixed;
-      top: 78px;
+      top: 88px;
       left: var(--container-pad-x);
       right: var(--container-pad-x);
       z-index: 80;
@@ -308,7 +310,7 @@
       border-color: var(--border-hover);
     }
 
-    /* Как у .nav a */
+    /* Те же drop-shadow, что у .brand-mark:hover picture img */
     .nav .nav-club-logout {
       -webkit-appearance: none;
       appearance: none;
@@ -316,7 +318,7 @@
       box-sizing: border-box;
       font: inherit;
       font-size: 16px;
-      font-weight: 500;
+      font-weight: 400;
       letter-spacing: .02em;
       padding: 8px 10px;
       border-radius: 12px;
@@ -324,15 +326,32 @@
       white-space: nowrap;
       cursor: pointer;
       background: transparent;
-      color: var(--text-muted);
-      transition: background .25s ease, color .25s ease, border-color .25s ease;
+      color: var(--btn-close-idle-text);
+      filter: none;
+      transition: color .25s ease, filter .35s ease, border-color .25s ease;
     }
 
     .nav .nav-club-logout:hover,
     .nav .nav-club-logout:active {
-      color: var(--text-hover);
-      background: var(--surface-hover);
-      border-color: var(--border-hover);
+      color: var(--text);
+      background: transparent;
+      border-color: transparent;
+      filter:
+        drop-shadow(0 0 5px rgba(0, 0, 0, 0.55))
+        drop-shadow(0 0 18px rgba(0, 0, 0, 0.48))
+        drop-shadow(0 0 40px rgba(0, 0, 0, 0.38))
+        drop-shadow(0 0 72px rgba(0, 0, 0, 0.25))
+        drop-shadow(0 0 110px rgba(0, 0, 0, 0.14));
+    }
+
+    .nav .nav-club-logout:focus-visible:not(:hover) {
+      outline: 2px solid var(--stroke, rgba(0, 0, 0, .28));
+      outline-offset: 2px;
+      filter: none;
+    }
+
+    .nav .nav-club-logout:hover:focus-visible {
+      outline: none;
     }
 
     body.menu-open .mobile-menu {
@@ -350,36 +369,73 @@
       display: flex;
       gap: 12px;
       align-items: center;
-      overflow: auto;
+      /* auto/scroll обрезает filter: drop-shadow у ссылок; свечение как у лого — вне коробки */
+      overflow: visible;
       flex: 1 1 auto;
       justify-content: center;
       margin-left: 0;
-      transform: translateX(-32px);
+      transform: translateZ(0) translateX(-56px);
+      padding: 0 48px;
+      box-sizing: border-box;
     }
 
     .nav a {
-      color: var(--text-muted);
+      color: var(--btn-close-idle-text);
       font-size: 16px;
-      font-weight: 500;
+      font-weight: 400;
       letter-spacing: .02em;
       padding: 8px 10px;
       border-radius: 12px;
       border: 1px solid transparent;
       white-space: nowrap;
-      transition: background .25s ease, color .25s ease, border-color .25s ease;
+      background: transparent;
+      filter: none;
+      transition: color .25s ease, filter .35s ease, border-color .25s ease;
     }
 
     .nav a:hover,
     .nav a:active {
-      color: var(--text-hover);
-      background: var(--surface-hover);
-      border-color: var(--border-hover);
+      color: var(--text);
+      background: transparent;
+      border-color: transparent;
+      filter:
+        drop-shadow(0 0 5px rgba(0, 0, 0, 0.55))
+        drop-shadow(0 0 18px rgba(0, 0, 0, 0.48))
+        drop-shadow(0 0 40px rgba(0, 0, 0, 0.38))
+        drop-shadow(0 0 72px rgba(0, 0, 0, 0.25))
+        drop-shadow(0 0 110px rgba(0, 0, 0, 0.14));
+    }
+
+    .nav a:focus-visible:not(:hover) {
+      outline: 2px solid var(--stroke, rgba(0, 0, 0, .28));
+      outline-offset: 2px;
+      filter: none;
+    }
+
+    .nav a:hover:focus-visible {
+      outline: none;
     }
 
     .nav a.active {
       color: var(--text);
-      background: var(--surface-2);
-      border-color: var(--stroke)
+      background: transparent;
+      border-color: transparent;
+      text-decoration: underline;
+      text-underline-offset: 6px;
+      text-decoration-color: var(--stroke);
+      text-decoration-thickness: 1px;
+    }
+
+    .nav a.active:hover,
+    .nav a.active:active {
+      text-decoration: underline;
+      text-decoration-color: var(--stroke);
+      filter:
+        drop-shadow(0 0 5px rgba(0, 0, 0, 0.55))
+        drop-shadow(0 0 18px rgba(0, 0, 0, 0.48))
+        drop-shadow(0 0 40px rgba(0, 0, 0, 0.38))
+        drop-shadow(0 0 72px rgba(0, 0, 0, 0.25))
+        drop-shadow(0 0 110px rgba(0, 0, 0, 0.14));
     }
 
     .right {
@@ -485,12 +541,12 @@
     }
 
     main {
-      padding-top: 78px
+      padding-top: 88px
     }
 
     section {
       padding: 56px 0;
-      /* Якорная прокрутка: раздел начинается под фиксированным топбаром (78px), без обрезки заголовка */
+      /* Якорная прокрутка: раздел начинается под фиксированным топбаром (88px), без обрезки заголовка */
       scroll-margin-top: 90px;
     }
 
@@ -1047,7 +1103,7 @@
     }
 
     .hero-fullscreen .heroArt {
-      min-height: calc(100vh - 78px);
+      min-height: calc(100vh - 88px);
       border: 0;
       border-radius: 0;
     }
@@ -1070,7 +1126,7 @@
     }
 
     .intro-start {
-      margin-top: -78px;
+      margin-top: -88px;
       padding: 0;
       min-height: 100vh;
       display: flex;
@@ -2336,7 +2392,7 @@
 
       .topbar,
       .topbar .in {
-        height: 68px
+        height: 76px
       }
 
       .topbar .in {
@@ -2354,8 +2410,8 @@
       .brand .brand-mark {
         position: static;
         transform: none;
-        width: 54px;
-        height: 54px;
+        width: 76px;
+        height: 76px;
         padding: 0;
       }
 
@@ -2389,19 +2445,19 @@
       }
 
       main {
-        padding-top: 68px
+        padding-top: 76px
       }
 
       main section {
-        scroll-margin-top: 78px;
+        scroll-margin-top: 88px;
       }
 
       .mobile-menu {
-        top: 68px
+        top: 76px
       }
 
       .mobile-menu-backdrop {
-        inset: 68px 0 0 0
+        inset: 76px 0 0 0
       }
 
       h1 {
@@ -2419,7 +2475,7 @@
       }
 
       .hero-fullscreen .heroArt {
-        min-height: calc(100vh - 68px)
+        min-height: calc(100vh - 76px)
       }
 
       .hero-fullscreen .heroArt .smile {
@@ -2436,7 +2492,7 @@
       }
 
       .intro-start {
-        margin-top: -68px;
+        margin-top: -76px;
         min-height: 100vh;
       }
 
@@ -2975,8 +3031,8 @@
       }
 
       .brand-mark {
-        width: 52px;
-        height: 52px;
+        width: 72px;
+        height: 72px;
         font-size: 19px
       }
 
@@ -3019,7 +3075,7 @@
       }
 
       .hero-fullscreen .heroArt {
-        min-height: calc(100vh - 68px)
+        min-height: calc(100vh - 76px)
       }
     }
 
@@ -3102,10 +3158,33 @@
         outline: none;
       }
 
-      /* Крупнее логотип в тёмной теме (светлый знак на размытой шапке) */
-      .brand-mark {
-        width: 68px;
-        height: 68px;
+      .nav a:hover,
+      .nav a:active,
+      .nav .nav-club-logout:hover,
+      .nav .nav-club-logout:active {
+        filter:
+          drop-shadow(0 0 5px rgba(255, 255, 255, 1))
+          drop-shadow(0 0 22px rgba(255, 255, 255, 1))
+          drop-shadow(0 0 48px rgba(255, 255, 255, 1))
+          drop-shadow(0 0 88px rgba(255, 255, 255, 0.92))
+          drop-shadow(0 0 130px rgba(255, 255, 255, 0.72));
+      }
+
+      .nav a.active:hover,
+      .nav a.active:active {
+        filter:
+          drop-shadow(0 0 5px rgba(255, 255, 255, 1))
+          drop-shadow(0 0 22px rgba(255, 255, 255, 1))
+          drop-shadow(0 0 48px rgba(255, 255, 255, 1))
+          drop-shadow(0 0 88px rgba(255, 255, 255, 0.92))
+          drop-shadow(0 0 130px rgba(255, 255, 255, 0.72));
+      }
+
+      .nav a:focus-visible:not(:hover),
+      .nav .nav-club-logout:focus-visible:not(:hover) {
+        outline: 2px solid var(--stroke);
+        outline-offset: 2px;
+        filter: none;
       }
 
       body::before {
@@ -3154,20 +3233,6 @@
         background: var(--border);
       }
 
-    }
-
-    @media (prefers-color-scheme: dark) and (max-width: 760px) {
-      .brand .brand-mark {
-        width: 62px;
-        height: 62px;
-      }
-    }
-
-    @media (prefers-color-scheme: dark) and (max-width: 380px) {
-      .brand .brand-mark {
-        width: 58px;
-        height: 58px;
-      }
     }
 
     @keyframes skeleton-loading {
