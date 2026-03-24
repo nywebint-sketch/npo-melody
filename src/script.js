@@ -1424,6 +1424,25 @@ function renderSkeletonGrid(selector, count = 4, variant = "default") {
   }
 }
 
+/** Загрузка таблиц для сеток; идёт параллельно с refreshClubSession, чтобы не ждать сессию и каталог по очереди. */
+const loadCatalogFromDb = async () => {
+  if (!window.dbLayer) return;
+  const [events, artists, releases, podcasts, merch, liveItems] = await Promise.all([
+    window.dbLayer.getEvents(),
+    window.dbLayer.getArtists(),
+    window.dbLayer.getReleases(),
+    window.dbLayer.getPodcasts(),
+    window.dbLayer.getMerch(),
+    window.dbLayer.getLiveItems ? window.dbLayer.getLiveItems() : Promise.resolve([])
+  ]);
+  data.events = events;
+  data.artists = artists;
+  data.releases = releases;
+  data.podcasts = podcasts;
+  data.merch = merch;
+  data.live = Array.isArray(liveItems) ? liveItems : [];
+};
+
 const initApp = async () => {
   // Показать скелетоны до загрузки данных из БД
   renderSkeletonGrid("#eventsGrid", 6);
@@ -1433,20 +1452,7 @@ const initApp = async () => {
   renderSkeletonGrid("#merchGrid", 4);
 
   if (window.dbLayer) {
-    const [events, artists, releases, podcasts, merch, liveItems] = await Promise.all([
-      window.dbLayer.getEvents(),
-      window.dbLayer.getArtists(),
-      window.dbLayer.getReleases(),
-      window.dbLayer.getPodcasts(),
-      window.dbLayer.getMerch(),
-      window.dbLayer.getLiveItems ? window.dbLayer.getLiveItems() : Promise.resolve([])
-    ]);
-    data.events = events;
-    data.artists = artists;
-    data.releases = releases;
-    data.podcasts = podcasts;
-    data.merch = merch;
-    data.live = Array.isArray(liveItems) ? liveItems : [];
+    await Promise.all([refreshClubSession(), loadCatalogFromDb()]);
   }
 
   const yearNode = $("#year");
@@ -1476,7 +1482,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   closeModal();
   if (window.dbLayer) {
     await window.dbLayer.syncDefaultData();
-    await refreshClubSession();
   }
   bindStreamsSectionPanels();
   bindSectionNavScroll();

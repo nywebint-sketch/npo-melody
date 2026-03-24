@@ -3,7 +3,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.supabase.co; script-src 'self' https://unpkg.com https://*.supabase.co; style-src 'self' 'unsafe-inline' blob: data:; font-src 'self' data: blob:; img-src 'self' https: data:; media-src 'self' https: blob: data:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://rutube.ru https://*.supabase.co; connect-src 'self' https://*.supabase.co https://httpbin.org; form-action 'self'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.supabase.co; script-src 'self' https://*.supabase.co; style-src 'self' 'unsafe-inline' blob: data:; font-src 'self' data: blob:; img-src 'self' https: data:; media-src 'self' https: blob: data:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://rutube.ru https://*.supabase.co; connect-src 'self' https://*.supabase.co https://httpbin.org; form-action 'self'; base-uri 'self';">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -85,6 +85,8 @@
         class="intro-start-image"
         src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/npo_print_source.png"
         alt="НПО Мелодия — главная обложка"
+        fetchpriority="high"
+        decoding="async"
       >
     </section>
 
@@ -291,7 +293,6 @@
     </div>
   </div>
 
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script type="module" src="./src/main.js"></script>
 
 </body>

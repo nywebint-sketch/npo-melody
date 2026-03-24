@@ -82,7 +82,7 @@ npm run build
 
 ### Supabase
 
-URL и anon-ключ проекта заданы в `src/db.js` (глобальный `window.supabase` подключается из `index.html` / `admin.html`).
+URL и anon-ключ проекта заданы в `src/db.js`; клиент Supabase подключается через npm (`@supabase/supabase-js`) и попадает в бандл Vite.
 
 Дальше можно вынести значения в переменные окружения (`VITE_SUPABASE_*`) и подставлять при сборке в CI.
 
