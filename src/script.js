@@ -734,7 +734,7 @@ function scrollToExclusiveSection() {
 /** Клики по пунктам меню: прокрутка к началу раздела без «хвостов» соседних блоков (см. scroll-margin-top в CSS). */
 function bindSectionNavScroll() {
   const links = document.querySelectorAll(
-    '.nav a[href^="#"], #mobileMenu a[href^="#"], header.topbar .right a[href^="#"]'
+    '.nav a[href^="#"], #mobileMenu a[href^="#"]'
   );
   links.forEach((link) => {
     link.addEventListener("click", (e) => {
@@ -1332,7 +1332,13 @@ document.addEventListener("submit", async (e) => {
 });
 
 const navLinks = $$(".nav a");
-const sections = navLinks.map((a) => document.querySelector(a.getAttribute("href"))).filter(Boolean);
+const sections = navLinks
+  .map((a) => {
+    const href = a.getAttribute("href");
+    if (!href || !href.startsWith("#")) return null;
+    return document.querySelector(href);
+  })
+  .filter(Boolean);
 
 // IntersectionObserver used to add 'active' class to nav links. 
 // Removed as per user request to only highlight on hover.
