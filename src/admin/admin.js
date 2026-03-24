@@ -1,4 +1,12 @@
 import * as db from '../db.js';
+import { getDefaultLogoUrl } from '../logoUrls.js';
+
+/** Превью в админке: sentinel `logo.png` → theme-aware URL */
+function resolvePosterPreview(p) {
+  const v = String(p || '').trim();
+  if (!v || v === 'logo.png') return getDefaultLogoUrl();
+  return v;
+}
 
 // ---- УПРАВЛЕНИЕ АВТОРИЗАЦИЕЙ ----
 
@@ -378,7 +386,7 @@ async function openEventEditor(id = null) {
       <div class="form-group">
         <label>Обложка / Фото</label>
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
-          ${event.poster ? `<img src="${event.poster}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">` : `<div style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:4px;"></div>`}
+          ${event.poster ? `<img src="${resolvePosterPreview(event.poster)}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">` : `<div style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:4px;"></div>`}
           <input type="file" name="posterFile" accept="image/*" style="font-size:14px;">
         </div>
         <div class="muted" style="font-size:12px;">Оставьте пустым, чтобы не менять текущую картинку.</div>
@@ -516,7 +524,7 @@ async function openArtistEditor(id = null) {
       <div class="form-group">
         <label>Обложка / Фото</label>
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
-          ${artist.poster ? `<img src="${artist.poster}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">` : `<div style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:4px;"></div>`}
+          ${artist.poster ? `<img src="${resolvePosterPreview(artist.poster)}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">` : `<div style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:4px;"></div>`}
           <input type="file" name="posterFile" accept="image/*" style="font-size:14px;">
         </div>
         <div class="muted" style="font-size:12px;">Оставьте пустым, чтобы не менять текущую картинку.</div>
@@ -756,7 +764,7 @@ async function openLiveEditor(id = null) {
       <div class="form-group">
         <label>Обложка / постер</label>
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
-          ${live.poster ? `<img src="${live.poster}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">` : `<div style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:4px;"></div>`}
+          ${live.poster ? `<img src="${resolvePosterPreview(live.poster)}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">` : `<div style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:4px;"></div>`}
           <input type="file" name="posterFile" accept="image/*" style="font-size:14px;">
         </div>
         <div class="muted" style="font-size:12px;">Оставьте пустым, чтобы не менять текущую картинку.</div>

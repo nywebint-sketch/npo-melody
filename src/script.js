@@ -1,17 +1,13 @@
 // Copied from original script.js with no behavior changes.
 
 import { createCarousel } from "./carousel.js";
+import { ASSET_PREFIX, getDefaultLogoUrl } from "./logoUrls.js";
 
-// IMPORTANT:
-// 1) Сохрани твою картинку рядом с index.html
-// 2) Назови файл https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png (или поменяй все src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" на свое имя)
+// Заглушка «логотип»: в БД может храниться sentinel `logo.png` — в UI подставляется theme-aware URL (см. logoUrls.js).
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const pad2 = (n) => String(n).padStart(2, "0");
-
-// Базовый URL для относительных путей, указывающий на публичный бакет Supabase
-const ASSET_PREFIX = "https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/";
 
 const monthsRu = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
 const fmtDT = (iso) => {
@@ -433,7 +429,7 @@ function createMedia(imgSrc, imgAlt, className = "media") {
   const media = el("div", { className });
   const img = document.createElement("img");
 
-  const defaultLogo = "https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png";
+  const defaultLogo = getDefaultLogoUrl();
   const raw = String(imgSrc || "").trim();
 
   let src;
@@ -455,7 +451,7 @@ function createMedia(imgSrc, imgAlt, className = "media") {
   // МАГИЯ ЗДЕСЬ: Если картинка (например wei.jpg) вернула 404, ставим заглушку
   img.onerror = function () {
     this.onerror = null; // Защита от бесконечного цикла
-    this.src = defaultLogo;
+    this.src = getDefaultLogoUrl();
   };
 
   media.appendChild(img);
@@ -463,7 +459,7 @@ function createMedia(imgSrc, imgAlt, className = "media") {
 }
 
 function resolveImageSrc(imgSrc) {
-  const defaultLogo = "https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png";
+  const defaultLogo = getDefaultLogoUrl();
   const raw = String(imgSrc || "").trim();
   if (!raw || raw === "logo.png" || raw === "smile.png") return defaultLogo;
   if (/^https?:\/\//i.test(raw)) return raw;
@@ -473,7 +469,7 @@ function resolveImageSrc(imgSrc) {
 
 /** Изображения товаров шопа в Storage: images/microdropych/; короткие имена («vtroem.jpeg», «vtroem») собираем в полный URL. */
 function resolveMerchImageSrc(raw) {
-  const defaultLogo = "https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png";
+  const defaultLogo = getDefaultLogoUrl();
   const s = String(raw || "").trim();
   if (!s || s === "logo.png" || s === "smile.png") return defaultLogo;
   if (/^https?:\/\//i.test(s)) return s;
@@ -1492,7 +1488,7 @@ const initApp = async () => {
     createCarousel(carouselContainer, {
       urls: [
         ASSET_PREFIX + "npo_print_source.png",
-        ASSET_PREFIX + "logo.png"
+        getDefaultLogoUrl()
       ].filter(Boolean),
       intervalMs: 5000,
       pauseOnHover: true

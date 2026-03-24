@@ -15,7 +15,11 @@
   <div id="adminLoginScreen" class="admin-login-screen">
     <div class="card pad admin-login-card">
       <div style="text-align: center; margin-bottom: 24px;">
-        <img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" alt="Logo" style="width: 64px; border-radius: 50%;">
+        <picture style="display:inline-block;">
+          <source media="(prefers-color-scheme: dark)"
+            srcset="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo%20white.png">
+          <img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo%20black.png" alt="Logo" style="width: 72px; height: auto; object-fit: contain; background: transparent;">
+        </picture>
         <h2>Вход в панель управления</h2>
       </div>
       <form id="adminLoginForm" class="auth-form">
@@ -33,7 +37,11 @@
     <!-- Сайдбар -->
     <aside class="admin-sidebar">
       <div class="sidebar-header">
-        <img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png" alt="Logo" class="sidebar-logo">
+        <picture class="sidebar-logo-wrap">
+          <source media="(prefers-color-scheme: dark)"
+            srcset="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo%20white.png">
+          <img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo%20black.png" alt="Logo" class="sidebar-logo">
+        </picture>
         <b>НПО Мелодия Admin</b>
       </div>
       <nav class="sidebar-nav">

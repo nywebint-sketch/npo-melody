@@ -161,44 +161,74 @@
     }
 
     .brand-mark {
-      width: 48px;
-      height: 48px;
-      border: 1px solid var(--btn-close-idle-border);
-      background: var(--btn-close-idle-bg);
+      width: 56px;
+      height: 56px;
+      border: 1px solid transparent;
+      background: transparent;
       border-radius: 12px;
       color: var(--btn-close-idle-text);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0;
-      overflow: hidden;
+      overflow: visible;
       cursor: pointer;
       user-select: none;
+      outline: none;
+      box-shadow: none;
       transition: background .25s ease, color .25s ease, border-color .25s ease;
     }
 
-    .brand-mark:hover,
-    .brand-mark:active,
-    .brand-mark:focus-visible {
+    /* Без заливки; свечение только на картинке (см. drop-shadow у img) */
+    .brand-mark:hover {
       transform: none;
-      background: var(--btn-close-hover-bg);
+      background: transparent;
       color: var(--btn-close-hover-text);
-      border-color: var(--btn-close-hover-border);
+      border-color: transparent;
+      box-shadow: none;
     }
 
-    .brand-mark img {
+    /* Фокус с клавиатуры — контур без заливки */
+    .brand-mark:focus-visible:not(:hover) {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      outline: 2px solid var(--stroke, rgba(0, 0, 0, .28));
+      outline-offset: 2px;
+    }
+
+    .brand-mark:hover:focus-visible {
+      outline: none;
+    }
+
+    .brand-mark picture {
+      display: block;
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      display: block;
-      filter: invert(1);
-      transition: filter .25s ease;
     }
 
-    .brand-mark:hover img,
-    .brand-mark:active img,
-    .brand-mark:focus-visible img {
-      filter: invert(0);
+    .brand-mark picture img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: transparent;
+      filter: none;
+      transition: filter .35s ease;
+    }
+
+    /* Светлая тема: по контуру лого — мягкий тёмный «дым» */
+    .brand-mark:hover picture img {
+      filter:
+        drop-shadow(0 0 5px rgba(0, 0, 0, 0.55))
+        drop-shadow(0 0 18px rgba(0, 0, 0, 0.48))
+        drop-shadow(0 0 40px rgba(0, 0, 0, 0.38))
+        drop-shadow(0 0 72px rgba(0, 0, 0, 0.25))
+        drop-shadow(0 0 110px rgba(0, 0, 0, 0.14));
+    }
+
+    .brand-mark:focus-visible:not(:hover) picture img {
+      filter: none;
     }
 
     .menu-toggle {
@@ -2324,13 +2354,13 @@
       .brand .brand-mark {
         position: static;
         transform: none;
-        width: 46px;
-        height: 46px;
+        width: 54px;
+        height: 54px;
         padding: 0;
       }
 
-      .brand .brand-mark img {
-        object-fit: cover;
+      .brand .brand-mark picture img {
+        object-fit: contain;
       }
 
       .right {
@@ -2945,8 +2975,8 @@
       }
 
       .brand-mark {
-        width: 44px;
-        height: 44px;
+        width: 52px;
+        height: 52px;
         font-size: 19px
       }
 
@@ -3041,6 +3071,43 @@
         --btn-close-hover-border: transparent;
       }
 
+      .brand-mark:hover {
+        background: transparent;
+        border-color: transparent;
+        box-shadow: none;
+      }
+
+      .brand-mark:hover picture img {
+        filter:
+          drop-shadow(0 0 5px rgba(255, 255, 255, 1))
+          drop-shadow(0 0 22px rgba(255, 255, 255, 1))
+          drop-shadow(0 0 48px rgba(255, 255, 255, 1))
+          drop-shadow(0 0 88px rgba(255, 255, 255, 0.92))
+          drop-shadow(0 0 130px rgba(255, 255, 255, 0.72));
+      }
+
+      .brand-mark:focus-visible:not(:hover) {
+        background: transparent;
+        border-color: transparent;
+        box-shadow: none;
+        outline: 2px solid var(--stroke);
+        outline-offset: 2px;
+      }
+
+      .brand-mark:focus-visible:not(:hover) picture img {
+        filter: none;
+      }
+
+      .brand-mark:hover:focus-visible {
+        outline: none;
+      }
+
+      /* Крупнее логотип в тёмной теме (светлый знак на размытой шапке) */
+      .brand-mark {
+        width: 68px;
+        height: 68px;
+      }
+
       body::before {
         filter: grayscale(1) invert(1) contrast(3.4) brightness(1.5);
         opacity: .22;
@@ -3087,13 +3154,19 @@
         background: var(--border);
       }
 
-      .brand-mark img {
-        filter: invert(0);
-      }
+    }
 
-      .brand-mark:hover img,
-      .brand-mark:active img {
-        filter: invert(1);
+    @media (prefers-color-scheme: dark) and (max-width: 760px) {
+      .brand .brand-mark {
+        width: 62px;
+        height: 62px;
+      }
+    }
+
+    @media (prefers-color-scheme: dark) and (max-width: 380px) {
+      .brand .brand-mark {
+        width: 58px;
+        height: 58px;
       }
     }
 

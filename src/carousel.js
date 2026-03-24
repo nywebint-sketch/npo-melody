@@ -1,3 +1,5 @@
+import { getDefaultLogoUrl } from "./logoUrls.js";
+
 /**
  * Карусель изображений: динамическая загрузка из массива URL,
  * автопрокрутка, стрелки, точки-индикаторы, адаптивность.
@@ -10,8 +12,6 @@
  * @param {string} [options.carouselClass='carousel'] - класс корневого элемента карусели
  * @returns {{ goTo: (index: number) => void, destroy: () => void }} API для перехода по индексу и уничтожения
  */
-const DEFAULT_CAROUSEL_FALLBACK =
-  "https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo.png";
 
 function createCarousel(container, options = {}) {
   const urls = options.urls || [];
@@ -52,10 +52,10 @@ function createCarousel(container, options = {}) {
         img.src = urls[0];
         img.addEventListener("error", function onSecondError() {
           img.removeEventListener("error", onSecondError);
-          img.src = DEFAULT_CAROUSEL_FALLBACK;
+          img.src = getDefaultLogoUrl();
         });
       } else {
-        img.src = DEFAULT_CAROUSEL_FALLBACK;
+        img.src = getDefaultLogoUrl();
       }
     });
     slide.appendChild(img);
