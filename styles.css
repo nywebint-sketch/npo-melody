@@ -31,6 +31,8 @@
       --radius: 18px;
       --max: 1180px;
       --modal-bg: rgba(255, 255, 255, .97);
+      /* Плёночное зерно (тот же тайл, что у шапки) */
+      --grain-noise-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' fill='%23fff' filter='url(%23n)'/%3E%3C/svg%3E");
       --focus-offset: 2px;
       --pad: 16px;
       --pad-sm: 12px;
@@ -121,6 +123,27 @@
       border-bottom: 1px solid var(--border);
       box-shadow: none;
       overflow: visible;
+      isolation: isolate;
+    }
+
+    .topbar::before,
+    .modal-inner::before,
+    .streams-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.2;
+      mix-blend-mode: soft-light;
+      background-image: var(--grain-noise-tile);
+      background-repeat: repeat;
+      background-size: 96px 96px;
+    }
+
+    .topbar .container {
+      position: relative;
+      z-index: 1;
     }
 
     .topbar .in {
@@ -708,6 +731,18 @@
       background: transparent;
       padding: 0;
       flex-shrink: 0;
+    }
+
+    /* Панель «Эксклюзив»: тот же зёрнистый слой, что у .modal-inner */
+    .streams-panel {
+      position: relative;
+      isolation: isolate;
+    }
+
+    .streams-panel .streams-panel-header,
+    .streams-panel .streams-panel-body {
+      position: relative;
+      z-index: 1;
     }
 
     /* Шапка с крестиком — те же классы, что у #modal */
@@ -1532,6 +1567,8 @@
     }
 
     .modal-inner {
+      position: relative;
+      isolation: isolate;
       width: min(920px, calc(100vw - 36px));
       max-width: min(920px, calc(100vw - 36px));
       max-height: 86vh;
@@ -1553,6 +1590,7 @@
       align-items: center;
       justify-content: center;
       position: relative;
+      z-index: 1;
       /* Симметричные поля — заголовок по центру карточки (крестик absolute справа) */
       padding: 14px 56px;
       border-bottom: 1px solid var(--border);
@@ -1638,6 +1676,8 @@
 
     /* overflow-anchor: none — меньше скачков прокрутки в моб. Safari; dvh — реальная высота окна */
     .modal-body {
+      position: relative;
+      z-index: 1;
       background: transparent;
       color: var(--text);
       flex: 1 1 auto;
