@@ -786,7 +786,16 @@ function bindStreamsSectionPanels() {
 
 const appendDivider = (parent) => parent.appendChild(el("div", { className: "divider" }));
 
-function buildEventModalRightColumn(eventItem, { sectionTitle = null } = {}) {
+function lineupNamesFromEvent(eventItem) {
+  return (Array.isArray(eventItem.lineup) ? eventItem.lineup : []).filter(
+    (name) => String(name ?? "").trim() !== ""
+  );
+}
+
+function buildEventModalRightColumn(
+  eventItem,
+  { sectionTitle = null, skipLineup = false, lineupChaos = false } = {}
+) {
   const right = el("div", { className: "card pad event-modal-right afisha-modal-right" });
   if (sectionTitle) {
     right.appendChild(el("b", { text: sectionTitle }));
@@ -797,17 +806,24 @@ function buildEventModalRightColumn(eventItem, { sectionTitle = null } = {}) {
     right.appendChild(el("div", { className: "muted", text: aboutText }));
   }
 
-  const lineupNames = (Array.isArray(eventItem.lineup) ? eventItem.lineup : []).filter(
-    (name) => String(name ?? "").trim() !== ""
-  );
-  if (lineupNames.length) {
-    const lineup = el("div", { className: "muted" });
-    lineup.style.marginTop = aboutText ? "4px" : "0";
-    lineupNames.forEach((name, idx) => {
-      if (idx > 0) lineup.appendChild(document.createElement("br"));
-      lineup.appendChild(document.createTextNode(String(name)));
-    });
-    right.appendChild(lineup);
+  const lineupNames = lineupNamesFromEvent(eventItem);
+  if (!skipLineup && lineupNames.length) {
+    if (lineupChaos) {
+      const chaos = el("div", { className: "muted event-lineup-chaos" });
+      chaos.style.marginTop = aboutText ? "8px" : "0";
+      chaos.setAttribute("aria-label", "Лайнап");
+      lineupNames.forEach((name) => {
+        chaos.appendChild(el("span", { className: "event-lineup-chaos-item", text: String(name) }));
+      });
+      right.appendChild(chaos);
+    } else {
+      const lineup = el("div", { className: "muted event-lineup" });
+      lineup.style.marginTop = aboutText ? "4px" : "0";
+      lineupNames.forEach((name) => {
+        lineup.appendChild(el("div", { className: "event-lineup-item", text: String(name) }));
+      });
+      right.appendChild(lineup);
+    }
   }
 
   if (eventItem.address) {
@@ -914,7 +930,7 @@ function buildEventModalBody(eventItem) {
 
   left.appendChild(buildEventModalTicketActions(eventItem));
   wrapper.appendChild(left);
-  wrapper.appendChild(buildEventModalRightColumn(eventItem));
+  wrapper.appendChild(buildEventModalRightColumn(eventItem, { lineupChaos: true }));
   return wrapper;
 }
 

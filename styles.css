@@ -782,7 +782,18 @@
       padding: 12px;
     }
 
-    #artistsGrid .artist-card .artist-card-name,
+    #artistsGrid .artist-card .artist-card-name {
+      display: block;
+      width: 100%;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      line-height: 1.25;
+      text-align: center;
+    }
+
     #releasesGrid .release-card .release-card-title {
       display: block;
       width: 100%;
@@ -1145,7 +1156,7 @@
     /* Карточки артистов: высота по контенту, квадратное фото, без пустых блоков */
     #artistsGrid {
       align-items: start;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     #artistsGrid .artist-card {
@@ -1571,6 +1582,12 @@
       overflow-x: hidden;
       overflow-anchor: none;
       -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .modal-body::-webkit-scrollbar {
+      display: none;
     }
 
     .profile-modal-wrap {
@@ -1848,6 +1865,39 @@
       width: 100%;
     }
 
+    /* Лайнап под описанием (афиша): «воздушный» поток, как на постере — зазоры между именами */
+    #mBody .event-modal-right .event-lineup-chaos {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      align-content: flex-start;
+      gap: 0.45em 0.95em;
+      width: 100%;
+      min-width: 0;
+      min-height: 0;
+      overflow: visible;
+      box-sizing: border-box;
+      line-height: 1.55;
+    }
+
+    #mBody .event-modal-right .event-lineup-chaos-item {
+      position: relative;
+      display: inline-block;
+      flex: 0 1 auto;
+      box-sizing: border-box;
+      max-width: 100%;
+      font-family: inherit;
+      font-style: normal;
+      font-size: inherit;
+      font-weight: 500;
+      line-height: inherit;
+      letter-spacing: inherit;
+      text-align: left;
+      color: var(--text-muted);
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
     .live-stream-modal-wrap .live-modal-iframe-wrap,
     .live-stream-modal-wrap .live-modal-video-file-wrap {
       position: relative;
@@ -2041,6 +2091,31 @@
       color: var(--text-muted);
     }
 
+    /* Лайнап live: 3 колонки */
+    #mBody .event-modal-right .event-lineup {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px 12px;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    #mBody .event-modal-right .event-lineup .event-lineup-item {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      line-height: 1.35;
+      text-align: left;
+    }
+
+    @media (max-width: 420px) {
+      #mBody .event-modal-right .event-lineup {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px 10px;
+      }
+    }
+
     #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right .divider {
       margin: 4px 0;
     }
@@ -2104,6 +2179,9 @@
       border: none;
       box-shadow: none;
       outline: none;
+      /* как у правой колонки: без blur от .card — иначе у нижнего края постера видна серая «тень» */
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
 
     /* Релиз: одна колонка — постер и кнопки по центру (не justify-self: start от правила выше) */
@@ -2201,7 +2279,6 @@
         grid-template-columns: repeat(3, minmax(0, 1fr))
       }
 
-      #artistsGrid,
       #merchGrid,
       #releasesGrid {
         grid-template-columns: repeat(4, minmax(0, 1fr));
