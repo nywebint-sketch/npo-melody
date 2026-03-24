@@ -71,9 +71,12 @@ npm run build
 
 ### GitHub Pages
 
-1. `npm run build`
-2. Выложить содержимое `dist/` (ветка `gh-pages`, Actions или `git subtree push` — см. историю коммитов / настройки репозитория).
-3. В **Settings → Pages**: источник — ветка `gh-pages`, папка `/ (root)`.
+Сайт должен отдавать **собранный** фронт (`dist/`), иначе браузер загрузит `src/main.js` и упадёт на импорте `@supabase/supabase-js` (его разрешает только Vite).
+
+1. В **Settings → Pages** выбери источник **GitHub Actions** (не «Deploy from a branch» с корнем репозитория).
+2. Workflow `.github/workflows/pages.yml` при push в `main` выполняет `npm ci` и `npm run build` и публикует **только каталог `dist/`**.
+
+Вручную: `npm run build` и выложи содержимое `dist/` на любой статический хостинг.
 
 Типичный URL: `https://nywebint-sketch.github.io/npo-melody/`  
 Админка: `https://nywebint-sketch.github.io/npo-melody/admin.html`
