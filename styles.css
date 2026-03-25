@@ -147,6 +147,19 @@
       overflow: visible;
     }
 
+    /* Большие мониторы: лого ближе к левому краю (только шапка, не контент страницы) */
+    @media (min-width: 1280px) {
+      .topbar .container {
+        /* Вплотную к краю, кроме safe-area на iPhone / ноутбуках с вырезом */
+        padding-left: env(safe-area-inset-left, 0px);
+      }
+
+      .brand {
+        margin-left: 0;
+        transform: translateX(-6px);
+      }
+    }
+
     .topbar .in {
       height: 72px;
       display: flex;
