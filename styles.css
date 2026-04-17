@@ -37,8 +37,6 @@
       --pad: 16px;
       --pad-sm: 12px;
       --container-pad-x: 16px;
-      /* Шапка: лого и бургер ближе к краям экрана, чем основной контент */
-      --topbar-pad-x: 8px;
       /* Лого и меню — один размер кнопки */
       --header-control-size: 48px;
       /* Высота зоны под фикс. шапкой: якоря, main, оверлей-меню, hero */
@@ -157,8 +155,8 @@
     .topbar .container {
       position: relative;
       z-index: 1;
-      padding-left: var(--topbar-pad-x);
-      padding-right: var(--topbar-pad-x);
+      padding-left: var(--container-pad-x);
+      padding-right: var(--container-pad-x);
     }
 
     .topbar .in {
@@ -445,7 +443,7 @@
       gap: 0;
       width: auto;
       min-width: 0;
-      max-width: min(260px, calc(100vw - 2 * var(--topbar-pad-x)));
+      max-width: min(260px, calc(100vw - 2 * var(--container-pad-x)));
       box-sizing: border-box;
       padding: 0;
       margin: 0;
@@ -454,9 +452,9 @@
       background: transparent;
     }
 
-    /* Всегда как при открытом меню: иначе бургер прыгает влево-вправо на --topbar-pad-x */
+    /* Всегда как при открытом меню: иначе бургер прыгает влево-вправо на отступ шапки */
     .topbar .dropdown-container {
-      margin-right: calc(-1 * var(--topbar-pad-x));
+      margin-right: calc(-1 * var(--container-pad-x));
     }
 
     body.menu-open .dropdown-container {
@@ -466,7 +464,7 @@
       padding: 0 0 14px;
       align-items: stretch;
       gap: 4px;
-      width: min(260px, calc(100vw - 2 * var(--topbar-pad-x)));
+      width: min(260px, calc(100vw - 2 * var(--container-pad-x)));
     }
 
     body.menu-open .dropdown-container .nav-burger {
@@ -2707,8 +2705,8 @@
         max-width: var(--max);
         margin-left: auto;
         margin-right: auto;
-        padding-left: var(--topbar-pad-x);
-        padding-right: var(--topbar-pad-x);
+        padding-left: var(--container-pad-x);
+        padding-right: var(--container-pad-x);
       }
 
       .topbar .in {
