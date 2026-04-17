@@ -1418,6 +1418,7 @@ brandHomeLink?.addEventListener("click", (e) => {
 const closeMobileMenu = () => {
   document.body.classList.remove("menu-open");
   mobileMenuToggle?.setAttribute("aria-expanded", "false");
+  mobileMenuToggle?.setAttribute("aria-label", "Открыть меню");
   if (mobileMenu) mobileMenu.hidden = true;
   if (mobileMenuBackdrop) mobileMenuBackdrop.hidden = true;
 };
@@ -1427,6 +1428,7 @@ const openMobileMenu = () => {
   if (mobileMenuBackdrop) mobileMenuBackdrop.hidden = false;
   document.body.classList.add("menu-open");
   mobileMenuToggle?.setAttribute("aria-expanded", "true");
+  mobileMenuToggle?.setAttribute("aria-label", "Закрыть меню");
 };
 
 mobileMenuToggle?.addEventListener("click", (e) => {

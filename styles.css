@@ -230,6 +230,7 @@
       max-width: 100%;
       max-height: 100%;
       line-height: 0;
+      overflow: visible;
     }
 
     .brand-home picture img {
@@ -241,7 +242,9 @@
       display: block;
       background: transparent;
       filter: none;
-      transition: filter .2s ease;
+      transform: scale(1.48);
+      transform-origin: center center;
+      transition: filter .2s ease, transform .2s ease;
     }
 
     .brand-home:hover {
@@ -288,6 +291,7 @@
       flex-shrink: 0;
       outline: none;
       box-shadow: none;
+      position: relative;
       transition: background .2s ease, color .2s ease, border-color .2s ease;
     }
 
@@ -297,6 +301,40 @@
       height: 2px;
       border-radius: 1px;
       background: currentColor;
+      transition: transform .22s ease, opacity .18s ease, height .18s ease;
+      transform-origin: center;
+    }
+
+    body.menu-open .nav-burger {
+      gap: 0;
+    }
+
+    body.menu-open .nav-burger .nav-burger-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 22px;
+      height: 1.5px;
+      margin: 0;
+    }
+
+    body.menu-open .nav-burger .nav-burger-line:nth-child(1) {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    body.menu-open .nav-burger .nav-burger-line:nth-child(2) {
+      opacity: 0;
+      transform: translate(-50%, -50%) scaleX(0);
+    }
+
+    body.menu-open .nav-burger .nav-burger-line:nth-child(3) {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .nav-burger-line {
+        transition: none;
+      }
     }
 
     .nav-burger:hover {
@@ -403,7 +441,7 @@
       gap: 0;
       width: auto;
       min-width: 0;
-      max-width: min(320px, calc(100vw - 2 * var(--container-pad-x)));
+      max-width: min(260px, calc(100vw - 2 * var(--container-pad-x)));
       box-sizing: border-box;
       padding: 0;
       margin: 0;
@@ -412,13 +450,18 @@
     body.menu-open .dropdown-container {
       background: var(--bg);
       border: 1px solid var(--border);
-      padding-bottom: 10px;
+      /* без padding-top — иначе кнопка визуально «прыгает» вниз при открытии */
+      padding: 0 0 14px;
       align-items: stretch;
-      width: min(320px, calc(100vw - 2 * var(--container-pad-x)));
+      gap: 4px;
+      width: min(260px, calc(100vw - 2 * var(--container-pad-x)));
+      /* вплотную к правому краю области шапки (убираем зазор от padding .container) */
+      margin-right: calc(-1 * var(--container-pad-x));
     }
 
     body.menu-open .dropdown-container .nav-burger {
       align-self: flex-end;
+      flex-shrink: 0;
     }
 
     .mobile-menu-backdrop {
@@ -495,9 +538,74 @@
       border-color: var(--border-hover);
     }
 
+    /* Открытое меню: колонка слева, капс, интерлиньяж как на референсе; крестик — см. .nav-burger */
+    body.menu-open .mobile-menu {
+      text-align: left;
+      /* без бокового padding у nav — иначе заливка hover не на всю ширину панели */
+      padding: 2px 0 6px;
+    }
+
+    body.menu-open .mobile-menu a {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px clamp(20px, 7vw, 36px);
+      margin: 0;
+      border: 1px solid transparent;
+      border-radius: 0;
+      color: var(--fg);
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: .06em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    body.menu-open .mobile-menu a:hover,
+    body.menu-open .mobile-menu a:active {
+      color: var(--text-hover);
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+    }
+
+    body.menu-open .mobile-menu .nav-club-logout {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px clamp(20px, 7vw, 36px);
+      margin: 0;
+      border: 1px solid transparent;
+      border-radius: 0;
+      text-align: left;
+      color: var(--fg);
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: .06em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    body.menu-open .mobile-menu .nav-club-logout:hover,
+    body.menu-open .mobile-menu .nav-club-logout:active {
+      color: var(--text-hover);
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+    }
+
+    body.menu-open .mobile-menu::after {
+      content: "";
+      display: block;
+      width: 1.5rem;
+      height: 1px;
+      margin-top: 10px;
+      margin-left: clamp(20px, 7vw, 36px);
+      background: currentColor;
+      opacity: .28;
+    }
+
     body.menu-open .dropdown-container .mobile-menu > :first-child {
       margin-top: 0;
-      padding-top: 8px;
+      padding-top: 4px;
     }
 
     body.menu-open .topbar {
@@ -3256,6 +3364,11 @@
       .mobile-menu a,
       .mobile-menu .nav-club-logout {
         font-size: 13px
+      }
+
+      body.menu-open .mobile-menu a,
+      body.menu-open .mobile-menu .nav-club-logout {
+        font-size: 14px;
       }
     }
 
