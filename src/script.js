@@ -801,9 +801,7 @@ function scrollToExclusiveSection() {
 
 /** Клики по пунктам меню: прокрутка к началу раздела без «хвостов» соседних блоков (см. scroll-margin-top в CSS). */
 function bindSectionNavScroll() {
-  const links = document.querySelectorAll(
-    '.nav a[href^="#"], #mobileMenu a[href^="#"]'
-  );
+  const links = document.querySelectorAll('#mobileMenu a[href^="#"]');
   links.forEach((link) => {
     link.addEventListener("click", (e) => {
       const href = link.getAttribute("href");
@@ -825,9 +823,7 @@ function bindSectionNavScroll() {
 }
 
 function bindStreamsSectionPanels() {
-  const liveNavLinks = document.querySelectorAll(
-    'header.topbar a[href="#streams"], #mobileMenu a[href="#streams"]'
-  );
+  const liveNavLinks = document.querySelectorAll('#mobileMenu a[href="#streams"]');
 
   $("#exclusiveCloseBtn")?.addEventListener("click", (e) => {
     e.preventDefault();
@@ -1399,18 +1395,6 @@ document.addEventListener("submit", async (e) => {
   }
 });
 
-const navLinks = $$(".nav a");
-const sections = navLinks
-  .map((a) => {
-    const href = a.getAttribute("href");
-    if (!href || !href.startsWith("#")) return null;
-    return document.querySelector(href);
-  })
-  .filter(Boolean);
-
-// IntersectionObserver used to add 'active' class to nav links. 
-// Removed as per user request to only highlight on hover.
-
 const mobileMenuToggle = $("#mobileMenuToggle");
 const mobileMenu = $("#mobileMenu");
 const mobileMenuBackdrop = $("#mobileMenuBackdrop");
@@ -1433,10 +1417,6 @@ const openMobileMenu = () => {
 
 mobileMenuToggle?.addEventListener("click", (e) => {
   e.preventDefault();
-  if (!mobileBp.matches) {
-    window.location.hash = "home";
-    return;
-  }
   if (document.body.classList.contains("menu-open")) closeMobileMenu();
   else openMobileMenu();
 });
