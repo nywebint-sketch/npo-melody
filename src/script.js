@@ -636,7 +636,7 @@ function renderStreamsLive() {
       text: "доступно участникам с аккаунтом."
     });
     box.appendChild(lead);
-    const btn = el("button", { className: "btn primary auth-open-button", text: "Вход или регистрация" });
+    const btn = el("button", { className: "btn primary auth-open-button", text: "вход / регистрация" });
     btn.type = "button";
     box.appendChild(btn);
     wrap.appendChild(box);
