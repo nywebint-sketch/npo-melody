@@ -116,7 +116,7 @@
       position: fixed;
       inset: 0 0 auto 0;
       z-index: 50;
-      height: 72px;
+      height: 88px;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       background: var(--header-bg);
@@ -144,11 +144,10 @@
     .topbar .container {
       position: relative;
       z-index: 1;
-      overflow: visible;
     }
 
     .topbar .in {
-      height: 72px;
+      height: 88px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
@@ -187,8 +186,8 @@
     }
 
     .brand-mark {
-      width: 120px;
-      height: 120px;
+      width: 88px;
+      height: 88px;
       border: 1px solid transparent;
       background: transparent;
       border-radius: 12px;
@@ -265,7 +264,7 @@
 
     .mobile-menu-backdrop {
       position: fixed;
-      inset: 72px 0 0 0;
+      inset: 88px 0 0 0;
       background: rgba(0, 0, 0, .25);
       backdrop-filter: blur(4px);
       z-index: 79;
@@ -276,7 +275,7 @@
 
     .mobile-menu {
       position: fixed;
-      top: 72px;
+      top: 88px;
       left: var(--container-pad-x);
       right: var(--container-pad-x);
       z-index: 80;
@@ -398,7 +397,7 @@
       flex: 1 1 auto;
       justify-content: center;
       margin-left: 0;
-      transform: translateZ(0) translateX(-72px);
+      transform: translateZ(0) translateX(-56px);
       padding: 0 48px;
       box-sizing: border-box;
     }
@@ -565,13 +564,13 @@
     }
 
     main {
-      padding-top: 72px
+      padding-top: 88px
     }
 
     section {
       padding: 56px 0;
-      /* Якорная прокрутка: раздел начинается под фиксированным топбаром, без обрезки заголовка */
-      scroll-margin-top: 74px;
+      /* Якорная прокрутка: раздел начинается под фиксированным топбаром (88px), без обрезки заголовка */
+      scroll-margin-top: 90px;
     }
 
     #streams .head {
@@ -1139,7 +1138,7 @@
     }
 
     .hero-fullscreen .heroArt {
-      min-height: calc(100vh - 72px);
+      min-height: calc(100vh - 88px);
       border: 0;
       border-radius: 0;
     }
@@ -1162,7 +1161,7 @@
     }
 
     .intro-start {
-      margin-top: -72px;
+      margin-top: -88px;
       padding: 0;
       min-height: 100vh;
       display: flex;
@@ -2397,15 +2396,6 @@
         display: none
       }
 
-      /* Одна колонка в шапке — лого по центру */
-      .topbar .in {
-        justify-content: center;
-      }
-
-      .brand {
-        margin-left: 0;
-      }
-
       .heroGrid {
         grid-template-columns: 1fr
       }
@@ -2442,12 +2432,12 @@
 
       .topbar,
       .topbar .in {
-        height: 64px
+        height: 76px
       }
 
       .topbar .in {
         position: relative;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
       }
 
@@ -2455,14 +2445,13 @@
         position: static;
         gap: 0;
         align-items: center;
-        margin-left: 0;
       }
 
       .brand .brand-mark {
         position: static;
         transform: none;
-        width: 104px;
-        height: 104px;
+        width: 76px;
+        height: 76px;
         padding: 0;
       }
 
@@ -2496,19 +2485,19 @@
       }
 
       main {
-        padding-top: 64px
+        padding-top: 76px
       }
 
       main section {
-        scroll-margin-top: 66px;
+        scroll-margin-top: 88px;
       }
 
       .mobile-menu {
-        top: 64px
+        top: 76px
       }
 
       .mobile-menu-backdrop {
-        inset: 64px 0 0 0
+        inset: 76px 0 0 0
       }
 
       h1 {
@@ -2526,7 +2515,7 @@
       }
 
       .hero-fullscreen .heroArt {
-        min-height: calc(100vh - 64px)
+        min-height: calc(100vh - 76px)
       }
 
       .hero-fullscreen .heroArt .smile {
@@ -2543,7 +2532,7 @@
       }
 
       .intro-start {
-        margin-top: -64px;
+        margin-top: -76px;
         min-height: 100vh;
       }
 
@@ -3081,35 +3070,10 @@
         font-size: 31px
       }
 
-      .brand .brand-mark {
-        width: 96px;
-        height: 96px;
+      .brand-mark {
+        width: 72px;
+        height: 72px;
         font-size: 19px
-      }
-
-      .topbar,
-      .topbar .in {
-        height: 56px;
-      }
-
-      main {
-        padding-top: 56px;
-      }
-
-      .mobile-menu {
-        top: 56px;
-      }
-
-      .mobile-menu-backdrop {
-        inset: 56px 0 0 0;
-      }
-
-      .hero-fullscreen .heroArt {
-        min-height: calc(100vh - 56px);
-      }
-
-      .intro-start {
-        margin-top: -56px;
       }
 
       .right .btn {
@@ -3151,7 +3115,7 @@
       }
 
       .hero-fullscreen .heroArt {
-        min-height: calc(100vh - 64px)
+        min-height: calc(100vh - 76px)
       }
     }
 
