@@ -116,6 +116,12 @@
       font: inherit
     }
 
+    a,
+    button,
+    [role="button"] {
+      -webkit-tap-highlight-color: transparent;
+    }
+
     .container {
       max-width: var(--max);
       margin: 0 auto;
@@ -390,10 +396,6 @@
       filter: none;
     }
 
-    .brand-mark.menu-toggle:active {
-      transform: none;
-    }
-
     .menu-toggle {
       color: var(--fg);
       cursor: pointer;
@@ -477,12 +479,6 @@
       border: 1px solid transparent;
     }
 
-    .mobile-menu a:active {
-      color: var(--text-hover);
-      background: var(--surface-hover);
-      border-color: var(--border-hover);
-    }
-
     /* Как у ссылок в мобильном меню */
     .mobile-menu .nav-club-logout {
       -webkit-appearance: none;
@@ -501,12 +497,6 @@
       border: 1px solid transparent;
       background: transparent;
       color: var(--muted);
-    }
-
-    .mobile-menu .nav-club-logout:active {
-      color: var(--text-hover);
-      background: var(--surface-hover);
-      border-color: var(--border-hover);
     }
 
     /* Открытое меню: колонка слева, капс, интерлиньяж как на референсе; крестик — см. .nav-burger */
@@ -532,12 +522,6 @@
       text-transform: uppercase;
     }
 
-    body.menu-open .mobile-menu a:active {
-      color: var(--text-hover);
-      background: var(--surface-hover);
-      border-color: var(--border-hover);
-    }
-
     body.menu-open .mobile-menu .nav-club-logout {
       display: block;
       width: 100%;
@@ -553,12 +537,6 @@
       letter-spacing: .06em;
       line-height: 1.2;
       text-transform: uppercase;
-    }
-
-    body.menu-open .mobile-menu .nav-club-logout:active {
-      color: var(--text-hover);
-      background: var(--surface-hover);
-      border-color: var(--border-hover);
     }
 
     body.menu-open .dropdown-container .mobile-menu > :first-child {
@@ -593,7 +571,6 @@
       margin-left: auto
     }
 
-    .topbar .btn:active,
     .topbar .btn:focus-visible {
       background: var(--btn-close-hover-bg);
       color: var(--btn-close-hover-text);
@@ -615,7 +592,6 @@
       transition: background .2s ease, color .2s ease, border-color .2s ease;
     }
 
-    .right .btn:active,
     .right .btn:focus-visible {
       transform: none;
       color: var(--btn-close-hover-text);
@@ -652,7 +628,6 @@
       white-space: nowrap;
     }
 
-    .btn:active,
     .btn:focus-visible {
       transform: none;
       background: var(--btn-close-hover-bg);
@@ -666,7 +641,6 @@
       border-color: var(--btn-close-idle-border);
     }
 
-    .btn.primary:active,
     .btn.primary:focus-visible {
       background: var(--btn-close-hover-bg);
       color: var(--btn-close-hover-text);
@@ -826,14 +800,6 @@
       box-shadow: none;
     }
 
-    /* Та же специфичность, что выше — иначе transparent !important перебивает .open-card:active */
-    #streams #streamsLiveList > .streams-hint-row.open-card:active,
-    #streams #streamsLiveList > .streams-hint-row.open-card.is-pressed {
-      background: var(--surface-hover) !important;
-      border-color: var(--border-hover) !important;
-      color: var(--text-hover) !important;
-    }
-
     #streams #streamsLiveList > .streams-live-locked {
       background: transparent !important;
       backdrop-filter: none;
@@ -990,36 +956,6 @@
     .open-card:focus-visible {
       outline: 2px solid var(--stroke);
       outline-offset: var(--focus-offset);
-    }
-
-    .open-card:active,
-    .open-card.is-pressed {
-      background: var(--surface-hover) !important;
-      border-color: var(--border-hover) !important;
-      color: var(--text-hover) !important;
-    }
-
-    .open-card:active *:not(img):not(svg),
-    .open-card.is-pressed *:not(img):not(svg) {
-      color: var(--text-hover) !important;
-      border-color: rgba(255, 255, 255, .25) !important;
-    }
-
-    .open-card:active .tag,
-    .open-card.is-pressed .tag {
-      background: transparent !important;
-      color: var(--text-hover) !important;
-    }
-
-    .open-card:active .catalog-title,
-    .open-card:active .artist-card-name,
-    .open-card:active .release-card-title,
-    .open-card:active .catalog-meta,
-    .open-card.is-pressed .catalog-title,
-    .open-card.is-pressed .artist-card-name,
-    .open-card.is-pressed .release-card-title,
-    .open-card.is-pressed .catalog-meta {
-      font-weight: 900;
     }
 
     #artistsGrid .open-card .pad,
@@ -1447,13 +1383,6 @@
       backdrop-filter: none;
     }
 
-    #artistsGrid .artist-card.open-card:active,
-    #artistsGrid .artist-card.open-card.is-pressed,
-    #releasesGrid .release-card.open-card:active,
-    #releasesGrid .release-card.open-card.is-pressed {
-      background: var(--surface-hover) !important;
-    }
-
     #artistsGrid .artist-card .pad,
     #releasesGrid .release-card .pad {
       background: transparent;
@@ -1547,19 +1476,6 @@
       flex-direction: column;
     }
 
-    #eventsGrid .event-card:active,
-    #merchGrid .event-card:active {
-      background: var(--surface-hover);
-    }
-
-    #eventsGrid .event-card:active .event-card-title,
-    #eventsGrid .event-card:active .event-card-date,
-    #merchGrid .event-card:active .event-card-title,
-    #merchGrid .event-card:active .event-card-date {
-      color: var(--text-hover) !important;
-      font-weight: 900;
-    }
-
     #eventsGrid .event-card .pad,
     #merchGrid .event-card .pad {
       display: flex;
@@ -1570,11 +1486,6 @@
       padding: var(--pad-sm) var(--pad);
       background: transparent;
       min-height: 0;
-    }
-
-    #eventsGrid .event-card:active .pad,
-    #merchGrid .event-card:active .pad {
-      background: transparent;
     }
 
     #eventsGrid .event-card .event-card-title,
@@ -1772,7 +1683,6 @@
       transition: background .12s ease, border-color .12s ease, color .12s ease;
     }
 
-    .modal-header .btn.modal-close:active,
     .modal-header .btn.modal-close:focus-visible {
       transform: translateY(-50%) !important;
       background: var(--btn-close-hover-bg) !important;
@@ -1798,7 +1708,6 @@
       flex-shrink: 0;
     }
 
-    .modal-header .btn.ghost:active:not(.modal-close),
     .modal-header .btn.ghost:focus-visible:not(.modal-close) {
       transform: none;
       background: var(--btn-close-hover-bg) !important;
@@ -1904,7 +1813,6 @@
       border-color: var(--btn-close-idle-border);
     }
 
-    #mBody .booking-form-modal .btn.primary:active,
     #mBody .booking-form-modal .btn.primary:focus-visible {
       background: var(--btn-close-hover-bg);
       border-color: var(--btn-close-hover-border);
@@ -2389,7 +2297,6 @@
       border-color: var(--btn-close-idle-border) !important;
     }
 
-    #mBody .afisha-modal-wrap .afisha-modal-actions .event-ticket-btn.btn.primary:active,
     #mBody .afisha-modal-wrap .afisha-modal-actions .event-ticket-btn.btn.primary:focus-visible {
       background: var(--btn-close-hover-bg) !important;
       color: var(--btn-close-hover-text) !important;
@@ -2407,9 +2314,7 @@
       transition: color .18s ease, background .18s ease, border-color .18s ease;
     }
 
-    #mBody .event-modal-actions .event-ticket-btn:not(.btn.primary):active,
     #mBody .event-modal-actions .event-ticket-btn:not(.btn.primary):focus-visible,
-    .event-modal-wrap .event-modal-actions .event-ticket-btn:not(.btn.primary):active,
     .event-modal-wrap .event-modal-actions .event-ticket-btn:not(.btn.primary):focus-visible {
       color: var(--btn-close-hover-text) !important;
       background: var(--btn-close-hover-bg) !important;
@@ -3108,7 +3013,6 @@
         transition: color .18s ease, background .18s ease, border-color .18s ease;
       }
 
-      .event-modal-actions .event-ticket-btn:not(.btn.primary):active,
       .event-modal-actions .event-ticket-btn:not(.btn.primary):focus-visible {
         color: var(--btn-close-hover-text) !important;
         background: var(--btn-close-hover-bg) !important;
@@ -3440,11 +3344,6 @@
         background: rgba(255, 255, 255, .05);
       }
 
-      .open-card:active *:not(img):not(svg),
-      .open-card.is-pressed *:not(img):not(svg) {
-        border-color: rgba(0, 0, 0, .2) !important;
-      }
-
       #mBody .event-modal-right b,
       #mBody .event-modal-right .tag {
         color: var(--text);
@@ -3563,7 +3462,6 @@
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.merch-modal-carousel .carousel-arrow:active,
 .merch-modal-carousel .carousel-arrow:focus-visible {
   background: var(--btn-close-idle-bg);
   color: var(--btn-close-idle-text);

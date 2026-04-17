@@ -9,6 +9,7 @@ body.admin-body {
   display: flex;
   height: 100vh;
   overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
   /* Те же кнопки «закрыть»: покой — без заливки, светлый текст; hover — белая плашка, тёмный текст */
   --btn-close-idle-bg: transparent;
   --btn-close-idle-text: rgba(255, 255, 255, 0.92);
@@ -72,7 +73,6 @@ body.admin-body {
   border-color: transparent;
 }
 
-.admin-login-card .auth-form .btn.primary:active,
 .admin-login-card .auth-form .btn.primary:focus-visible {
   background: #e8e8e8;
   color: #0a0a0a;
@@ -217,7 +217,6 @@ body.admin-body {
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
-.btn-sm:active,
 .btn-sm:focus-visible {
   background: var(--btn-close-hover-bg);
   color: var(--btn-close-hover-text);
@@ -228,7 +227,6 @@ body.admin-body {
   color: #ff6b6b;
   background: transparent;
 }
-.btn-sm.danger:active,
 .btn-sm.danger:focus-visible {
   background: #ff6b6b;
   color: #0a0a0a;
@@ -309,7 +307,6 @@ body.admin-body {
   border: 1px solid #111;
 }
 
-#adminModal .editor-actions .btn.primary:active,
 #adminModal .editor-actions .btn.primary:focus-visible {
   background: #2c2c2c;
   color: #fff;
@@ -324,7 +321,6 @@ body.admin-body {
     border-color: #fff;
   }
 
-  #adminModal .editor-actions .btn.primary:active,
   #adminModal .editor-actions .btn.primary:focus-visible {
     background: #e6e6e6;
     color: #0a0a0a;
@@ -338,7 +334,6 @@ body.admin-body {
   border: 1px solid rgba(0, 0, 0, 0.22);
 }
 
-#adminModal .editor-actions .btn.ghost:active,
 #adminModal .editor-actions .btn.ghost:focus-visible {
   background: rgba(0, 0, 0, 0.06);
   color: #111;
@@ -351,7 +346,6 @@ body.admin-body {
     border-color: rgba(255, 255, 255, 0.35);
   }
 
-  #adminModal .editor-actions .btn.ghost:active,
   #adminModal .editor-actions .btn.ghost:focus-visible {
     background: rgba(255, 255, 255, 0.08);
     color: #fff;

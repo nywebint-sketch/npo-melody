@@ -485,10 +485,6 @@ function setupOpenCard(node, type, id) {
   node.dataset.id = id;
   node.tabIndex = 0;
   node.setAttribute("role", "button");
-  node.addEventListener("pointerdown", () => node.classList.add("is-pressed"));
-  ["pointerup", "pointerleave", "pointercancel", "blur"].forEach((evt) => {
-    node.addEventListener(evt, () => node.classList.remove("is-pressed"));
-  });
   node.addEventListener("keydown", (ev) => {
     if (ev.key === "Enter" || ev.key === " ") {
       ev.preventDefault();
@@ -766,10 +762,6 @@ function closeExclusivePanel() {
 
 function bindHintPressHandlers(hint) {
   if (!hint) return;
-  hint.addEventListener("pointerdown", () => hint.classList.add("is-pressed"));
-  ["pointerup", "pointerleave", "pointercancel", "blur"].forEach((evt) => {
-    hint.addEventListener(evt, () => hint.classList.remove("is-pressed"));
-  });
   hint.addEventListener("keydown", (ev) => {
     if (ev.key === "Enter" || ev.key === " ") {
       ev.preventDefault();
