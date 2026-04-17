@@ -636,7 +636,7 @@ function renderStreamsLive() {
       text: "доступно участникам с аккаунтом."
     });
     box.appendChild(lead);
-    const btn = el("button", { className: "btn primary auth-open-button", text: "Вход или зарегистрироваться" });
+    const btn = el("button", { className: "btn primary auth-open-button", text: "Вход или регистрация" });
     btn.type = "button";
     box.appendChild(btn);
     wrap.appendChild(box);
@@ -1416,17 +1416,17 @@ brandHomeLink?.addEventListener("click", (e) => {
 });
 
 const closeMobileMenu = () => {
-  document.body.classList.remove("menu-open");
   mobileMenuToggle?.setAttribute("aria-expanded", "false");
   mobileMenuToggle?.setAttribute("aria-label", "Открыть меню");
   if (mobileMenu) mobileMenu.hidden = true;
   if (mobileMenuBackdrop) mobileMenuBackdrop.hidden = true;
+  document.body.classList.remove("menu-open");
 };
 
 const openMobileMenu = () => {
+  document.body.classList.add("menu-open");
   if (mobileMenu) mobileMenu.hidden = false;
   if (mobileMenuBackdrop) mobileMenuBackdrop.hidden = false;
-  document.body.classList.add("menu-open");
   mobileMenuToggle?.setAttribute("aria-expanded", "true");
   mobileMenuToggle?.setAttribute("aria-label", "Закрыть меню");
 };
