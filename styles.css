@@ -2440,6 +2440,15 @@
         display: none
       }
 
+      /* Одна кнопка-лого в шапке — по центру */
+      .topbar .in {
+        justify-content: center;
+      }
+
+      .topbar .brand {
+        margin-left: 0;
+      }
+
       .heroGrid {
         grid-template-columns: 1fr
       }
@@ -2481,7 +2490,7 @@
 
       .topbar .in {
         position: relative;
-        justify-content: flex-start;
+        justify-content: center;
         align-items: center;
       }
 
