@@ -573,6 +573,38 @@
       scroll-margin-top: 90px;
     }
 
+    .db-notice-wrap {
+      margin-top: 12px;
+      margin-bottom: 8px;
+    }
+
+    .db-notice {
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      background: color-mix(in oklab, var(--card-bg) 75%, #b30000 25%);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .db-notice-text {
+      margin-bottom: 10px;
+    }
+
+    .db-notice-actions {
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .db-notice-retry {
+      padding: 8px 12px;
+    }
+
+    .db-notice-retry:disabled {
+      opacity: 0.7;
+      cursor: default;
+    }
+
     #streams .head {
       margin-bottom: 8px;
     }
@@ -1257,7 +1289,7 @@
     /* Карточки артистов: высота по контенту, квадратное фото, без пустых блоков */
     #artistsGrid {
       align-items: start;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     #artistsGrid .artist-card {

@@ -49,6 +49,78 @@ let data = {
 };
 
 let clubSession = null;
+let dbNoticeNode = null;
+let dbRetryButtonNode = null;
+let isDbRetryInProgress = false;
+
+const getOrCreateDbNoticeNode = () => {
+  if (dbNoticeNode && document.body.contains(dbNoticeNode)) return dbNoticeNode;
+  const main = document.querySelector("main");
+  if (!main) return null;
+  const wrap = document.createElement("div");
+  wrap.className = "container db-notice-wrap";
+  const notice = document.createElement("div");
+  notice.id = "dbNotice";
+  notice.className = "card pad db-notice";
+  notice.hidden = true;
+  const text = document.createElement("div");
+  text.className = "db-notice-text";
+  const actions = document.createElement("div");
+  actions.className = "db-notice-actions";
+  const retryBtn = document.createElement("button");
+  retryBtn.type = "button";
+  retryBtn.className = "btn db-notice-retry";
+  retryBtn.textContent = "Повторить попытку";
+  retryBtn.addEventListener("click", async () => {
+    if (isDbRetryInProgress) return;
+    isDbRetryInProgress = true;
+    retryBtn.disabled = true;
+    retryBtn.textContent = "Пробуем...";
+    try {
+      renderSkeletonGrid("#eventsGrid", 6);
+      renderSkeletonGrid("#artistsGrid", ARTISTS_VISIBLE);
+      renderSkeletonGrid("#releasesGrid", 4);
+      renderSkeletonGrid("#streamsLiveList", 4, "row");
+      renderSkeletonGrid("#merchGrid", 4);
+      await loadCatalogFromDb();
+      renderEvents();
+      renderArtists();
+      renderReleases();
+      renderStreams();
+      renderMerch();
+    } finally {
+      isDbRetryInProgress = false;
+      retryBtn.disabled = false;
+      retryBtn.textContent = "Повторить попытку";
+    }
+  });
+  actions.appendChild(retryBtn);
+  notice.appendChild(text);
+  notice.appendChild(actions);
+  wrap.appendChild(notice);
+  main.prepend(wrap);
+  dbNoticeNode = notice;
+  dbRetryButtonNode = retryBtn;
+  return notice;
+};
+
+const setDbNotice = (health) => {
+  const notice = getOrCreateDbNoticeNode();
+  if (!notice) return;
+  const textNode = notice.querySelector(".db-notice-text");
+  if (!health?.hasNetworkIssue) {
+    notice.hidden = true;
+    if (textNode) textNode.textContent = "";
+    return;
+  }
+  notice.hidden = false;
+  if (textNode) {
+    textNode.textContent = "Нет соединения с Supabase. Проверьте DNS/интернет. Можно нажать «Повторить попытку» без перезагрузки страницы.";
+  }
+  if (dbRetryButtonNode) {
+    dbRetryButtonNode.disabled = isDbRetryInProgress;
+  }
+};
 
 const streamsAuthOk = () => Boolean(clubSession?.email);
 
@@ -1459,6 +1531,9 @@ const loadCatalogFromDb = async () => {
   data.podcasts = podcasts;
   data.merch = merch;
   data.live = Array.isArray(liveItems) ? liveItems : [];
+  if (typeof window.dbLayer.getDbHealth === "function") {
+    setDbNotice(window.dbLayer.getDbHealth());
+  }
 };
 
 const initApp = async () => {
@@ -1498,6 +1573,7 @@ const initApp = async () => {
 
 document.addEventListener("DOMContentLoaded", async () => {
   closeModal();
+  window.addEventListener("db:health", (evt) => setDbNotice(evt?.detail || null));
   if (window.dbLayer) {
     await window.dbLayer.syncDefaultData();
   }

@@ -8,6 +8,72 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const STORAGE_BUCKET = 'images';
 
 let supabaseClt = null;
+let dbHealth = {
+  hasNetworkIssue: false,
+  lastErrorMessage: '',
+  lastErrorAt: 0,
+  errorCount: 0
+};
+let lastLoggedNetworkErrorAt = 0;
+let lastLoggedNetworkErrorMsg = '';
+const NETWORK_ERROR_LOG_DEBOUNCE_MS = 15000;
+
+const NETWORK_ERROR_RE = /Failed to fetch|NetworkError|ERR_NAME_NOT_RESOLVED|Could not resolve host|Load failed|fetch/i;
+
+const toErrorMessage = (errorLike) => {
+  if (!errorLike) return '';
+  const message = errorLike.message || errorLike.details || errorLike.hint || '';
+  if (message) return String(message);
+  try {
+    return JSON.stringify(errorLike);
+  } catch {
+    return String(errorLike);
+  }
+};
+
+const emitDbHealth = () => {
+  if (typeof window === 'undefined' || typeof window.dispatchEvent !== 'function') return;
+  window.dispatchEvent(new CustomEvent('db:health', { detail: { ...dbHealth } }));
+};
+
+const markDbError = (errorLike) => {
+  const msg = toErrorMessage(errorLike);
+  dbHealth = {
+    hasNetworkIssue: NETWORK_ERROR_RE.test(msg),
+    lastErrorMessage: msg,
+    lastErrorAt: Date.now(),
+    errorCount: dbHealth.errorCount + 1
+  };
+  emitDbHealth();
+};
+
+const reportDbError = (errorLike) => {
+  const msg = toErrorMessage(errorLike);
+  const isNetworkError = NETWORK_ERROR_RE.test(msg);
+  if (!isNetworkError) {
+    console.error(errorLike);
+    return;
+  }
+  const now = Date.now();
+  const isSameAsLast = msg === lastLoggedNetworkErrorMsg;
+  if (isSameAsLast && now - lastLoggedNetworkErrorAt < NETWORK_ERROR_LOG_DEBOUNCE_MS) return;
+  lastLoggedNetworkErrorAt = now;
+  lastLoggedNetworkErrorMsg = msg;
+  console.warn('[db] Supabase network/DNS is unavailable:', msg);
+};
+
+const markDbSuccess = () => {
+  if (!dbHealth.hasNetworkIssue && !dbHealth.lastErrorMessage) return;
+  dbHealth = {
+    hasNetworkIssue: false,
+    lastErrorMessage: '',
+    lastErrorAt: dbHealth.lastErrorAt,
+    errorCount: dbHealth.errorCount
+  };
+  emitDbHealth();
+};
+
+const getDbHealth = () => ({ ...dbHealth });
 
 /**
  * GoTrue по умолчанию использует Navigator Locks для localStorage-сессии.
@@ -46,9 +112,11 @@ const initSupabase = () => {
 
 const safeArray = (data, error) => {
   if (error) {
-    console.error(error);
+    reportDbError(error);
+    markDbError(error);
     return [];
   }
+  markDbSuccess();
   return Array.isArray(data) ? data : [];
 };
 
@@ -56,9 +124,12 @@ const withClient = async (fn, fallback = null) => {
   const client = initSupabase();
   if (!client) return fallback;
   try {
-    return await fn(client);
+    const result = await fn(client);
+    markDbSuccess();
+    return result;
   } catch (error) {
-    console.error(error);
+    reportDbError(error);
+    markDbError(error);
     return fallback;
   }
 };
@@ -258,6 +329,7 @@ const syncDefaultData = async () => true;
 
 const api = {
   initSupabase,
+  getDbHealth,
   getEvents, getEventsAdmin, getArtists, getReleases, getPodcasts, getStreams, getLiveItems, getLiveItemsAdmin, getMerch,
   getSession, login, register, logout, syncDefaultData,
   getUsers, checkIsAdmin, updateUserRole, uploadImage,
@@ -270,6 +342,7 @@ window.dbLayer = api;
 
 export {
   initSupabase,
+  getDbHealth,
   getEvents, getEventsAdmin,
   getArtists, getReleases, getPodcasts, getStreams, getLiveItems, getLiveItemsAdmin, getMerch,
   getSession, login, register, logout, syncDefaultData,
