@@ -116,7 +116,7 @@
       position: fixed;
       inset: 0 0 auto 0;
       z-index: 50;
-      height: 88px;
+      height: 52px;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       background: var(--header-bg);
@@ -147,7 +147,7 @@
     }
 
     .topbar .in {
-      height: 88px;
+      height: 52px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
@@ -186,8 +186,8 @@
     }
 
     .brand-mark {
-      width: 88px;
-      height: 88px;
+      width: 96px;
+      height: 96px;
       border: 1px solid transparent;
       background: transparent;
       border-radius: 12px;
@@ -264,7 +264,7 @@
 
     .mobile-menu-backdrop {
       position: fixed;
-      inset: 88px 0 0 0;
+      inset: 52px 0 0 0;
       background: rgba(0, 0, 0, .25);
       backdrop-filter: blur(4px);
       z-index: 79;
@@ -275,7 +275,7 @@
 
     .mobile-menu {
       position: fixed;
-      top: 88px;
+      top: 52px;
       left: var(--container-pad-x);
       right: var(--container-pad-x);
       z-index: 80;
@@ -397,7 +397,7 @@
       flex: 1 1 auto;
       justify-content: center;
       margin-left: 0;
-      transform: translateZ(0) translateX(-56px);
+      transform: translateZ(0) translateX(-64px);
       padding: 0 48px;
       box-sizing: border-box;
     }
@@ -564,13 +564,13 @@
     }
 
     main {
-      padding-top: 88px
+      padding-top: 52px
     }
 
     section {
       padding: 56px 0;
-      /* Якорная прокрутка: раздел начинается под фиксированным топбаром (88px), без обрезки заголовка */
-      scroll-margin-top: 90px;
+      /* Якорная прокрутка: раздел начинается под фиксированным топбаром (52px), без обрезки заголовка */
+      scroll-margin-top: 60px;
     }
 
     .db-notice-wrap {
@@ -1170,7 +1170,7 @@
     }
 
     .hero-fullscreen .heroArt {
-      min-height: calc(100vh - 88px);
+      min-height: calc(100vh - 52px);
       border: 0;
       border-radius: 0;
     }
@@ -1193,7 +1193,7 @@
     }
 
     .intro-start {
-      margin-top: -88px;
+      margin-top: -52px;
       padding: 0;
       min-height: 100vh;
       display: flex;
@@ -1726,8 +1726,8 @@
       color: var(--text);
       flex: 1 1 auto;
       min-height: 0;
-      max-height: calc(86vh - 76px);
-      max-height: calc(min(86vh, 100dvh) - 76px);
+      max-height: calc(86vh - 52px);
+      max-height: calc(min(86vh, 100dvh) - 52px);
       overflow-y: auto;
       overflow-x: hidden;
       overflow-anchor: none;
@@ -2476,7 +2476,7 @@
 
       .topbar,
       .topbar .in {
-        height: 76px
+        height: 48px
       }
 
       .topbar .in {
@@ -2494,8 +2494,8 @@
       .brand .brand-mark {
         position: static;
         transform: none;
-        width: 76px;
-        height: 76px;
+        width: 80px;
+        height: 80px;
         padding: 0;
       }
 
@@ -2529,19 +2529,19 @@
       }
 
       main {
-        padding-top: 76px
+        padding-top: 48px
       }
 
       main section {
-        scroll-margin-top: 88px;
+        scroll-margin-top: 54px;
       }
 
       .mobile-menu {
-        top: 76px
+        top: 48px
       }
 
       .mobile-menu-backdrop {
-        inset: 76px 0 0 0
+        inset: 48px 0 0 0
       }
 
       h1 {
@@ -2559,7 +2559,7 @@
       }
 
       .hero-fullscreen .heroArt {
-        min-height: calc(100vh - 76px)
+        min-height: calc(100vh - 48px)
       }
 
       .hero-fullscreen .heroArt .smile {
@@ -2576,7 +2576,7 @@
       }
 
       .intro-start {
-        margin-top: -76px;
+        margin-top: -48px;
         min-height: 100vh;
       }
 
@@ -2748,8 +2748,8 @@
       }
 
       .modal-body {
-        max-height: calc(86vh - 72px);
-        max-height: calc(min(86vh, 100dvh) - 72px);
+        max-height: calc(86vh - 48px);
+        max-height: calc(min(86vh, 100dvh) - 48px);
       }
 
       /* Карточка афиши: как на скрине — изображение сверху на всю ширину, подпись под ним */
@@ -2999,8 +2999,8 @@
       }
 
       .modal-body {
-        max-height: calc(92vh - 76px);
-        max-height: calc(min(92vh, 100dvh) - 76px);
+        max-height: calc(92vh - 48px);
+        max-height: calc(min(92vh, 100dvh) - 48px);
       }
 
       /* Ещё компактнее на очень узких экранах */
@@ -3114,9 +3114,7 @@
         font-size: 31px
       }
 
-      .brand-mark {
-        width: 72px;
-        height: 72px;
+      .brand .brand-mark {
         font-size: 19px
       }
 
@@ -3159,7 +3157,7 @@
       }
 
       .hero-fullscreen .heroArt {
-        min-height: calc(100vh - 76px)
+        min-height: calc(100vh - 52px)
       }
     }
 
