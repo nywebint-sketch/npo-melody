@@ -1349,6 +1349,8 @@
       background: transparent;
     }
 
+    /* Афиша и шоп: одинаковая ширина карточек на десктопе */
+    #eventsGrid,
     #merchGrid {
       align-items: start;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1496,12 +1498,22 @@
     }
 
     #eventsGrid .event-poster,
-    #eventsGrid .event-media,
+    #eventsGrid .event-media {
+      width: 100%;
+      max-width: 100%;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      padding: 0;
+      border: none;
+      background: transparent;
+      display: block;
+    }
+
     #merchGrid .event-poster,
     #merchGrid .event-media {
       width: 100%;
       max-width: 100%;
-      aspect-ratio: 4/5;
+      aspect-ratio: 1/1;
       overflow: hidden;
       padding: 0;
       border: none;
