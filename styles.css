@@ -246,7 +246,7 @@
       display: block;
       background: transparent;
       filter: none;
-      transform: scale(1.68);
+      transform: scale(1.58);
       transform-origin: center center;
       transition: filter .2s ease, transform .2s ease;
     }
