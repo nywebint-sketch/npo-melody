@@ -36,19 +36,22 @@
 <body class="hero-fullscreen">
   <header class="topbar">
     <div class="container">
-      <div class="in">
+      <div class="in topbar-row">
+        <a class="brand-home" href="./" id="brandHomeLink" aria-label="НПО Мелодия — главная">
+          <picture>
+            <source media="(prefers-color-scheme: dark)"
+              srcset="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo%20white.png">
+            <img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo%20black.png"
+              alt="" width="52" height="52" decoding="async">
+          </picture>
+        </a>
         <div class="dropdown-container" id="headerDropdown">
-          <div class="brand">
-            <button class="brand-mark menu-toggle" id="mobileMenuToggle" type="button" aria-label="Открыть меню"
-              aria-expanded="false" aria-controls="mobileMenu">
-              <picture>
-                <source media="(prefers-color-scheme: dark)"
-                  srcset="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo%20white.png">
-                <img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo%20black.png"
-                  alt="Логотип НПО Мелодия" width="132" height="132">
-              </picture>
-            </button>
-          </div>
+          <button class="nav-burger menu-toggle" id="mobileMenuToggle" type="button" aria-label="Открыть меню"
+            aria-expanded="false" aria-controls="mobileMenu">
+            <span class="nav-burger-line" aria-hidden="true"></span>
+            <span class="nav-burger-line" aria-hidden="true"></span>
+            <span class="nav-burger-line" aria-hidden="true"></span>
+          </button>
           <nav class="mobile-menu" id="mobileMenu" aria-label="Навигация по сайту" hidden>
             <a href="#streams">Live</a>
             <a href="#events">Афиша</a>
@@ -58,7 +61,6 @@
             <a href="#profile" class="auth-open-button">вход</a>
             <a href="#" data-placeholder-link="Поставь ссылку">SoundCloud</a>
             <button type="button" class="nav-club-logout" hidden aria-label="Выход из аккаунта">выход</button>
-            <p class="mobile-menu-copyright">© 2026 НПО Мелодия</p>
           </nav>
         </div>
       </div>

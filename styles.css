@@ -37,12 +37,10 @@
       --pad: 16px;
       --pad-sm: 12px;
       --container-pad-x: 16px;
-      /* Единая ширина слота «лого + меню» — без сдвига лого при открытии */
-      --header-dropdown-width: min(188px, calc(100vw - 2 * var(--container-pad-x)));
-      /* Вертикальный отступ плашки «лого+меню» сверху (совпадает с body.menu-open) */
-      --header-dropdown-pad-top: 8px;
+      /* Лого и меню — один размер кнопки */
+      --header-control-size: 48px;
       /* Высота зоны под фикс. шапкой: якоря, main, оверлей-меню, hero */
-      --site-topbar-offset: 52px;
+      --site-topbar-offset: calc(env(safe-area-inset-top, 0px) + 6px + var(--header-control-size) + 6px);
       /* Доп. зазор под логотипом при закрытом меню — заголовок раздела ниже лого при скролле и по якорю */
       --logo-scroll-clearance: 0px;
       --btn-primary-inverted-fg: var(--bg);
@@ -128,7 +126,8 @@
       position: fixed;
       inset: 0 0 auto 0;
       z-index: 50;
-      height: 52px;
+      min-height: 0;
+      height: auto;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       background: var(--header-bg);
@@ -159,13 +158,15 @@
     }
 
     .topbar .in {
-      height: 52px;
+      min-height: var(--header-control-size);
+      height: auto;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       gap: 14px;
       flex-wrap: nowrap;
       overflow: visible;
+      width: 100%;
     }
 
     .topbar .in>* {
@@ -195,6 +196,122 @@
       display: block;
       position: relative;
       top: 3px;
+    }
+
+    .brand-home {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: var(--header-control-size);
+      height: var(--header-control-size);
+      min-width: var(--header-control-size);
+      min-height: var(--header-control-size);
+      margin: 0;
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: 12px;
+      padding: 0;
+      line-height: 0;
+      flex-shrink: 0;
+      color: var(--fg);
+      cursor: pointer;
+      outline: none;
+      box-shadow: none;
+      transition: background .2s ease, color .2s ease, border-color .2s ease;
+    }
+
+    .brand-home picture {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      line-height: 0;
+    }
+
+    .brand-home picture img {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+      background: transparent;
+      filter: none;
+      transition: filter .2s ease;
+    }
+
+    .brand-home:hover {
+      background: var(--surface-hover);
+      color: var(--text-hover);
+      border-color: var(--border-hover);
+    }
+
+    .brand-home:hover picture img {
+      filter: brightness(0) invert(1);
+    }
+
+    .brand-home:focus-visible:not(:hover) {
+      outline: 2px solid var(--stroke, rgba(0, 0, 0, .28));
+      outline-offset: 2px;
+    }
+
+    .brand-home:focus-visible:not(:hover) picture img {
+      filter: none;
+    }
+
+    .brand-home:hover:focus-visible {
+      outline: none;
+    }
+
+    .nav-burger {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: var(--header-control-size);
+      height: var(--header-control-size);
+      min-width: var(--header-control-size);
+      min-height: var(--header-control-size);
+      padding: 0;
+      margin: 0;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--fg);
+      cursor: pointer;
+      flex-shrink: 0;
+      outline: none;
+      box-shadow: none;
+      transition: background .2s ease, color .2s ease, border-color .2s ease;
+    }
+
+    .nav-burger-line {
+      display: block;
+      width: 22px;
+      height: 2px;
+      border-radius: 1px;
+      background: currentColor;
+    }
+
+    .nav-burger:hover {
+      background: var(--surface-hover);
+      color: var(--text-hover);
+      border-color: var(--border-hover);
+    }
+
+    .nav-burger:focus-visible:not(:hover) {
+      outline: 2px solid var(--stroke, rgba(0, 0, 0, .28));
+      outline-offset: 2px;
+    }
+
+    .nav-burger:hover:focus-visible {
+      outline: none;
     }
 
     .brand-mark {
@@ -278,32 +395,30 @@
       padding: 0;
     }
 
-    /* Лого + nav — одна плашка при открытом меню; ширина постоянная, лого не прыгает */
+    /* Бургер + nav — плашка при открытом меню, прижата к правому краю ряда */
     .dropdown-container {
       display: flex;
       flex-direction: column;
-      align-items: stretch;
+      align-items: flex-end;
       gap: 0;
-      width: var(--header-dropdown-width);
-      max-width: 100%;
+      width: auto;
+      min-width: 0;
+      max-width: min(320px, calc(100vw - 2 * var(--container-pad-x)));
       box-sizing: border-box;
-      /* Как при открытом меню — лого не «прыгает» при открытии */
-      padding-top: var(--header-dropdown-pad-top);
-    }
-
-    .dropdown-container .brand {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0;
       padding: 0;
+      margin: 0;
     }
 
     body.menu-open .dropdown-container {
       background: var(--bg);
       border: 1px solid var(--border);
-      /* верхний отступ — у базового .dropdown-container; снизу плашка меню */
       padding-bottom: 10px;
+      align-items: stretch;
+      width: min(320px, calc(100vw - 2 * var(--container-pad-x)));
+    }
+
+    body.menu-open .dropdown-container .nav-burger {
+      align-self: flex-end;
     }
 
     .mobile-menu-backdrop {
@@ -380,19 +495,6 @@
       border-color: var(--border-hover);
     }
 
-    /* Нижняя строка меню: копирайт без отдельной заливки — как остальные пункты */
-    .mobile-menu .mobile-menu-copyright {
-      margin: 36px 0 0;
-      padding: 8px 12px 4px;
-      font-size: 12px;
-      font-style: italic;
-      letter-spacing: .04em;
-      line-height: 1.35;
-      color: var(--muted);
-      background: transparent;
-      border: none;
-    }
-
     body.menu-open .dropdown-container .mobile-menu > :first-child {
       margin-top: 0;
       padding-top: 8px;
@@ -408,6 +510,7 @@
     body.menu-open .topbar .in {
       height: auto;
       min-height: 0;
+      align-items: flex-start;
     }
 
     body.menu-open .mobile-menu-backdrop {
@@ -2425,11 +2528,10 @@
 
     @media (min-width: 981px) {
       :root {
-        --desktop-topbar-logo: 132px;
+        --header-control-size: 52px;
         --site-topbar-offset: calc(
-          env(safe-area-inset-top, 0px) + 12px + var(--header-dropdown-pad-top) + var(--desktop-topbar-logo) + 12px
+          env(safe-area-inset-top, 0px) + 4px + var(--header-control-size) + 10px
         );
-        --header-dropdown-width: min(172px, calc(100vw - 2 * var(--container-pad-x)));
       }
 
       .topbar {
@@ -2449,33 +2551,28 @@
       .topbar .in {
         height: auto;
         min-height: 0;
-        padding-top: calc(12px + env(safe-area-inset-top, 0px));
-        padding-bottom: 12px;
-      }
-
-      .brand .brand-mark {
-        width: var(--desktop-topbar-logo);
-        height: var(--desktop-topbar-logo);
+        align-items: center;
+        padding-top: max(0px, env(safe-area-inset-top, 0px));
+        padding-bottom: 10px;
       }
     }
 
     @media (max-width: 760px) {
 
       :root {
-        /* Мобильная шапка = только лого; отступы под fixed topbar = вырез + отступ + лого */
-        --mob-topbar-logo: 120px;
-        --mob-topbar-logo-margin-top: 18px;
+        --header-control-size: 48px;
+        --mob-topbar-logo-margin-top: 0px;
         --mob-topbar-offset: calc(
-          var(--mob-topbar-logo) + var(--mob-topbar-logo-margin-top) + var(--header-dropdown-pad-top) + env(safe-area-inset-top, 0px)
+          var(--header-control-size) + var(--mob-topbar-logo-margin-top) + env(safe-area-inset-top, 0px)
         );
       }
 
       .topbar {
-        left: 50%;
-        right: auto;
-        width: max-content;
-        max-width: min(100%, calc(100vw - 2 * var(--container-pad-x)));
-        transform: translateX(-50%);
+        left: 0;
+        right: 0;
+        width: auto;
+        max-width: none;
+        transform: none;
         height: auto;
         border-bottom: none;
         background: transparent;
@@ -2493,40 +2590,22 @@
       }
 
       .topbar .container {
-        width: auto;
-        max-width: none;
+        width: 100%;
+        max-width: var(--max);
         margin-left: auto;
         margin-right: auto;
-        padding-left: 0;
-        padding-right: 0;
+        padding-left: var(--container-pad-x);
+        padding-right: var(--container-pad-x);
       }
 
       .topbar .in {
         position: relative;
         height: auto;
         min-height: 0;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
-        padding: var(--mob-topbar-logo-margin-top) 0 0;
-        gap: 0;
-      }
-
-      .brand {
-        position: static;
-        gap: 0;
-        align-items: center;
-      }
-
-      .brand .brand-mark {
-        position: static;
-        transform: none;
-        width: var(--mob-topbar-logo);
-        height: var(--mob-topbar-logo);
         padding: 0;
-      }
-
-      .brand .brand-mark picture img {
-        object-fit: contain;
+        gap: 0;
       }
 
       .right {
@@ -3124,6 +3203,13 @@
     }
 
     @media (max-width: 380px) {
+      :root {
+        --header-control-size: 44px;
+        --mob-topbar-offset: calc(
+          var(--header-control-size) + var(--mob-topbar-logo-margin-top) + env(safe-area-inset-top, 0px)
+        );
+      }
+
       .brand {
         gap: 9px
       }
@@ -3132,8 +3218,12 @@
         font-size: 31px
       }
 
-      .brand .brand-mark {
-        font-size: 19px
+      .nav-burger {
+        gap: 5px;
+      }
+
+      .nav-burger-line {
+        width: 20px;
       }
 
       .right .btn {
@@ -3167,10 +3257,6 @@
       .mobile-menu .nav-club-logout {
         font-size: 13px
       }
-
-      .mobile-menu .mobile-menu-copyright {
-        font-size: 11px
-      }
     }
 
     @media (max-height: 700px) {
@@ -3196,6 +3282,9 @@
     .tag,
     .pill,
     .brand-mark,
+    .brand-home,
+    .nav-burger,
+    .nav-burger-line,
     .dropdown-container,
     .mobile-menu,
     .mobile-menu a,
@@ -3238,7 +3327,8 @@
       }
 
       /* Белое лого: не чистый белый, слегка серое */
-      .brand-mark picture img {
+      .brand-mark picture img,
+      .brand-home picture img {
         filter: brightness(0.86);
       }
 
@@ -3258,6 +3348,16 @@
           drop-shadow(0 0 130px rgba(255, 255, 255, 0.72));
       }
 
+      .brand-home:hover {
+        background: var(--surface-hover);
+        color: var(--text-hover);
+        border-color: var(--border-hover);
+      }
+
+      .brand-home:hover picture img {
+        filter: brightness(0);
+      }
+
       .brand-mark:focus-visible:not(:hover) {
         background: transparent;
         border-color: transparent;
@@ -3270,7 +3370,20 @@
         filter: brightness(0.86);
       }
 
+      .brand-home:focus-visible:not(:hover) {
+        outline: 2px solid var(--stroke);
+        outline-offset: 2px;
+      }
+
+      .brand-home:focus-visible:not(:hover) picture img {
+        filter: brightness(0.86);
+      }
+
       .brand-mark:hover:focus-visible {
+        outline: none;
+      }
+
+      .brand-home:hover:focus-visible {
         outline: none;
       }
 

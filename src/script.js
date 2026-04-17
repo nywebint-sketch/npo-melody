@@ -1400,6 +1400,20 @@ const mobileMenu = $("#mobileMenu");
 const mobileMenuBackdrop = $("#mobileMenuBackdrop");
 const mobileLinks = $$("#mobileMenu a");
 const mobileBp = window.matchMedia("(max-width: 980px)");
+const brandHomeLink = $("#brandHomeLink");
+
+brandHomeLink?.addEventListener("click", (e) => {
+  e.preventDefault();
+  const next = new URL(brandHomeLink.getAttribute("href") || "./", window.location.href);
+  next.hash = "";
+  const here = new URL(window.location.href);
+  here.hash = "";
+  if (String(next.pathname) === String(here.pathname) && String(next.search) === String(here.search)) {
+    window.location.reload();
+    return;
+  }
+  window.location.assign(next.href);
+});
 
 const closeMobileMenu = () => {
   document.body.classList.remove("menu-open");
