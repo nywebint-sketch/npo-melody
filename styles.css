@@ -39,6 +39,8 @@
       --container-pad-x: 16px;
       /* Единая ширина слота «лого + меню» — без сдвига лого при открытии */
       --header-dropdown-width: min(188px, calc(100vw - 2 * var(--container-pad-x)));
+      /* Вертикальный отступ плашки «лого+меню» сверху (совпадает с body.menu-open) */
+      --header-dropdown-pad-top: 8px;
       /* Высота зоны под фикс. шапкой: якоря, main, оверлей-меню, hero */
       --site-topbar-offset: 52px;
       --btn-primary-inverted-fg: var(--bg);
@@ -279,6 +281,8 @@
       width: var(--header-dropdown-width);
       max-width: 100%;
       box-sizing: border-box;
+      /* Как при открытом меню — лого не «прыгает» при открытии */
+      padding-top: var(--header-dropdown-pad-top);
     }
 
     .dropdown-container .brand {
@@ -292,8 +296,8 @@
     body.menu-open .dropdown-container {
       background: var(--bg);
       border: 1px solid var(--border);
-      /* только вертикальные отступы — горизонталь не смещает лого */
-      padding: 8px 0 10px;
+      /* верхний отступ — у базового .dropdown-container; снизу плашка меню */
+      padding-bottom: 10px;
     }
 
     .mobile-menu-backdrop {
@@ -323,6 +327,7 @@
       pointer-events: auto;
       flex-shrink: 0;
       box-sizing: border-box;
+      text-align: center;
     }
 
     .mobile-menu a {
@@ -355,7 +360,7 @@
       font: inherit;
       font-size: 16px;
       letter-spacing: .02em;
-      text-align: left;
+      text-align: center;
       cursor: pointer;
       border: 1px solid transparent;
       background: transparent;
@@ -2403,7 +2408,7 @@
       :root {
         --desktop-topbar-logo: 132px;
         --site-topbar-offset: calc(
-          env(safe-area-inset-top, 0px) + 12px + var(--desktop-topbar-logo) + 12px
+          env(safe-area-inset-top, 0px) + 12px + var(--header-dropdown-pad-top) + var(--desktop-topbar-logo) + 12px
         );
         --header-dropdown-width: min(172px, calc(100vw - 2 * var(--container-pad-x)));
       }
@@ -2442,7 +2447,7 @@
         --mob-topbar-logo: 120px;
         --mob-topbar-logo-margin-top: 18px;
         --mob-topbar-offset: calc(
-          var(--mob-topbar-logo) + var(--mob-topbar-logo-margin-top) + env(safe-area-inset-top, 0px)
+          var(--mob-topbar-logo) + var(--mob-topbar-logo-margin-top) + var(--header-dropdown-pad-top) + env(safe-area-inset-top, 0px)
         );
       }
 
