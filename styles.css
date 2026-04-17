@@ -602,17 +602,6 @@
       border-color: var(--border-hover);
     }
 
-    body.menu-open .mobile-menu::after {
-      content: "";
-      display: block;
-      width: 1.5rem;
-      height: 1px;
-      margin-top: 10px;
-      margin-left: clamp(20px, 7vw, 36px);
-      background: currentColor;
-      opacity: .28;
-    }
-
     body.menu-open .dropdown-container .mobile-menu > :first-child {
       margin-top: 0;
       padding-top: 4px;
