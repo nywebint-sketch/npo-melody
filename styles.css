@@ -2483,15 +2483,54 @@
 
     @media (max-width: 760px) {
 
-      .topbar,
-      .topbar .in {
-        height: 48px
+      :root {
+        /* Мобильная шапка = только лого; отступы под fixed topbar = вырез + отступ + лого */
+        --mob-topbar-logo: 120px;
+        --mob-topbar-logo-margin-top: 18px;
+        --mob-topbar-offset: calc(
+          var(--mob-topbar-logo) + var(--mob-topbar-logo-margin-top) + env(safe-area-inset-top, 0px)
+        );
+      }
+
+      .topbar {
+        left: 50%;
+        right: auto;
+        width: max-content;
+        max-width: min(100%, calc(100vw - 2 * var(--container-pad-x)));
+        transform: translateX(-50%);
+        height: auto;
+        border-bottom: none;
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        box-shadow: none;
+        padding-top: max(0px, env(safe-area-inset-top, 0px));
+        padding-left: max(0px, env(safe-area-inset-left, 0px));
+        padding-right: max(0px, env(safe-area-inset-right, 0px));
+      }
+
+      /* Без зерна/подложки — шапка визуально полностью прозрачная, только лого */
+      .topbar::before {
+        display: none;
+      }
+
+      .topbar .container {
+        width: auto;
+        max-width: none;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 0;
+        padding-right: 0;
       }
 
       .topbar .in {
         position: relative;
+        height: auto;
+        min-height: 0;
         justify-content: center;
         align-items: center;
+        padding: var(--mob-topbar-logo-margin-top) 0 0;
+        gap: 0;
       }
 
       .brand {
@@ -2503,8 +2542,8 @@
       .brand .brand-mark {
         position: static;
         transform: none;
-        width: 80px;
-        height: 80px;
+        width: var(--mob-topbar-logo);
+        height: var(--mob-topbar-logo);
         padding: 0;
       }
 
@@ -2538,19 +2577,19 @@
       }
 
       main {
-        padding-top: 48px
+        padding-top: var(--mob-topbar-offset);
       }
 
       main section {
-        scroll-margin-top: 54px;
+        scroll-margin-top: calc(8px + var(--mob-topbar-offset));
       }
 
       .mobile-menu {
-        top: 48px
+        top: var(--mob-topbar-offset);
       }
 
       .mobile-menu-backdrop {
-        inset: 48px 0 0 0
+        inset: var(--mob-topbar-offset) 0 0 0;
       }
 
       h1 {
@@ -2568,7 +2607,7 @@
       }
 
       .hero-fullscreen .heroArt {
-        min-height: calc(100vh - 48px)
+        min-height: calc(100svh - var(--mob-topbar-offset));
       }
 
       .hero-fullscreen .heroArt .smile {
@@ -2585,7 +2624,7 @@
       }
 
       .intro-start {
-        margin-top: -48px;
+        margin-top: calc(-1 * var(--mob-topbar-offset));
         min-height: 100vh;
       }
 
@@ -3170,6 +3209,12 @@
       }
     }
 
+    @media (max-height: 700px) and (max-width: 760px) {
+      .hero-fullscreen .heroArt {
+        min-height: calc(100svh - var(--mob-topbar-offset));
+      }
+    }
+
     /* Global sharp corners */
     .card,
     .heroArt,
@@ -3218,6 +3263,11 @@
         --btn-close-hover-border: transparent;
       }
 
+      /* Белое лого: не чистый белый, слегка серое */
+      .brand-mark picture img {
+        filter: brightness(0.86);
+      }
+
       .brand-mark:hover {
         background: transparent;
         border-color: transparent;
@@ -3226,6 +3276,7 @@
 
       .brand-mark:hover picture img {
         filter:
+          brightness(0.92)
           drop-shadow(0 0 5px rgba(255, 255, 255, 1))
           drop-shadow(0 0 22px rgba(255, 255, 255, 1))
           drop-shadow(0 0 48px rgba(255, 255, 255, 1))
@@ -3242,7 +3293,7 @@
       }
 
       .brand-mark:focus-visible:not(:hover) picture img {
-        filter: none;
+        filter: brightness(0.86);
       }
 
       .brand-mark:hover:focus-visible {
