@@ -172,7 +172,7 @@
       flex-shrink: 0;
       position: static;
       gap: 0;
-      margin-left: 8px;
+      margin-left: 16px;
     }
 
     .brand-name {
@@ -2404,7 +2404,6 @@
 
       .brand {
         margin-left: 0;
-        transform: translateX(-10px);
       }
 
       .heroGrid {
