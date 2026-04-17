@@ -246,7 +246,7 @@
       display: block;
       background: transparent;
       filter: none;
-      transform: scale(1.48);
+      transform: scale(1.68);
       transform-origin: center center;
       transition: filter .2s ease, transform .2s ease;
     }
@@ -454,6 +454,11 @@
       background: transparent;
     }
 
+    /* Всегда как при открытом меню: иначе бургер прыгает влево-вправо на --topbar-pad-x */
+    .topbar .dropdown-container {
+      margin-right: calc(-1 * var(--topbar-pad-x));
+    }
+
     body.menu-open .dropdown-container {
       background: var(--bg);
       border-color: var(--border);
@@ -462,8 +467,6 @@
       align-items: stretch;
       gap: 4px;
       width: min(260px, calc(100vw - 2 * var(--topbar-pad-x)));
-      /* вплотную к правому краю области шапки (убираем зазор от padding .container) */
-      margin-right: calc(-1 * var(--topbar-pad-x));
     }
 
     body.menu-open .dropdown-container .nav-burger {
