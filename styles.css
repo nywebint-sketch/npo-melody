@@ -302,7 +302,7 @@
     .nav-burger-line {
       display: block;
       width: 22px;
-      height: 2px;
+      height: 1.25px;
       border-radius: 1px;
       background: currentColor;
       transition: transform .22s ease, opacity .18s ease, height .18s ease;
@@ -318,7 +318,7 @@
       left: 50%;
       top: 50%;
       width: 22px;
-      height: 1.5px;
+      height: 0.75px;
       margin: 0;
     }
 
