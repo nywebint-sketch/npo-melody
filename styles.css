@@ -249,16 +249,6 @@
       transition: filter .2s ease, transform .2s ease;
     }
 
-    .brand-home:hover {
-      background: var(--surface-hover);
-      color: var(--text-hover);
-      border-color: var(--border-hover);
-    }
-
-    .brand-home:hover picture img {
-      filter: brightness(0) invert(1);
-    }
-
     .brand-home:focus-visible:not(:hover) {
       outline: 2px solid var(--stroke, rgba(0, 0, 0, .28));
       outline-offset: 2px;
@@ -339,12 +329,6 @@
       }
     }
 
-    .nav-burger:hover {
-      background: var(--surface-hover);
-      color: var(--text-hover);
-      border-color: var(--border-hover);
-    }
-
     .nav-burger:focus-visible:not(:hover) {
       outline: 2px solid var(--stroke, rgba(0, 0, 0, .28));
       outline-offset: 2px;
@@ -371,15 +355,6 @@
       outline: none;
       box-shadow: none;
       transition: background .25s ease, color .25s ease, border-color .25s ease;
-    }
-
-    /* Без заливки; свечение только на картинке (см. drop-shadow у img) */
-    .brand-mark:hover {
-      transform: none;
-      background: transparent;
-      color: var(--btn-close-hover-text);
-      border-color: transparent;
-      box-shadow: none;
     }
 
     /* Фокус с клавиатуры — контур без заливки */
@@ -409,16 +384,6 @@
       background: transparent;
       filter: none;
       transition: filter .35s ease;
-    }
-
-    /* Светлая тема: по контуру лого — мягкий тёмный «дым» */
-    .brand-mark:hover picture img {
-      filter:
-        drop-shadow(0 0 5px rgba(0, 0, 0, 0.55))
-        drop-shadow(0 0 18px rgba(0, 0, 0, 0.48))
-        drop-shadow(0 0 40px rgba(0, 0, 0, 0.38))
-        drop-shadow(0 0 72px rgba(0, 0, 0, 0.25))
-        drop-shadow(0 0 110px rgba(0, 0, 0, 0.14));
     }
 
     .brand-mark:focus-visible:not(:hover) picture img {
@@ -512,7 +477,6 @@
       border: 1px solid transparent;
     }
 
-    .mobile-menu a:hover,
     .mobile-menu a:active {
       color: var(--text-hover);
       background: var(--surface-hover);
@@ -539,7 +503,6 @@
       color: var(--muted);
     }
 
-    .mobile-menu .nav-club-logout:hover,
     .mobile-menu .nav-club-logout:active {
       color: var(--text-hover);
       background: var(--surface-hover);
@@ -569,7 +532,6 @@
       text-transform: uppercase;
     }
 
-    body.menu-open .mobile-menu a:hover,
     body.menu-open .mobile-menu a:active {
       color: var(--text-hover);
       background: var(--surface-hover);
@@ -593,7 +555,6 @@
       text-transform: uppercase;
     }
 
-    body.menu-open .mobile-menu .nav-club-logout:hover,
     body.menu-open .mobile-menu .nav-club-logout:active {
       color: var(--text-hover);
       background: var(--surface-hover);
@@ -632,7 +593,6 @@
       margin-left: auto
     }
 
-    .topbar .btn:hover,
     .topbar .btn:active,
     .topbar .btn:focus-visible {
       background: var(--btn-close-hover-bg);
@@ -655,7 +615,6 @@
       transition: background .2s ease, color .2s ease, border-color .2s ease;
     }
 
-    .right .btn:hover,
     .right .btn:active,
     .right .btn:focus-visible {
       transform: none;
@@ -693,7 +652,6 @@
       white-space: nowrap;
     }
 
-    .btn:hover,
     .btn:active,
     .btn:focus-visible {
       transform: none;
@@ -708,7 +666,6 @@
       border-color: var(--btn-close-idle-border);
     }
 
-    .btn.primary:hover,
     .btn.primary:active,
     .btn.primary:focus-visible {
       background: var(--btn-close-hover-bg);
@@ -869,8 +826,7 @@
       box-shadow: none;
     }
 
-    /* Та же специфичность, что выше — иначе transparent !important перебивает .open-card:hover */
-    #streams #streamsLiveList > .streams-hint-row.open-card:hover,
+    /* Та же специфичность, что выше — иначе transparent !important перебивает .open-card:active */
     #streams #streamsLiveList > .streams-hint-row.open-card:active,
     #streams #streamsLiveList > .streams-hint-row.open-card.is-pressed {
       background: var(--surface-hover) !important;
@@ -1036,7 +992,6 @@
       outline-offset: var(--focus-offset);
     }
 
-    .open-card:hover,
     .open-card:active,
     .open-card.is-pressed {
       background: var(--surface-hover) !important;
@@ -1044,24 +999,18 @@
       color: var(--text-hover) !important;
     }
 
-    .open-card:hover *:not(img):not(svg),
     .open-card:active *:not(img):not(svg),
     .open-card.is-pressed *:not(img):not(svg) {
       color: var(--text-hover) !important;
       border-color: rgba(255, 255, 255, .25) !important;
     }
 
-    .open-card:hover .tag,
     .open-card:active .tag,
     .open-card.is-pressed .tag {
       background: transparent !important;
       color: var(--text-hover) !important;
     }
 
-    .open-card:hover .catalog-title,
-    .open-card:hover .artist-card-name,
-    .open-card:hover .release-card-title,
-    .open-card:hover .catalog-meta,
     .open-card:active .catalog-title,
     .open-card:active .artist-card-name,
     .open-card:active .release-card-title,
@@ -1498,10 +1447,8 @@
       backdrop-filter: none;
     }
 
-    #artistsGrid .artist-card.open-card:hover,
     #artistsGrid .artist-card.open-card:active,
     #artistsGrid .artist-card.open-card.is-pressed,
-    #releasesGrid .release-card.open-card:hover,
     #releasesGrid .release-card.open-card:active,
     #releasesGrid .release-card.open-card.is-pressed {
       background: var(--surface-hover) !important;
@@ -1600,19 +1547,13 @@
       flex-direction: column;
     }
 
-    #eventsGrid .event-card:hover,
     #eventsGrid .event-card:active,
-    #merchGrid .event-card:hover,
     #merchGrid .event-card:active {
       background: var(--surface-hover);
     }
 
-    #eventsGrid .event-card:hover .event-card-title,
-    #eventsGrid .event-card:hover .event-card-date,
     #eventsGrid .event-card:active .event-card-title,
     #eventsGrid .event-card:active .event-card-date,
-    #merchGrid .event-card:hover .event-card-title,
-    #merchGrid .event-card:hover .event-card-date,
     #merchGrid .event-card:active .event-card-title,
     #merchGrid .event-card:active .event-card-date {
       color: var(--text-hover) !important;
@@ -1631,9 +1572,7 @@
       min-height: 0;
     }
 
-    #eventsGrid .event-card:hover .pad,
     #eventsGrid .event-card:active .pad,
-    #merchGrid .event-card:hover .pad,
     #merchGrid .event-card:active .pad {
       background: transparent;
     }
@@ -1833,7 +1772,6 @@
       transition: background .12s ease, border-color .12s ease, color .12s ease;
     }
 
-    .modal-header .btn.modal-close:hover,
     .modal-header .btn.modal-close:active,
     .modal-header .btn.modal-close:focus-visible {
       transform: translateY(-50%) !important;
@@ -1860,7 +1798,6 @@
       flex-shrink: 0;
     }
 
-    .modal-header .btn.ghost:hover:not(.modal-close),
     .modal-header .btn.ghost:active:not(.modal-close),
     .modal-header .btn.ghost:focus-visible:not(.modal-close) {
       transform: none;
@@ -1967,7 +1904,6 @@
       border-color: var(--btn-close-idle-border);
     }
 
-    #mBody .booking-form-modal .btn.primary:hover,
     #mBody .booking-form-modal .btn.primary:active,
     #mBody .booking-form-modal .btn.primary:focus-visible {
       background: var(--btn-close-hover-bg);
@@ -2453,7 +2389,6 @@
       border-color: var(--btn-close-idle-border) !important;
     }
 
-    #mBody .afisha-modal-wrap .afisha-modal-actions .event-ticket-btn.btn.primary:hover,
     #mBody .afisha-modal-wrap .afisha-modal-actions .event-ticket-btn.btn.primary:active,
     #mBody .afisha-modal-wrap .afisha-modal-actions .event-ticket-btn.btn.primary:focus-visible {
       background: var(--btn-close-hover-bg) !important;
@@ -2472,10 +2407,8 @@
       transition: color .18s ease, background .18s ease, border-color .18s ease;
     }
 
-    #mBody .event-modal-actions .event-ticket-btn:not(.btn.primary):hover,
     #mBody .event-modal-actions .event-ticket-btn:not(.btn.primary):active,
     #mBody .event-modal-actions .event-ticket-btn:not(.btn.primary):focus-visible,
-    .event-modal-wrap .event-modal-actions .event-ticket-btn:not(.btn.primary):hover,
     .event-modal-wrap .event-modal-actions .event-ticket-btn:not(.btn.primary):active,
     .event-modal-wrap .event-modal-actions .event-ticket-btn:not(.btn.primary):focus-visible {
       color: var(--btn-close-hover-text) !important;
@@ -3175,7 +3108,6 @@
         transition: color .18s ease, background .18s ease, border-color .18s ease;
       }
 
-      .event-modal-actions .event-ticket-btn:not(.btn.primary):hover,
       .event-modal-actions .event-ticket-btn:not(.btn.primary):active,
       .event-modal-actions .event-ticket-btn:not(.btn.primary):focus-visible {
         color: var(--btn-close-hover-text) !important;
@@ -3448,32 +3380,6 @@
         filter: brightness(0.86);
       }
 
-      .brand-mark:hover {
-        background: transparent;
-        border-color: transparent;
-        box-shadow: none;
-      }
-
-      .brand-mark:hover picture img {
-        filter:
-          brightness(0.92)
-          drop-shadow(0 0 5px rgba(255, 255, 255, 1))
-          drop-shadow(0 0 22px rgba(255, 255, 255, 1))
-          drop-shadow(0 0 48px rgba(255, 255, 255, 1))
-          drop-shadow(0 0 88px rgba(255, 255, 255, 0.92))
-          drop-shadow(0 0 130px rgba(255, 255, 255, 0.72));
-      }
-
-      .brand-home:hover {
-        background: var(--surface-hover);
-        color: var(--text-hover);
-        border-color: var(--border-hover);
-      }
-
-      .brand-home:hover picture img {
-        filter: brightness(0);
-      }
-
       .brand-mark:focus-visible:not(:hover) {
         background: transparent;
         border-color: transparent;
@@ -3534,7 +3440,6 @@
         background: rgba(255, 255, 255, .05);
       }
 
-      .open-card:hover *:not(img):not(svg),
       .open-card:active *:not(img):not(svg),
       .open-card.is-pressed *:not(img):not(svg) {
         border-color: rgba(0, 0, 0, .2) !important;
@@ -3658,7 +3563,6 @@
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.merch-modal-carousel .carousel-arrow:hover,
 .merch-modal-carousel .carousel-arrow:active,
 .merch-modal-carousel .carousel-arrow:focus-visible {
   background: var(--btn-close-idle-bg);
@@ -3699,8 +3603,7 @@
   transition: background 0.2s;
 }
 
-.merch-modal-carousel .carousel-dot-active,
-.merch-modal-carousel .carousel-dot:hover {
+.merch-modal-carousel .carousel-dot-active {
   background: var(--text);
 }
 

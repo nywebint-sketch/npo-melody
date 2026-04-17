@@ -72,7 +72,6 @@ body.admin-body {
   border-color: transparent;
 }
 
-.admin-login-card .auth-form .btn.primary:hover,
 .admin-login-card .auth-form .btn.primary:active,
 .admin-login-card .auth-form .btn.primary:focus-visible {
   background: #e8e8e8;
@@ -129,10 +128,6 @@ body.admin-body {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-.nav-item:hover {
-  background-color: rgba(255,255,255,0.05);
-  color: var(--txt-100, #fff);
 }
 .nav-item.active {
   background-color: var(--bg-btn, #fff);
@@ -200,9 +195,6 @@ body.admin-body {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-.admin-table tr:hover td {
-  background-color: rgba(255,255,255,0.02);
-}
 .admin-table td .actions {
   display: flex;
   gap: 8px;
@@ -225,7 +217,6 @@ body.admin-body {
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
-.btn-sm:hover,
 .btn-sm:active,
 .btn-sm:focus-visible {
   background: var(--btn-close-hover-bg);
@@ -237,7 +228,6 @@ body.admin-body {
   color: #ff6b6b;
   background: transparent;
 }
-.btn-sm.danger:hover,
 .btn-sm.danger:active,
 .btn-sm.danger:focus-visible {
   background: #ff6b6b;
@@ -319,7 +309,6 @@ body.admin-body {
   border: 1px solid #111;
 }
 
-#adminModal .editor-actions .btn.primary:hover,
 #adminModal .editor-actions .btn.primary:active,
 #adminModal .editor-actions .btn.primary:focus-visible {
   background: #2c2c2c;
@@ -335,7 +324,6 @@ body.admin-body {
     border-color: #fff;
   }
 
-  #adminModal .editor-actions .btn.primary:hover,
   #adminModal .editor-actions .btn.primary:active,
   #adminModal .editor-actions .btn.primary:focus-visible {
     background: #e6e6e6;
@@ -350,7 +338,6 @@ body.admin-body {
   border: 1px solid rgba(0, 0, 0, 0.22);
 }
 
-#adminModal .editor-actions .btn.ghost:hover,
 #adminModal .editor-actions .btn.ghost:active,
 #adminModal .editor-actions .btn.ghost:focus-visible {
   background: rgba(0, 0, 0, 0.06);
@@ -364,7 +351,6 @@ body.admin-body {
     border-color: rgba(255, 255, 255, 0.35);
   }
 
-  #adminModal .editor-actions .btn.ghost:hover,
   #adminModal .editor-actions .btn.ghost:active,
   #adminModal .editor-actions .btn.ghost:focus-visible {
     background: rgba(255, 255, 255, 0.08);
