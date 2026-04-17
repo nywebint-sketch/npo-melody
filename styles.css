@@ -43,6 +43,8 @@
       --header-dropdown-pad-top: 8px;
       /* Высота зоны под фикс. шапкой: якоря, main, оверлей-меню, hero */
       --site-topbar-offset: 52px;
+      /* Доп. зазор под логотипом при закрытом меню — заголовок раздела ниже лого при скролле и по якорю */
+      --logo-scroll-clearance: 0px;
       --btn-primary-inverted-fg: var(--bg);
       /* Как у кнопки закрытия: покой — без заливки, чёрный текст; наведение — инверсия */
       --btn-close-idle-bg: transparent;
@@ -60,6 +62,10 @@
     html,
     body {
       height: 100%
+    }
+
+    body:not(.menu-open) {
+      --logo-scroll-clearance: 20px;
     }
 
     body {
@@ -374,6 +380,19 @@
       border-color: var(--border-hover);
     }
 
+    /* Нижняя строка меню: копирайт без отдельной заливки — как остальные пункты */
+    .mobile-menu .mobile-menu-copyright {
+      margin: 36px 0 0;
+      padding: 8px 12px 4px;
+      font-size: 12px;
+      font-style: italic;
+      letter-spacing: .04em;
+      line-height: 1.35;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+    }
+
     body.menu-open .dropdown-container .mobile-menu > :first-child {
       margin-top: 0;
       padding-top: 8px;
@@ -500,13 +519,13 @@
     }
 
     main {
-      padding-top: var(--site-topbar-offset);
+      padding-top: calc(var(--site-topbar-offset) + var(--logo-scroll-clearance));
     }
 
     section {
       padding: 56px 0;
       /* Якорная прокрутка: раздел под фиксированной шапкой */
-      scroll-margin-top: calc(8px + var(--site-topbar-offset));
+      scroll-margin-top: calc(8px + var(--site-topbar-offset) + var(--logo-scroll-clearance));
     }
 
     .db-notice-wrap {
@@ -1106,7 +1125,7 @@
     }
 
     .hero-fullscreen .heroArt {
-      min-height: calc(100vh - var(--site-topbar-offset));
+      min-height: calc(100vh - var(--site-topbar-offset) - var(--logo-scroll-clearance));
       border: 0;
       border-radius: 0;
     }
@@ -1129,7 +1148,7 @@
     }
 
     .intro-start {
-      margin-top: calc(-1 * var(--site-topbar-offset));
+      margin-top: calc(-1 * (var(--site-topbar-offset) + var(--logo-scroll-clearance)));
       padding: 0;
       min-height: 100vh;
       display: flex;
@@ -2536,11 +2555,11 @@
       }
 
       main {
-        padding-top: var(--mob-topbar-offset);
+        padding-top: calc(var(--mob-topbar-offset) + var(--logo-scroll-clearance));
       }
 
       main section {
-        scroll-margin-top: calc(8px + var(--mob-topbar-offset));
+        scroll-margin-top: calc(8px + var(--mob-topbar-offset) + var(--logo-scroll-clearance));
       }
 
       h1 {
@@ -2558,7 +2577,7 @@
       }
 
       .hero-fullscreen .heroArt {
-        min-height: calc(100svh - var(--mob-topbar-offset));
+        min-height: calc(100svh - var(--mob-topbar-offset) - var(--logo-scroll-clearance));
       }
 
       .hero-fullscreen .heroArt .smile {
@@ -2575,7 +2594,7 @@
       }
 
       .intro-start {
-        margin-top: calc(-1 * var(--mob-topbar-offset));
+        margin-top: calc(-1 * (var(--mob-topbar-offset) + var(--logo-scroll-clearance)));
         min-height: 100vh;
       }
 
@@ -3148,6 +3167,10 @@
       .mobile-menu .nav-club-logout {
         font-size: 13px
       }
+
+      .mobile-menu .mobile-menu-copyright {
+        font-size: 11px
+      }
     }
 
     @media (max-height: 700px) {
@@ -3156,13 +3179,13 @@
       }
 
       .hero-fullscreen .heroArt {
-        min-height: calc(100vh - var(--site-topbar-offset));
+        min-height: calc(100vh - var(--site-topbar-offset) - var(--logo-scroll-clearance));
       }
     }
 
     @media (max-height: 700px) and (max-width: 760px) {
       .hero-fullscreen .heroArt {
-        min-height: calc(100svh - var(--mob-topbar-offset));
+        min-height: calc(100svh - var(--mob-topbar-offset) - var(--logo-scroll-clearance));
       }
     }
 
