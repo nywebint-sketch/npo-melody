@@ -37,30 +37,32 @@
   <header class="topbar">
     <div class="container">
       <div class="in">
-        <div class="brand">
-          <button class="brand-mark menu-toggle" id="mobileMenuToggle" type="button" aria-label="Открыть меню"
-            aria-expanded="false">
-            <picture>
-              <source media="(prefers-color-scheme: dark)"
-                srcset="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo%20white.png">
-              <img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo%20black.png"
-                alt="Логотип НПО Мелодия" width="132" height="132">
-            </picture>
-          </button>
+        <div class="dropdown-container" id="headerDropdown">
+          <div class="brand">
+            <button class="brand-mark menu-toggle" id="mobileMenuToggle" type="button" aria-label="Открыть меню"
+              aria-expanded="false" aria-controls="mobileMenu">
+              <picture>
+                <source media="(prefers-color-scheme: dark)"
+                  srcset="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo%20white.png">
+                <img src="https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/logo%20black.png"
+                  alt="Логотип НПО Мелодия" width="132" height="132">
+              </picture>
+            </button>
+          </div>
+          <nav class="mobile-menu" id="mobileMenu" aria-label="Навигация по сайту" hidden>
+            <a href="#streams">Live</a>
+            <a href="#events">Афиша</a>
+            <a href="#artists">Артисты</a>
+            <a href="#merch">Шоп</a>
+            <a href="#releases">Релизы</a>
+            <a href="#profile" class="auth-open-button">войти</a>
+            <button type="button" class="nav-club-logout" hidden aria-label="Выйти из аккаунта">выйти</button>
+          </nav>
         </div>
       </div>
     </div>
   </header>
   <div class="mobile-menu-backdrop" id="mobileMenuBackdrop" hidden></div>
-  <nav class="mobile-menu" id="mobileMenu" aria-label="Навигация по сайту" hidden>
-    <a href="#streams">Live</a>
-    <a href="#events">Афиша</a>
-    <a href="#artists">Артисты</a>
-    <a href="#merch">Шоп</a>
-    <a href="#releases">Релизы</a>
-    <a href="#profile" class="auth-open-button">войти</a>
-    <button type="button" class="nav-club-logout" hidden aria-label="Выйти из аккаунта">выйти</button>
-  </nav>
 
   <main>
 
