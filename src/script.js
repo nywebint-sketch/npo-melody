@@ -77,12 +77,12 @@ const getOrCreateDbNoticeNode = () => {
     retryBtn.textContent = "Пробуем...";
     try {
       renderSkeletonGrid("#eventsGrid", 6);
-      renderSkeletonGrid("#releasesGrid", 4);
+      if (isReleasesSectionVisible()) renderSkeletonGrid("#releasesGrid", 4);
       renderSkeletonGrid("#streamsLiveList", 4, "row");
       renderSkeletonGrid("#merchGrid", 4);
       await loadCatalogFromDb();
       renderEvents();
-      renderReleases();
+      if (isReleasesSectionVisible()) renderReleases();
       renderStreams();
       renderMerch();
     } finally {
@@ -120,6 +120,11 @@ const setDbNotice = (health) => {
 };
 
 const streamsAuthOk = () => Boolean(clubSession?.email);
+
+const isReleasesSectionVisible = () => {
+  const section = document.getElementById("releases");
+  return Boolean(section && !section.hasAttribute("hidden"));
+};
 
 const BOOKING_ADMIN_ENDPOINT = "https://httpbin.org/post";
 const BOOKING_COOLDOWN_MS = 60 * 1000;
@@ -564,6 +569,7 @@ function renderEvents() {
 }
 
 function renderReleases() {
+  if (!isReleasesSectionVisible()) return;
   const wrap = $("#releasesGrid");
   if (!wrap) return;
   wrap.replaceChildren();
@@ -1427,7 +1433,7 @@ const loadCatalogFromDb = async () => {
   if (!window.dbLayer) return;
   const [events, releases, podcasts, merch, liveItems] = await Promise.all([
     window.dbLayer.getEvents(),
-    window.dbLayer.getReleases(),
+    isReleasesSectionVisible() ? window.dbLayer.getReleases() : Promise.resolve([]),
     window.dbLayer.getPodcasts(),
     window.dbLayer.getMerch(),
     window.dbLayer.getLiveItems ? window.dbLayer.getLiveItems() : Promise.resolve([])
@@ -1445,7 +1451,7 @@ const loadCatalogFromDb = async () => {
 const initApp = async () => {
   // Показать скелетоны до загрузки данных из БД
   renderSkeletonGrid("#eventsGrid", 6);
-  renderSkeletonGrid("#releasesGrid", 4);
+  if (isReleasesSectionVisible()) renderSkeletonGrid("#releasesGrid", 4);
   renderSkeletonGrid("#streamsLiveList", 4, "row");
   renderSkeletonGrid("#merchGrid", 4);
 
@@ -1457,7 +1463,7 @@ const initApp = async () => {
   if (yearNode) yearNode.textContent = new Date().getFullYear();
 
   renderEvents();
-  renderReleases();
+  if (isReleasesSectionVisible()) renderReleases();
   renderStreams();
   renderMerch();
 

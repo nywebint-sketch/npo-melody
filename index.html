@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>НПО Мелодия</title>
   <meta name="description"
-    content="НПО Мелодия — клуб / лейбл / трансляции. Афиша, релизы, подкасты, НПО Радио, магазин.">
+    content="НПО Мелодия — клуб / лейбл / трансляции. Афиша, подкасты, НПО Радио, магазин.">
 
   <!-- Базовый URL сайта: при своём домене замени href во всех meta ниже + canonical -->
   <link rel="canonical" href="https://nywebint-sketch.github.io/npo-melody/">
@@ -18,13 +18,13 @@
   <meta property="og:site_name" content="НПО Мелодия">
   <meta property="og:title" content="НПО Мелодия">
   <meta property="og:description"
-    content="НПО Мелодия — клуб / лейбл / трансляции. Афиша, релизы, подкасты, НПО Радио, магазин.">
+    content="НПО Мелодия — клуб / лейбл / трансляции. Афиша, подкасты, НПО Радио, магазин.">
   <meta property="og:url" content="https://nywebint-sketch.github.io/npo-melody/">
   <meta property="og:image" content="./images/logo-white.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="НПО Мелодия">
   <meta name="twitter:description"
-    content="НПО Мелодия — клуб / лейбл / трансляции. Афиша, релизы, подкасты, НПО Радио, магазин.">
+    content="НПО Мелодия — клуб / лейбл / трансляции. Афиша, подкасты, НПО Радио, магазин.">
   <meta name="twitter:image" content="./images/logo-white.png">
 
   <link rel="icon" href="./images/logo-white.png" type="image/png">
@@ -50,10 +50,9 @@
             <span class="nav-burger-line" aria-hidden="true"></span>
           </button>
           <nav class="mobile-menu" id="mobileMenu" aria-label="Навигация по сайту" hidden>
-            <a href="#streams">НПО РАДИО</a>
             <a href="#events">Афиша</a>
+            <a href="#streams">НПО РАДИО</a>
             <a href="#merch">Магазин</a>
-            <a href="#releases">Релизы</a>
             <a href="#profile" class="auth-open-button">вход</a>
             <button type="button" class="nav-club-logout" hidden aria-label="Выход из аккаунта">выход</button>
           </nav>
@@ -75,6 +74,22 @@
       >
     </section>
 
+    <section id="events">
+      <div class="container">
+        <div class="head">
+          <div>
+            <h2>Афиша</h2>
+          </div>
+        </div>
+
+        <div class="card catalog-block">
+          <div class="pad catalog-block__pad">
+            <div class="grid g4" id="eventsGrid"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="streams">
       <div class="container">
         <div class="head">
@@ -87,22 +102,6 @@
           <div class="pad catalog-block__pad">
             <p id="streamsLiveCount" class="streams-live-meta muted" aria-live="polite"></p>
             <div class="grid streams-live-grid" id="streamsLiveList" role="list" aria-label="Предстоящие эфиры"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="events">
-      <div class="container">
-        <div class="head">
-          <div>
-            <h2>Афиша</h2>
-          </div>
-        </div>
-
-        <div class="card catalog-block">
-          <div class="pad catalog-block__pad">
-            <div class="grid g4" id="eventsGrid"></div>
           </div>
         </div>
       </div>
@@ -167,7 +166,8 @@
       </div>
     </section>
 
-    <section id="releases">
+    <!-- Релизы: временно скрыты -->
+    <section id="releases" hidden>
       <div class="container">
         <div class="head">
           <div>
@@ -232,10 +232,19 @@
     <footer>
       <div class="container">
         <div class="row footer-socials">
-          <a class="btn" href="#" data-placeholder-link="Поставь ссылку">Telegram</a>
-          <a class="btn" href="https://www.instagram.com/npo_melody/" target="_blank"
-            rel="noopener noreferrer">Instagram</a>
-          <a class="btn" href="#" data-placeholder-link="Поставь ссылку">SoundCloud</a>
+          <a class="footer-social-btn footer-social-btn--telegram" href="#" data-placeholder-link="Поставь ссылку" aria-label="Telegram">
+            <span class="footer-social-icon footer-social-icon--mask" aria-hidden="true"></span>
+          </a>
+          <a class="footer-social-btn footer-social-btn--instagram" href="https://www.instagram.com/npo_melody/" target="_blank"
+            rel="noopener noreferrer" aria-label="Instagram">
+            <span class="footer-social-icon footer-social-icon--mask" aria-hidden="true"></span>
+          </a>
+          <a class="footer-social-btn footer-social-btn--soundcloud" href="#" data-placeholder-link="Поставь ссылку" aria-label="SoundCloud">
+            <span class="footer-social-icon footer-social-icon--mask" aria-hidden="true"></span>
+          </a>
+          <a class="footer-social-btn footer-social-btn--email" href="mailto:npomelodia@yandex.ru" aria-label="Почта">
+            <span class="footer-social-icon footer-social-icon--mask" aria-hidden="true"></span>
+          </a>
         </div>
         <div class="footer-address muted">Москва, 3-я улица Ямского Поля, 2к5А</div>
         <div>© <span id="year">2026</span> НПО Мелодия</div>
