@@ -154,13 +154,20 @@ body.admin-body {
   padding: 30px;
   border-bottom: 1px solid var(--bd-100, rgba(255,255,255,0.1));
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   background-color: rgba(0,0,0,0.5);
 }
 .admin-header h1 {
   margin: 0;
   font-size: 24px;
+  text-align: center;
+}
+.admin-header .header-actions {
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .admin-content {
   position: relative;

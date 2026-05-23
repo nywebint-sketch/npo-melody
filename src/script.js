@@ -41,7 +41,6 @@ const sortAsc = (arr, key) => [...arr].sort((a, b) => new Date(a[key]) - new Dat
 
 let data = {
   events: [],
-  artists: [],
   releases: [],
   podcasts: [],
   merch: [],
@@ -78,13 +77,11 @@ const getOrCreateDbNoticeNode = () => {
     retryBtn.textContent = "Пробуем...";
     try {
       renderSkeletonGrid("#eventsGrid", 6);
-      renderSkeletonGrid("#artistsGrid", ARTISTS_VISIBLE);
       renderSkeletonGrid("#releasesGrid", 4);
       renderSkeletonGrid("#streamsLiveList", 4, "row");
       renderSkeletonGrid("#merchGrid", 4);
       await loadCatalogFromDb();
       renderEvents();
-      renderArtists();
       renderReleases();
       renderStreams();
       renderMerch();
@@ -131,9 +128,6 @@ const BOOKING_REQUEST_TIMEOUT_MS = 12000;
 const BOOKING_KEY = "npo_booking_last_submit_ts";
 const CLUB_TOKEN_KEY = "npo_club_token_v1";
 const CLUB_API_BASE = window.location.protocol === "file:" ? "http://localhost:8000" : "";
-const ARTISTS_VISIBLE = 6;
-
-
 const el = (tag, { className, text } = {}) => {
   const node = document.createElement(tag);
   if (className) node.className = className;
@@ -370,7 +364,7 @@ async function refreshClubSession() {
     const mockExclusive = [
       { title: 'Early Access: NPO VA 002', description: 'Превью треков + закрытый pre-save.' },
       { title: 'Private Stream Archive', description: 'Закрытые записи из ночных сетов.' },
-      { title: 'Members Promo Code', description: 'Скидка 15% в шопе и на закрытые дропы.' }
+      { title: 'Members Promo Code', description: 'Скидка 15% в магазине и на закрытые дропы.' }
     ];
     renderExclusiveItems(mockExclusive);
     renderClubAccess();
@@ -421,7 +415,7 @@ function initClubAuth() {
       const mockExclusive = [
         { title: 'Early Access: NPO VA 002', description: 'Превью треков + закрытый pre-save.' },
         { title: 'Private Stream Archive', description: 'Закрытые записи из ночных сетов.' },
-        { title: 'Members Promo Code', description: 'Скидка 15% в шопе и на закрытые дропы.' }
+        { title: 'Members Promo Code', description: 'Скидка 15% в магазине и на закрытые дропы.' }
       ];
       renderExclusiveItems(mockExclusive);
       renderStreams();
@@ -453,7 +447,7 @@ function initClubAuth() {
       const mockExclusive = [
         { title: 'Early Access: NPO VA 002', description: 'Превью треков + закрытый pre-save.' },
         { title: 'Private Stream Archive', description: 'Закрытые записи из ночных сетов.' },
-        { title: 'Members Promo Code', description: 'Скидка 15% в шопе и на закрытые дропы.' }
+        { title: 'Members Promo Code', description: 'Скидка 15% в магазине и на закрытые дропы.' }
       ];
       renderExclusiveItems(mockExclusive);
       renderStreams();
@@ -535,7 +529,7 @@ function resolveImageSrc(imgSrc) {
   return defaultLogo;
 }
 
-/** Изображения товаров шопа в Storage: images/microdropych/; короткие имена («vtroem.jpeg», «vtroem») собираем в полный URL. */
+/** Изображения товаров магазина в Storage: images/microdropych/; короткие имена («vtroem.jpeg», «vtroem») собираем в полный URL. */
 function resolveMerchImageSrc(raw) {
   const defaultLogo = getDefaultLogoUrl();
   const s = String(raw || "").trim();
@@ -567,36 +561,6 @@ function renderEvents() {
   });
 
   if (streamsAuthOk()) renderStreamsLive();
-}
-
-function renderArtists() {
-  const wrap = $("#artistsGrid");
-  if (!wrap) return;
-  wrap.replaceChildren();
-
-  const ARTIST_ORDER = ["wei", "laty", "rha", "and"];
-  const orderIndex = (name) => {
-    const i = ARTIST_ORDER.indexOf(String(name).toLowerCase());
-    return i === -1 ? ARTIST_ORDER.length : i;
-  };
-  const list = [...data.artists].sort((a, b) => {
-    const ia = orderIndex(a.name);
-    const ib = orderIndex(b.name);
-    if (ia !== ib) return ia - ib;
-    return a.name.localeCompare(b.name);
-  });
-
-  list.forEach((artist) => {
-    const card = el("div", { className: "card artist-card" });
-    card.appendChild(createMedia(artist.poster || "logo.png", artist.name, "media square"));
-
-    const pad = el("div", { className: "pad artist-card-body" });
-    pad.appendChild(el("b", { className: "artist-card-name", text: artist.name }));
-    card.appendChild(pad);
-
-    setupOpenCard(card, "artist", artist.id);
-    wrap.appendChild(card);
-  });
 }
 
 function renderReleases() {
@@ -1008,38 +972,6 @@ function buildLiveStreamModalBody(eventItem) {
   return wrapper;
 }
 
-function buildArtistModalBody(artist) {
-  const wrapper = el("div", { className: "event-modal-wrap artist-modal-wrap" });
-
-  const left = el("div", { className: "card event-modal-left" });
-  const posterSlot = el("div", { className: "event-modal-poster-slot" });
-  const mediaClass = artist.poster ? "media square cover" : "media square";
-  posterSlot.appendChild(createMedia(artist.poster || "logo.png", artist.name, mediaClass));
-  left.appendChild(posterSlot);
-
-  const right = el("div", { className: "card pad event-modal-right" });
-
-  const bio = el("div", { className: "muted", text: artist.bio || "—" });
-  right.appendChild(bio);
-
-  const actions = el("div", { className: "event-modal-actions" });
-
-  const bandcamp = el("button", { className: "btn event-ticket-btn", text: "Bandcamp" });
-  bandcamp.type = "button";
-  bandcamp.addEventListener("click", () => alert("Bandcamp (поставишь ссылку)"));
-  actions.appendChild(bandcamp);
-
-  const soundcloud = el("button", { className: "btn event-ticket-btn", text: "SoundCloud" });
-  soundcloud.type = "button";
-  soundcloud.addEventListener("click", () => alert("SoundCloud (поставишь ссылку)"));
-  actions.appendChild(soundcloud);
-
-  left.appendChild(actions);
-  wrapper.appendChild(left);
-  wrapper.appendChild(right);
-  return wrapper;
-}
-
 function buildReleaseModalBody(release) {
   const wrapper = el("div", { className: "event-modal-wrap release-modal-wrap" });
 
@@ -1215,17 +1147,6 @@ document.addEventListener("click", (e) => {
   if (type === "live-event") {
     const eventItem = data.live.find((x) => String(x.id) === String(id));
     if (eventItem) openLiveStreamModal(eventItem);
-    return;
-  }
-
-  if (type === "artist") {
-    const artist = data.artists.find((x) => x.id === id);
-    if (!artist) return;
-    openModal({
-      title: artist.name,
-      sub: artist.role || artist.genre || "Артист",
-      body: buildArtistModalBody(artist)
-    });
     return;
   }
 
@@ -1434,7 +1355,6 @@ mobileLinks.forEach((link) => link.addEventListener("click", closeMobileMenu));
 
 window.addEventListener("resize", () => {
   if (!mobileBp.matches) closeMobileMenu();
-  renderArtists();
 });
 
 document.addEventListener("keydown", (e) => {
@@ -1505,16 +1425,14 @@ function renderSkeletonGrid(selector, count = 4, variant = "default") {
 /** Загрузка таблиц для сеток; идёт параллельно с refreshClubSession, чтобы не ждать сессию и каталог по очереди. */
 const loadCatalogFromDb = async () => {
   if (!window.dbLayer) return;
-  const [events, artists, releases, podcasts, merch, liveItems] = await Promise.all([
+  const [events, releases, podcasts, merch, liveItems] = await Promise.all([
     window.dbLayer.getEvents(),
-    window.dbLayer.getArtists(),
     window.dbLayer.getReleases(),
     window.dbLayer.getPodcasts(),
     window.dbLayer.getMerch(),
     window.dbLayer.getLiveItems ? window.dbLayer.getLiveItems() : Promise.resolve([])
   ]);
   data.events = events;
-  data.artists = artists;
   data.releases = releases;
   data.podcasts = podcasts;
   data.merch = merch;
@@ -1527,7 +1445,6 @@ const loadCatalogFromDb = async () => {
 const initApp = async () => {
   // Показать скелетоны до загрузки данных из БД
   renderSkeletonGrid("#eventsGrid", 6);
-  renderSkeletonGrid("#artistsGrid", ARTISTS_VISIBLE);
   renderSkeletonGrid("#releasesGrid", 4);
   renderSkeletonGrid("#streamsLiveList", 4, "row");
   renderSkeletonGrid("#merchGrid", 4);
@@ -1540,7 +1457,6 @@ const initApp = async () => {
   if (yearNode) yearNode.textContent = new Date().getFullYear();
 
   renderEvents();
-  renderArtists();
   renderReleases();
   renderStreams();
   renderMerch();

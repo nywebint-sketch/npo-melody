@@ -96,19 +96,17 @@ navItems.forEach((item) => {
       dashboard: 'Дашборд',
       users: 'Пользователи',
       events: 'Афиша (События)',
-      artists: 'Артисты',
       releases: 'Релизы',
       podcasts: 'Подкасты',
       streams: 'Стримы',
       live: 'Live',
-      merch: 'Шоп'
+      merch: 'Магазин'
     };
     pageTitle.textContent = titles[view] || view;
 
     if (view === 'dashboard') loadDashboard();
     if (view === 'users') loadUsersView();
     if (view === 'events') loadEventsView();
-    if (view === 'artists') loadArtistsView();
     if (view === 'releases') loadReleasesView();
     if (view === 'podcasts') loadPodcastsView();
     if (view === 'streams') loadStreamsView();
@@ -123,7 +121,6 @@ async function loadDashboard() {
   addBtn.style.display = 'none';
   const users = await db.getUsers();
   const events = await db.getEvents();
-  const artists = await db.getArtists();
   const merch = await db.getMerch();
   const liveItems = await db.getLiveItems();
 
@@ -138,15 +135,11 @@ async function loadDashboard() {
         <p style="font-size:32px;font-weight:bold;margin:10px 0;">${events.length}</p>
       </div>
       <div class="card pad" style="background:rgba(255,255,255,0.05)">
-        <h3>Артистов</h3>
-        <p style="font-size:32px;font-weight:bold;margin:10px 0;">${artists.length}</p>
-      </div>
-      <div class="card pad" style="background:rgba(255,255,255,0.05)">
         <h3>Live (эфиры)</h3>
         <p style="font-size:32px;font-weight:bold;margin:10px 0;">${liveItems.length}</p>
       </div>
       <div class="card pad" style="background:rgba(255,255,255,0.05)">
-        <h3>Товаров (шоп)</h3>
+        <h3>Товаров (магазин)</h3>
         <p style="font-size:32px;font-weight:bold;margin:10px 0;">${merch.length}</p>
       </div>
     </div>
@@ -456,140 +449,6 @@ async function deleteEventById(id) {
   }
 }
 
-// ---- АРТИСТЫ ----
-
-async function loadArtistsView() {
-  addBtn.style.display = 'block';
-  addBtn.textContent = '+ Добавить артиста';
-  addBtn.onclick = () => openArtistEditor();
-
-  const artists = await db.getArtists();
-  const rows = artists.map((a) => `
-    <tr>
-      <td><b>${a.name}</b></td>
-      <td>${a.role || '—'}</td>
-      <td>${a.bookable ? 'Да' : 'Нет'}</td>
-      <td>
-        <div class="actions">
-          <button type="button" class="btn-sm" data-admin-action="edit-artist" data-id="${a.id}">Изменить</button>
-        </div>
-      </td>
-    </tr>
-  `).join('');
-
-  viewContainer.innerHTML = `
-    <div class="admin-table-wrap">
-      <table class="admin-table">
-        <thead><tr><th>Имя</th><th>Роль</th><th>Букинг</th><th>Действия</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-  `;
-}
-
-async function openArtistEditor(id = null) {
-  let artist = { name: '', role: 'DJ', bookable: true, bio: '', tags: [], poster: '' };
-  let isEdit = false;
-
-  if (id) {
-    const artists = await db.getArtists();
-    artist = artists.find((a) => a.id === id) || artist;
-    isEdit = true;
-  }
-
-  editorTitle.textContent = isEdit ? 'Редактировать артиста' : 'Новый артист';
-  const artistSubmitLabel = isEdit ? 'Сохранить' : 'Добавить артиста';
-
-  editorBody.innerHTML = `
-    <form id="editorForm" class="editor-form">
-      <div class="form-group">
-        <label>Имя артиста</label>
-        <input type="text" name="name" value="${artist.name}" required>
-      </div>
-      <div class="form-group">
-        <label>Роль</label>
-        <input type="text" name="role" value="${artist.role || ''}">
-      </div>
-      <div class="form-group">
-        <label>Описание (Bio)</label>
-        <textarea name="bio">${artist.bio || ''}</textarea>
-      </div>
-      <div class="form-group">
-        <label>Доступен для букинга</label>
-        <select name="bookable">
-          <option value="true" ${artist.bookable ? 'selected' : ''}>Да</option>
-          <option value="false" ${!artist.bookable ? 'selected' : ''}>Нет</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Обложка / Фото</label>
-        <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
-          ${artist.poster ? `<img src="${resolvePosterPreview(artist.poster)}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">` : `<div style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:4px;"></div>`}
-          <input type="file" name="posterFile" accept="image/*" style="font-size:14px;">
-        </div>
-        <div class="muted" style="font-size:12px;">Оставьте пустым, чтобы не менять текущую картинку.</div>
-      </div>
-      <div class="editor-actions${isEdit ? ' editor-actions--spread' : ''}">
-        ${isEdit ? `<button type="button" class="btn-sm danger" data-admin-action="delete-artist" data-id="${id}">Удалить артиста</button>` : ''}
-        <div class="editor-actions-main">
-          <button type="button" class="btn ghost" data-admin-action="close-modal">Отмена</button>
-          <button type="submit" class="btn primary" id="saveArtistBtn">${artistSubmitLabel}</button>
-        </div>
-      </div>
-    </form>
-  `;
-
-  adminModal.style.display = 'flex';
-
-  document.getElementById('editorForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('saveArtistBtn');
-    btn.textContent = 'Сохранение...';
-    btn.disabled = true;
-
-    const fd = new FormData(e.target);
-    const file = fd.get('posterFile');
-    let posterUrl = artist.poster || 'logo.png';
-
-    if (file && file.size > 0) {
-      try {
-        posterUrl = await db.uploadImage(file);
-      } catch (err) {
-        alert('Ошибка при загрузке картинки!');
-        btn.textContent = artistSubmitLabel;
-        btn.disabled = false;
-        return;
-      }
-    }
-
-    const data = {
-      name: fd.get('name'),
-      role: fd.get('role'),
-      bio: fd.get('bio'),
-      bookable: fd.get('bookable') === 'true',
-      tags: artist.tags,
-      poster: posterUrl
-    };
-
-    if (isEdit) {
-      await db.updateArtist(id, data);
-    } else {
-      await db.addArtist(data);
-    }
-
-    adminModal.style.display = 'none';
-    loadArtistsView();
-  });
-}
-
-async function deleteArtistById(id) {
-  if (confirm('Точно удалить?')) {
-    await db.deleteArtist(id);
-    loadArtistsView();
-    if (adminModal) adminModal.style.display = 'none';
-  }
-}
-
 // --- РЕЛИЗЫ ---
 
 async function loadReleasesView() {
@@ -831,11 +690,11 @@ async function deleteLiveById(id) {
   }
 }
 
-// --- Шоп (таблица merch) ---
+// --- Магазин (таблица merch) ---
 
 async function loadMerchView() {
   addBtn.style.display = 'block';
-  addBtn.onclick = () => alert('Редактор шопа пока в разработке');
+  addBtn.onclick = () => alert('Редактор магазина пока в разработке');
 
   const merch = await db.getMerch();
   const rows = merch.map((m) => `
@@ -885,9 +744,6 @@ if (adminPanel) {
       if (action === 'edit-event' && id) {
         ev.preventDefault();
         void openEventEditor(id);
-      } else if (action === 'edit-artist' && id) {
-        ev.preventDefault();
-        void openArtistEditor(id);
       } else if (action === 'edit-live-item' && id) {
         ev.preventDefault();
         void openLiveEditor(id);
@@ -908,7 +764,6 @@ if (adminModal) {
       return;
     }
     if (action === 'delete-event' && id) void deleteEventById(id);
-    if (action === 'delete-artist' && id) void deleteArtistById(id);
     if (action === 'delete-live-item' && id) void deleteLiveById(id);
   });
 }
