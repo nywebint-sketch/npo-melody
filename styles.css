@@ -2455,18 +2455,13 @@
       color: var(--footer-social-btn-fg);
       text-decoration: none;
       cursor: pointer;
-      transition: opacity .2s ease, background-color .2s ease, color .2s ease;
+      transition: background-color .2s ease, color .2s ease;
       user-select: none
-    }
-
-    .footer-social-btn:hover {
-      opacity: .82
     }
 
     .footer-social-btn:focus-visible {
       outline: 2px solid var(--footer-social-btn-outline);
-      outline-offset: 3px;
-      opacity: 1
+      outline-offset: 3px
     }
 
     .footer-social-icon {

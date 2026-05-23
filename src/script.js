@@ -761,6 +761,18 @@ function scrollToExclusiveSection() {
   }
 }
 
+function goToHomeScreen() {
+  closeMobileMenu();
+  closeModal();
+  closeExclusivePanel();
+  document.getElementById("home")?.scrollIntoView(scrollOptsSectionNav);
+  try {
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+  } catch {
+    window.location.hash = "";
+  }
+}
+
 /** Клики по пунктам меню: прокрутка к началу раздела без «хвостов» соседних блоков (см. scroll-margin-top в CSS). */
 function bindSectionNavScroll() {
   const links = document.querySelectorAll('#mobileMenu a[href^="#"]');
@@ -1321,19 +1333,6 @@ const mobileLinks = $$("#mobileMenu a");
 const mobileBp = window.matchMedia("(max-width: 980px)");
 const brandHomeLink = $("#brandHomeLink");
 
-brandHomeLink?.addEventListener("click", (e) => {
-  e.preventDefault();
-  const next = new URL(brandHomeLink.getAttribute("href") || "./", window.location.href);
-  next.hash = "";
-  const here = new URL(window.location.href);
-  here.hash = "";
-  if (String(next.pathname) === String(here.pathname) && String(next.search) === String(here.search)) {
-    window.location.reload();
-    return;
-  }
-  window.location.assign(next.href);
-});
-
 const closeMobileMenu = () => {
   mobileMenuToggle?.setAttribute("aria-expanded", "false");
   mobileMenuToggle?.setAttribute("aria-label", "Открыть меню");
@@ -1349,6 +1348,19 @@ const openMobileMenu = () => {
   mobileMenuToggle?.setAttribute("aria-expanded", "true");
   mobileMenuToggle?.setAttribute("aria-label", "Закрыть меню");
 };
+
+brandHomeLink?.addEventListener("click", (e) => {
+  e.preventDefault();
+  const next = new URL(brandHomeLink.getAttribute("href") || "./", window.location.href);
+  next.hash = "";
+  const here = new URL(window.location.href);
+  here.hash = "";
+  if (String(next.pathname) === String(here.pathname) && String(next.search) === String(here.search)) {
+    goToHomeScreen();
+    return;
+  }
+  window.location.assign(next.href);
+});
 
 mobileMenuToggle?.addEventListener("click", (e) => {
   e.preventDefault();
