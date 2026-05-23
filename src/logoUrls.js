@@ -1,11 +1,14 @@
-/** Supabase public images base + theme-aware default logo */
+/** Локальные статические ассеты (Vite: public/images → /images/…) */
+export const LOCAL_IMAGES = "./images/";
+
+/** Supabase Storage — постеры, мерч и прочий контент из БД */
 export const ASSET_PREFIX =
   "https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/";
 
-/** Светлый знак — для тёмного фона / тёмной темы */
-export const LOGO_WHITE_URL = ASSET_PREFIX + "logo%20white.png";
-/** Знак для светлой темы — `logo black.png` в Storage (чёрный контур, прозрачный фон) */
-export const LOGO_BLACK_URL = ASSET_PREFIX + "logo%20black.png";
+export const LOGO_WHITE_URL = LOCAL_IMAGES + "logo-white.png";
+export const LOGO_BLACK_URL = LOCAL_IMAGES + "logo-black.png";
+export const HERO_PRINT_URL = LOCAL_IMAGES + "npo_print_source.png";
+export const BG_CONTOUR_URL = LOCAL_IMAGES + "bg-contour.jpg";
 
 export function getDefaultLogoUrl() {
   try {

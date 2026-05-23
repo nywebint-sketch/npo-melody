@@ -124,9 +124,7 @@ const withClient = async (fn, fallback = null) => {
   const client = initSupabase();
   if (!client) return fallback;
   try {
-    const result = await fn(client);
-    markDbSuccess();
-    return result;
+    return await fn(client);
   } catch (error) {
     reportDbError(error);
     markDbError(error);
@@ -184,7 +182,13 @@ const getMerch = async () => withClient(async (client) => {
 }, []);
 
 const getSession = async () => withClient(async (client) => {
-  const { data: { session } } = await client.auth.getSession();
+  const { data: { session }, error } = await client.auth.getSession();
+  if (error) {
+    reportDbError(error);
+    markDbError(error);
+    return null;
+  }
+  markDbSuccess();
   return session;
 }, null);
 

@@ -1,7 +1,7 @@
 // Copied from original script.js with no behavior changes.
 
 import { createCarousel } from "./carousel.js";
-import { ASSET_PREFIX, getDefaultLogoUrl } from "./logoUrls.js";
+import { ASSET_PREFIX, HERO_PRINT_URL, getDefaultLogoUrl } from "./logoUrls.js";
 
 // Заглушка «логотип»: в БД может храниться sentinel `logo.png` — в UI подставляется theme-aware URL (см. logoUrls.js).
 
@@ -1466,7 +1466,7 @@ const initApp = async () => {
   if (carouselContainer) {
     createCarousel(carouselContainer, {
       urls: [
-        ASSET_PREFIX + "npo_print_source.png",
+        HERO_PRINT_URL,
         getDefaultLogoUrl()
       ].filter(Boolean),
       intervalMs: 5000,
