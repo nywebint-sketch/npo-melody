@@ -562,7 +562,7 @@ function updateEventsArchiveToggle(hiddenCount) {
   }
 
   toggle.hidden = false;
-  btn.textContent = eventsArchiveExpanded ? "Свернуть" : "Показать всю афишу";
+  btn.textContent = eventsArchiveExpanded ? "свернуть" : "показать всю афишу";
   btn.setAttribute("aria-expanded", eventsArchiveExpanded ? "true" : "false");
 }
 

@@ -949,8 +949,8 @@
       align-items: center;
       width: 100%;
       box-sizing: border-box;
-      padding-top: 1px;
-      margin-top: 0;
+      padding-top: 0;
+      margin-top: 2px;
       text-align: center;
     }
 
@@ -960,6 +960,8 @@
 
     #events .events-archive-toggle__btn {
       margin-inline: auto;
+      margin-top: -4px;
+      padding: 4px 14px;
       font-size: 13px;
       letter-spacing: 0.03em;
       opacity: 0.92;
