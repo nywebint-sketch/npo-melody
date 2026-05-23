@@ -99,7 +99,7 @@ navItems.forEach((item) => {
       releases: 'Релизы',
       podcasts: 'Подкасты',
       streams: 'Стримы',
-      live: 'Live',
+      live: 'НПО РАДИО',
       merch: 'Магазин'
     };
     pageTitle.textContent = titles[view] || view;
@@ -135,7 +135,7 @@ async function loadDashboard() {
         <p style="font-size:32px;font-weight:bold;margin:10px 0;">${events.length}</p>
       </div>
       <div class="card pad" style="background:rgba(255,255,255,0.05)">
-        <h3>Live (эфиры)</h3>
+        <h3>НПО РАДИО (эфиры)</h3>
         <p style="font-size:32px;font-weight:bold;margin:10px 0;">${liveItems.length}</p>
       </div>
       <div class="card pad" style="background:rgba(255,255,255,0.05)">
@@ -365,7 +365,7 @@ async function openEventEditor(id = null) {
         <input type="url" name="ticket_url" value="${event.ticketUrl || ''}" placeholder="https://...">
       </div>
       <div class="form-group">
-        <label>Ссылка на трансляцию (YouTube, Vimeo, Rutube, mp4 — для кнопки «Смотреть» в Live)</label>
+        <label>Ссылка на трансляцию (YouTube, Vimeo, Rutube, mp4 — для кнопки «Смотреть» в НПО РАДИО)</label>
         <input type="url" name="stream_url" value="${event.stream_url || event.streamUrl || ''}" placeholder="https://...">
       </div>
       <div class="form-group">
@@ -591,7 +591,7 @@ async function openLiveEditor(id = null) {
     isEdit = true;
   }
 
-  editorTitle.textContent = isEdit ? 'Редактировать эфир (Live)' : 'Новый эфир (Live)';
+  editorTitle.textContent = isEdit ? 'Редактировать эфир (НПО РАДИО)' : 'Новый эфир (НПО РАДИО)';
   const submitLabel = isEdit ? 'Сохранить' : 'Добавить эфир';
 
   editorBody.innerHTML = `
