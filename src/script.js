@@ -37,6 +37,10 @@ const recordsCountRu = (n) => {
   return `${num} записей`;
 };
 
+const EVENTS_VISIBLE_LIMIT = 8;
+
+let eventsArchiveExpanded = false;
+
 const sortAsc = (arr, key) => [...arr].sort((a, b) => new Date(a[key]) - new Date(b[key]));
 
 let data = {
@@ -547,15 +551,32 @@ function resolveMerchImageSrc(raw) {
   return resolveImageSrc(s);
 }
 
+function updateEventsArchiveToggle(hiddenCount) {
+  const toggle = $("#eventsArchiveToggle");
+  const btn = $("#eventsArchiveToggleBtn");
+  if (!toggle || !btn) return;
+
+  if (hiddenCount <= 0) {
+    toggle.hidden = true;
+    return;
+  }
+
+  toggle.hidden = false;
+  btn.textContent = eventsArchiveExpanded ? "Свернуть" : "Показать всю афишу";
+  btn.setAttribute("aria-expanded", eventsArchiveExpanded ? "true" : "false");
+}
+
 function renderEvents() {
   const wrap = $("#eventsGrid");
   if (!wrap) return;
 
   const sorted = [...data.events].sort((a, b) => b.date.localeCompare(a.date));
+  const hiddenCount = Math.max(0, sorted.length - EVENTS_VISIBLE_LIMIT);
+  const toShow = eventsArchiveExpanded ? sorted : sorted.slice(0, EVENTS_VISIBLE_LIMIT);
 
   wrap.replaceChildren();
 
-  sorted.forEach((eventItem) => {
+  toShow.forEach((eventItem) => {
     const card = el("div", { className: "card event-card" });
     card.appendChild(createMedia(eventItem.poster || "logo.png", eventItem.title, "media event-media event-poster"));
     const pad = el("div", { className: "pad" });
@@ -564,6 +585,8 @@ function renderEvents() {
     setupOpenCard(card, "event", eventItem.id);
     wrap.appendChild(card);
   });
+
+  updateEventsArchiveToggle(hiddenCount);
 
   if (streamsAuthOk()) renderStreamsLive();
 }
@@ -1115,6 +1138,11 @@ const openLiveStreamModal = (eventItem) => {
 $("#mClose")?.addEventListener("click", closeModal);
 modal?.addEventListener("click", (e) => {
   if (e.target === modal) closeModal();
+});
+
+$("#eventsArchiveToggleBtn")?.addEventListener("click", () => {
+  eventsArchiveExpanded = !eventsArchiveExpanded;
+  renderEvents();
 });
 
 // Вход: ссылка «Вход» / кнопки .auth-open-button открывают модалку входа (неавторизованным)
