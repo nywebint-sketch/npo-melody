@@ -712,13 +712,6 @@
       cursor: default;
     }
 
-    #streams .head {
-      margin-bottom: 8px;
-    }
-
-    #streams .catalog-block__pad.pad {
-      padding-top: 8px;
-    }
 
     #streams #streamsLiveCount:empty {
       margin: 0;
@@ -730,9 +723,13 @@
       align-items: center;
       justify-content: center;
       gap: 14px;
-      margin-bottom: 18px;
+      margin-bottom: 10px;
       width: 100%;
       box-sizing: border-box;
+    }
+
+    .card.catalog-block > .catalog-block__pad.pad {
+      padding-top: 0;
     }
 
     /* Заголовок секции на всю ширину контейнера — по центру */
