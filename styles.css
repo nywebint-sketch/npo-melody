@@ -737,6 +737,8 @@
 
     main section .head h2 {
       text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     h1,
