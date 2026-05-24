@@ -1655,6 +1655,7 @@
       border: none;
       background: transparent;
       display: block;
+      border-radius: var(--radius-window);
     }
 
     #merchGrid .event-poster,
@@ -1679,6 +1680,11 @@
       object-fit: cover;
       max-width: 100%;
       vertical-align: top;
+    }
+
+    #eventsGrid .event-poster img,
+    #eventsGrid .event-media img {
+      border-radius: inherit;
     }
 
     /* Студия: квадратные кнопки без картинок */
