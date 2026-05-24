@@ -2475,12 +2475,7 @@
       color: currentColor;
       text-decoration: none;
       cursor: pointer;
-      transition: opacity .2s ease;
       user-select: none
-    }
-
-    .footer-social-btn:hover {
-      opacity: .6
     }
 
     .footer-social-btn:focus-visible {
