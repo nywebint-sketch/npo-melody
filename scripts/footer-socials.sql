@@ -2,6 +2,10 @@
 -- НПО Мелодия — Supabase: соцсети в футере (иконки + ссылки)
 -- Как выполнить: Dashboard → SQL Editor → New query → вставить → Run
 -- Иконки: Storage → bucket `images` (tg.png, vk.png, ig.png, sc.png)
+--
+-- После Run: в корне проекта создайте .env.local
+--   VITE_FOOTER_SOCIALS_FROM_DB=true
+-- и перезапустите `npm run dev` (иначе сайт не ходит в API и 404 не будет).
 -- =============================================================================
 
 CREATE TABLE IF NOT EXISTS public.footer_socials (

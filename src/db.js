@@ -110,6 +110,19 @@ const initSupabase = () => {
   return supabaseClt;
 };
 
+const isMissingRelationError = (error) => {
+  if (!error) return false;
+  const code = String(error.code || '');
+  const msg = String(error.message || error.details || error.hint || '');
+  const status = Number(error.status ?? error.statusCode ?? 0);
+  return (
+    code === 'PGRST205' ||
+    code === '42P01' ||
+    status === 404 ||
+    /does not exist|could not find the table|schema cache/i.test(msg)
+  );
+};
+
 const safeArray = (data, error) => {
   if (error) {
     reportDbError(error);
@@ -187,7 +200,12 @@ const getFooterSocials = async () => withClient(async (client) => {
     .select('*')
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
-  return safeArray(data, error);
+  if (error) {
+    if (isMissingRelationError(error)) return [];
+    return safeArray(data, error);
+  }
+  markDbSuccess();
+  return Array.isArray(data) ? data : [];
 }, []);
 
 const getSession = async () => withClient(async (client) => {

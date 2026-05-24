@@ -3,7 +3,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.supabase.co; script-src 'self' https://*.supabase.co; style-src 'self' 'unsafe-inline' blob: data:; font-src 'self' data: blob:; img-src 'self' https: data:; media-src 'self' https: blob: data:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://rutube.ru https://*.supabase.co; connect-src 'self' https://rvswpgsxutfcpgvmzonr.supabase.co https://*.supabase.co https://httpbin.org; form-action 'self'; base-uri 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.supabase.co; script-src 'self' https://*.supabase.co; style-src 'self' 'unsafe-inline' blob: data:; font-src 'self' data: blob:; img-src 'self' https: data:; media-src 'self' https: blob: data:; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://rutube.ru https://w.soundcloud.com https://soundcloud.com https://vk.com https://vkvideo.ru https://kinescope.io https://*.supabase.co; connect-src 'self' https://rvswpgsxutfcpgvmzonr.supabase.co https://*.supabase.co https://soundcloud.com https://httpbin.org; form-action 'self'; base-uri 'self';">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -107,11 +107,9 @@
         <div class="card catalog-block">
           <div class="pad catalog-block__pad">
             <p id="streamsLiveCount" class="streams-live-meta muted" aria-live="polite"></p>
-            <div class="grid streams-live-grid" id="streamsLiveList" role="list" aria-label="Предстоящие эфиры"></div>
+            <div class="grid g2 streams-yt-grid" id="streamsLiveList" role="list" aria-label="Предстоящие эфиры"></div>
 
-            <h3 class="streams-subhead" id="streamsRecordingsHead" hidden>Записи</h3>
-            <p id="streamsRecordingsCount" class="streams-live-meta muted" aria-live="polite" hidden></p>
-            <div class="grid streams-live-grid" id="streamsRecordingsList" role="list" aria-label="Записи эфиров" hidden></div>
+            <div class="grid g2 streams-yt-grid" id="streamsRecordingsList" role="list" aria-label="Записи эфиров" hidden></div>
           </div>
         </div>
       </div>

@@ -147,8 +147,13 @@ const renderFooterSocials = (items = []) => {
   }
 };
 
+/** После `scripts/footer-socials.sql` в Supabase: VITE_FOOTER_SOCIALS_FROM_DB=true в .env.local */
+const FOOTER_SOCIALS_FROM_DB = import.meta.env.VITE_FOOTER_SOCIALS_FROM_DB === "true";
+
 const loadFooterSocialsFromDb = async () => {
-  if (!window.dbLayer?.getFooterSocials) return DEFAULT_FOOTER_SOCIALS;
+  if (!FOOTER_SOCIALS_FROM_DB || !window.dbLayer?.getFooterSocials) {
+    return DEFAULT_FOOTER_SOCIALS;
+  }
   const rows = await window.dbLayer.getFooterSocials();
   return rows.length ? rows : DEFAULT_FOOTER_SOCIALS;
 };
@@ -266,6 +271,9 @@ const normalizeStreamUrlInput = (raw) => {
   if (/^(youtu\.be\/|(?:www\.)?youtube\.com\/|m\.youtube\.com\/)/i.test(s)) {
     return `https://${s}`;
   }
+  if (/^(?:www\.)?soundcloud\.com\//i.test(s)) {
+    return `https://${s.replace(/^(?:www\.)?/i, "")}`;
+  }
   return s;
 };
 
@@ -336,6 +344,22 @@ const streamUrlToEmbed = (href) => {
       const m = u.pathname.match(/\/embed\/([^/?]+)/i);
       if (m) return { kind: "iframe", embed: `https://kinescope.io/embed/${m[1]}`, video: "" };
     }
+    if (host === "soundcloud.com" || host === "on.soundcloud.com") {
+      const path = u.pathname.replace(/\/$/, "");
+      const parts = path.split("/").filter(Boolean);
+      if (parts.length >= 2) {
+        const trackUrl = `https://soundcloud.com/${parts.join("/")}`;
+        const player = new URL("https://w.soundcloud.com/player/");
+        player.searchParams.set("url", trackUrl);
+        player.searchParams.set("auto_play", "false");
+        player.searchParams.set("hide_related", "true");
+        player.searchParams.set("show_comments", "false");
+        player.searchParams.set("show_user", "true");
+        player.searchParams.set("show_reposts", "false");
+        player.searchParams.set("visual", "true");
+        return { kind: "iframe", embed: player.href, video: "" };
+      }
+    }
 
     if (STREAM_HLS_EXT.test(u.pathname) || STREAM_HLS_EXT.test(normalized)) {
       return { kind: "hls", embed: "", video: normalized };
@@ -353,6 +377,92 @@ const streamUrlToEmbed = (href) => {
   } catch {
     return { kind: "none", embed: "", video: "" };
   }
+};
+
+/** Превью для карточки: YouTube / Rutube или постер из админки */
+const getRadioThumbUrl = (eventItem) => {
+  const fallback = getDefaultLogoUrl();
+  const posterRaw = String(eventItem?.poster || "").trim();
+  const poster =
+    posterRaw && posterRaw !== "logo.png" && posterRaw !== "smile.png" ? resolveImageSrc(posterRaw) : fallback;
+
+  const streamUrl = getEventStreamUrl(eventItem);
+  if (!streamUrl) return poster;
+
+  try {
+    const u = new URL(streamUrl);
+    const host = u.hostname.replace(/^www\./, "");
+
+    if (host === "youtu.be") {
+      const id = u.pathname.replace(/^\//, "").split("/").filter(Boolean)[0];
+      if (id) return `https://i.ytimg.com/vi/${encodeURIComponent(id)}/hqdefault.jpg`;
+    }
+    if (host === "youtube.com" || host === "youtube-nocookie.com" || host === "m.youtube.com") {
+      const v = u.searchParams.get("v");
+      if (v) return `https://i.ytimg.com/vi/${encodeURIComponent(v)}/hqdefault.jpg`;
+      const shorts = u.pathname.match(/\/shorts\/([^/?]+)/);
+      if (shorts) return `https://i.ytimg.com/vi/${encodeURIComponent(shorts[1])}/hqdefault.jpg`;
+      const embed = u.pathname.match(/\/embed\/([^/?]+)/);
+      if (embed) return `https://i.ytimg.com/vi/${encodeURIComponent(embed[1])}/hqdefault.jpg`;
+    }
+    if (host.endsWith("rutube.ru")) {
+      const m = u.pathname.match(/\/video\/([a-f0-9]{32})/i);
+      if (m) return `https://pic.rutube.ru/${m[1]}.jpg`;
+    }
+  } catch {
+    /* ignore */
+  }
+
+  return poster;
+};
+
+/** Карточка эфира / записи в стиле YouTube */
+const buildRadioYtCard = (eventItem, { thumbBadge = "", statsLine = "" } = {}) => {
+  const card = el("div", { className: "radio-yt-card" });
+
+  const thumb = el("div", { className: "radio-yt-card__thumb" });
+  const img = document.createElement("img");
+  img.className = "radio-yt-card__thumb-img";
+  img.alt = "";
+  img.loading = "lazy";
+  img.decoding = "async";
+  const thumbFallback = getDefaultLogoUrl();
+  img.src = getRadioThumbUrl(eventItem);
+  img.onerror = function onThumbError() {
+    this.onerror = null;
+    if (this.src !== thumbFallback) this.src = thumbFallback;
+  };
+  thumb.appendChild(img);
+  const streamUrl = getEventStreamUrl(eventItem);
+  if (/soundcloud\.com/i.test(streamUrl)) {
+    const oembedUrl = `https://soundcloud.com/oembed?format=json&url=${encodeURIComponent(streamUrl)}`;
+    fetch(oembedUrl)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        const art = data?.thumbnail_url;
+        if (art) img.src = art.replace("-large.jpg", "-t500x500.jpg");
+      })
+      .catch(() => {});
+  }
+  if (thumbBadge) {
+    thumb.appendChild(el("span", { className: "radio-yt-card__badge", text: thumbBadge }));
+  }
+  card.appendChild(thumb);
+
+  const info = el("div", { className: "radio-yt-card__info" });
+  const textCol = el("div", { className: "radio-yt-card__text" });
+  textCol.appendChild(el("h3", { className: "radio-yt-card__title", text: eventItem.title || "—" }));
+  if (statsLine) {
+    textCol.appendChild(el("p", { className: "radio-yt-card__stats", text: statsLine }));
+  }
+  info.appendChild(textCol);
+
+  const menu = el("span", { className: "radio-yt-card__menu", text: "⋮" });
+  menu.setAttribute("aria-hidden", "true");
+  info.appendChild(menu);
+
+  card.appendChild(info);
+  return card;
 };
 
 const createTag = (text) => el("span", { className: "tag", text: String(text || "").trim() || "—" });
@@ -773,14 +883,7 @@ function renderStreamsLive() {
           text: "Пока нет эфиров. Добавьте их в админ-панели: раздел «НПО РАДИО» (название и ссылка на YouTube / Rutube)."
         })
       );
-    } else if (recordings.length) {
-      wrap.appendChild(
-        el("div", {
-          className: "muted streams-live-empty",
-          text: "Предстоящих эфиров нет — смотрите записи ниже."
-        })
-      );
-    } else {
+    } else if (!recordings.length) {
       wrap.appendChild(
         el("div", {
           className: "muted streams-live-empty",
@@ -791,13 +894,11 @@ function renderStreamsLive() {
     if (liveCount) liveCount.textContent = upcoming.length ? recordsCountRu(upcoming.length) : "";
   } else {
     upcoming.forEach((eventItem) => {
-      const row = el("div", { className: "card pad streams-hint-row" });
-      const content = el("div", { className: "row sp" });
-      content.appendChild(el("b", { text: eventItem.title }));
-      content.appendChild(el("span", { className: "tag", text: "→" }));
-      row.appendChild(content);
-      setupOpenCard(row, "live-event", eventItem.id);
-      wrap.appendChild(row);
+      const card = buildRadioYtCard(eventItem, {
+        thumbBadge: fmtDateShort(eventItem.date)
+      });
+      setupOpenCard(card, "live-event", eventItem.id);
+      wrap.appendChild(card);
     });
     if (liveCount) liveCount.textContent = recordsCountRu(upcoming.length);
   }
@@ -807,48 +908,27 @@ function renderStreamsLive() {
 
 function renderStreamsRecordings() {
   const wrap = $("#streamsRecordingsList");
-  const head = $("#streamsRecordingsHead");
-  const countEl = $("#streamsRecordingsCount");
   if (!wrap) return;
 
   wrap.replaceChildren();
 
-  const hideRecordings = () => {
-    wrap.hidden = true;
-    if (head) head.hidden = true;
-    if (countEl) {
-      countEl.hidden = true;
-      countEl.textContent = "";
-    }
-  };
-
   if (!streamsAuthOk()) {
-    hideRecordings();
+    wrap.hidden = true;
     return;
   }
 
   const recordings = getLiveRecordings();
   if (!recordings.length) {
-    hideRecordings();
+    wrap.hidden = true;
     return;
   }
 
   wrap.hidden = false;
-  if (head) head.hidden = false;
-  if (countEl) {
-    countEl.hidden = false;
-    countEl.textContent = recordsCountRu(recordings.length);
-  }
 
   recordings.forEach((eventItem) => {
-    const row = el("div", { className: "card pad streams-hint-row streams-recording-row" });
-    const content = el("div", { className: "row sp" });
-    content.appendChild(el("b", { text: eventItem.title }));
-    content.appendChild(el("span", { className: "tag", text: "Смотреть →" }));
-    row.appendChild(content);
-    row.appendChild(el("div", { className: "muted streams-recording-meta", text: fmtDateDots(eventItem.date) }));
-    setupOpenCard(row, "live-event", eventItem.id);
-    wrap.appendChild(row);
+    const card = buildRadioYtCard(eventItem);
+    setupOpenCard(card, "live-event", eventItem.id);
+    wrap.appendChild(card);
   });
 }
 
@@ -1200,7 +1280,6 @@ function appendLiveStreamMediaSlot(posterSlot, eventItem) {
       "allow",
       "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
     );
-    iframe.setAttribute("allowfullscreen", "");
     iframe.referrerPolicy = "strict-origin-when-cross-origin";
     wrap.appendChild(iframe);
     posterSlot.appendChild(wrap);
