@@ -286,6 +286,13 @@ const getEventStreamUrl = (eventItem) => {
 };
 
 const STREAM_VIDEO_EXT = /\.(mp4|webm|ogg)(\?|$)/i;
+const STREAM_HLS_EXT = /\.m3u8(\?|$)/i;
+
+/** Эфиры с заполненной ссылкой на видео — блок «Записи» в Радио */
+const getLiveRecordings = () =>
+  data.live
+    .filter((e) => getEventStreamUrl(e))
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 
 /** Преобразует публичную ссылку в iframe-embed или прямой URL для HTML5 video */
 const streamUrlToEmbed = (href) => {
@@ -314,6 +321,24 @@ const streamUrlToEmbed = (href) => {
     if (host.endsWith("rutube.ru")) {
       const m = u.pathname.match(/\/video\/([a-f0-9]{32})/i);
       if (m) return { kind: "iframe", embed: `https://rutube.ru/play/embed/${m[1]}`, video: "" };
+    }
+    if (host === "vk.com" || host === "vkvideo.ru") {
+      const m = u.pathname.match(/\/video(-?\d+)_(\d+)/i);
+      if (m) {
+        return {
+          kind: "iframe",
+          embed: `https://vk.com/video_ext.php?oid=${encodeURIComponent(m[1])}&id=${encodeURIComponent(m[2])}&hd=2`,
+          video: ""
+        };
+      }
+    }
+    if (host === "kinescope.io") {
+      const m = u.pathname.match(/\/embed\/([^/?]+)/i);
+      if (m) return { kind: "iframe", embed: `https://kinescope.io/embed/${m[1]}`, video: "" };
+    }
+
+    if (STREAM_HLS_EXT.test(u.pathname) || STREAM_HLS_EXT.test(normalized)) {
+      return { kind: "hls", embed: "", video: normalized };
     }
 
     if (STREAM_VIDEO_EXT.test(u.pathname) || STREAM_VIDEO_EXT.test(normalized)) {
@@ -664,7 +689,7 @@ function updateEventsArchiveToggle(hiddenCount) {
   }
 
   toggle.hidden = false;
-  btn.textContent = eventsArchiveExpanded ? "свернуть" : "показать всю афишу";
+  btn.textContent = eventsArchiveExpanded ? "меньше" : "больше";
   btn.setAttribute("aria-expanded", eventsArchiveExpanded ? "true" : "false");
 }
 
@@ -737,34 +762,94 @@ function renderStreamsLive() {
 
   const now = new Date();
   const upcoming = sortAsc(data.live, "date").filter((e) => new Date(e.date) >= now);
+  const recordings = getLiveRecordings();
 
   if (!upcoming.length) {
     const total = data.live.length;
-    const emptyText =
-      total === 0
-        ? "Пока нет эфиров. Добавьте их в админ-панели: раздел «Радио» (название, дата в будущем, при необходимости ссылка на трансляцию)."
-        : "Нет предстоящих эфиров: все запланированные даты уже в прошлом. Задайте новую дату в админке или добавьте эфир.";
-    wrap.appendChild(
-      el("div", {
-        className: "muted streams-live-empty",
-        text: emptyText
-      })
-    );
-    if (liveCount) liveCount.textContent = recordsCountRu(0);
+    if (total === 0) {
+      wrap.appendChild(
+        el("div", {
+          className: "muted streams-live-empty",
+          text: "Пока нет эфиров. Добавьте их в админ-панели: раздел «НПО РАДИО» (название и ссылка на YouTube / Rutube)."
+        })
+      );
+    } else if (recordings.length) {
+      wrap.appendChild(
+        el("div", {
+          className: "muted streams-live-empty",
+          text: "Предстоящих эфиров нет — смотрите записи ниже."
+        })
+      );
+    } else {
+      wrap.appendChild(
+        el("div", {
+          className: "muted streams-live-empty",
+          text: "Нет предстоящих эфиров. Добавьте ссылку на видео в админке (НПО РАДИО) или задайте новую дату."
+        })
+      );
+    }
+    if (liveCount) liveCount.textContent = upcoming.length ? recordsCountRu(upcoming.length) : "";
+  } else {
+    upcoming.forEach((eventItem) => {
+      const row = el("div", { className: "card pad streams-hint-row" });
+      const content = el("div", { className: "row sp" });
+      content.appendChild(el("b", { text: eventItem.title }));
+      content.appendChild(el("span", { className: "tag", text: "→" }));
+      row.appendChild(content);
+      setupOpenCard(row, "live-event", eventItem.id);
+      wrap.appendChild(row);
+    });
+    if (liveCount) liveCount.textContent = recordsCountRu(upcoming.length);
+  }
+
+  renderStreamsRecordings();
+}
+
+function renderStreamsRecordings() {
+  const wrap = $("#streamsRecordingsList");
+  const head = $("#streamsRecordingsHead");
+  const countEl = $("#streamsRecordingsCount");
+  if (!wrap) return;
+
+  wrap.replaceChildren();
+
+  const hideRecordings = () => {
+    wrap.hidden = true;
+    if (head) head.hidden = true;
+    if (countEl) {
+      countEl.hidden = true;
+      countEl.textContent = "";
+    }
+  };
+
+  if (!streamsAuthOk()) {
+    hideRecordings();
     return;
   }
 
-  upcoming.forEach((eventItem) => {
-    const row = el("div", { className: "card pad streams-hint-row" });
+  const recordings = getLiveRecordings();
+  if (!recordings.length) {
+    hideRecordings();
+    return;
+  }
+
+  wrap.hidden = false;
+  if (head) head.hidden = false;
+  if (countEl) {
+    countEl.hidden = false;
+    countEl.textContent = recordsCountRu(recordings.length);
+  }
+
+  recordings.forEach((eventItem) => {
+    const row = el("div", { className: "card pad streams-hint-row streams-recording-row" });
     const content = el("div", { className: "row sp" });
     content.appendChild(el("b", { text: eventItem.title }));
-    content.appendChild(el("span", { className: "tag", text: "→" }));
+    content.appendChild(el("span", { className: "tag", text: "Смотреть →" }));
     row.appendChild(content);
+    row.appendChild(el("div", { className: "muted streams-recording-meta", text: fmtDateDots(eventItem.date) }));
     setupOpenCard(row, "live-event", eventItem.id);
     wrap.appendChild(row);
   });
-
-  if (liveCount) liveCount.textContent = recordsCountRu(upcoming.length);
 }
 
 function renderStreams() {
@@ -772,7 +857,7 @@ function renderStreams() {
   const next = sortAsc(data.live, "date").filter((e) => new Date(e.date) >= now)[0];
   const streamNext = $("#streamNext");
   if (streamNext) {
-    streamNext.textContent = next ? `Следующий эфир: ${next.title} · ${fmtDT(next.date)}` : "Следующий эфир: —";
+    streamNext.textContent = next ? `Следующий эфир: ${next.title} · ${fmtDateDots(next.date)}` : "Следующий эфир: —";
   }
   renderStreamsLive();
 }
@@ -874,10 +959,37 @@ const openModal = ({ title, sub, body }) => {
   if (modal) modal.style.display = "flex";
 };
 
+const destroyLiveModalVideos = () => {
+  mBody?.querySelectorAll(".live-modal-video-file").forEach((v) => {
+    v._hlsInstance?.destroy();
+    v._hlsInstance = null;
+    v.removeAttribute("src");
+    v.load();
+  });
+};
+
 const closeModal = () => {
   mBody?.querySelector(".live-modal-iframe")?.setAttribute("src", "");
-  mBody?.querySelector(".live-modal-video-file")?.removeAttribute("src");
+  destroyLiveModalVideos();
   if (modal) modal.style.display = "none";
+};
+
+const attachHlsToVideo = async (videoEl, src) => {
+  try {
+    const { default: Hls } = await import("hls.js");
+    if (Hls.isSupported()) {
+      const hls = new Hls({ enableWorker: true });
+      hls.loadSource(src);
+      hls.attachMedia(videoEl);
+      videoEl._hlsInstance = hls;
+      return;
+    }
+  } catch (err) {
+    console.warn("[radio] HLS player failed", err);
+  }
+  if (videoEl.canPlayType("application/vnd.apple.mpegurl")) {
+    videoEl.src = src;
+  }
 };
 
 const exclusivePanel = $("#exclusivePanel");
@@ -1095,14 +1207,19 @@ function appendLiveStreamMediaSlot(posterSlot, eventItem) {
     return;
   }
 
-  if (kind === "video" && video) {
+  if ((kind === "video" || kind === "hls") && video) {
     const wrap = el("div", { className: "media live-modal-video-file-wrap" });
     const v = document.createElement("video");
     v.className = "live-modal-video-file";
     v.controls = true;
     v.playsInline = true;
-    v.setAttribute("preload", "metadata");
-    v.src = video;
+    v.setAttribute("preload", "none");
+    v.setAttribute("controlsList", "nodownload");
+    if (kind === "hls") {
+      void attachHlsToVideo(v, video);
+    } else {
+      v.src = video;
+    }
     wrap.appendChild(v);
     posterSlot.appendChild(wrap);
     return;
@@ -1279,7 +1396,7 @@ const openLiveStreamModal = (eventItem) => {
   if (!eventItem) return;
   openModal({
     title: eventItem.title,
-    sub: `${fmtDT(eventItem.date)} · ${eventItem.place || "—"}`,
+    sub: `${fmtDateDots(eventItem.date)} · ${eventItem.place || "—"}`,
     body: buildLiveStreamModalBody(eventItem)
   });
 };

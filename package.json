@@ -6,10 +6,12 @@
     "dev": "vite",
     "build": "vite build",
     "build:client": "vite build --config vite.client.config.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "radio:publish": "node scripts/publish-radio-recording.mjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.49.1"
+    "@supabase/supabase-js": "^2.49.1",
+    "hls.js": "^1.6.16"
   },
   "devDependencies": {
     "vite": "^5.0.0"

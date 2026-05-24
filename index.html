@@ -88,7 +88,7 @@
             <div class="grid g4" id="eventsGrid"></div>
             <div class="events-archive-toggle" id="eventsArchiveToggle" hidden>
               <button type="button" class="btn ghost events-archive-toggle__btn" id="eventsArchiveToggleBtn" aria-expanded="false">
-                показать всю афишу
+                больше
               </button>
             </div>
           </div>
@@ -108,6 +108,10 @@
           <div class="pad catalog-block__pad">
             <p id="streamsLiveCount" class="streams-live-meta muted" aria-live="polite"></p>
             <div class="grid streams-live-grid" id="streamsLiveList" role="list" aria-label="Предстоящие эфиры"></div>
+
+            <h3 class="streams-subhead" id="streamsRecordingsHead" hidden>Записи</h3>
+            <p id="streamsRecordingsCount" class="streams-live-meta muted" aria-live="polite" hidden></p>
+            <div class="grid streams-live-grid" id="streamsRecordingsList" role="list" aria-label="Записи эфиров" hidden></div>
           </div>
         </div>
       </div>

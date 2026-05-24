@@ -609,8 +609,9 @@ async function openLiveEditor(id = null) {
         <input type="text" name="place" value="${live.place || ''}">
       </div>
       <div class="form-group">
-        <label>Ссылка на трансляцию (YouTube, Vimeo, Rutube, mp4)</label>
-        <input type="url" name="stream_url" value="${live.stream_url || ''}" placeholder="https://...">
+        <label>Ссылка на видео (YouTube, Rutube, VK, Kinescope, HLS .m3u8)</label>
+        <input type="url" name="stream_url" value="${live.stream_url || ''}" placeholder="https://rutube.ru/video/... или YouTube">
+        <div class="muted" style="font-size:12px;margin-top:6px;">Для больших файлов (от ~500 МБ) загрузите видео на Rutube или YouTube и вставьте ссылку — так воспроизведение будет с адаптивным качеством, как на YouTube.</div>
       </div>
       <div class="form-group">
         <label>Описание</label>
