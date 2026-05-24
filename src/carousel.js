@@ -129,17 +129,20 @@ function createCarousel(container, options = {}) {
     }
   }
 
-  prevBtn.addEventListener("click", () => {
+  prevBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
     goPrev();
     startAuto();
   });
-  nextBtn.addEventListener("click", () => {
+  nextBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
     goNext();
     startAuto();
   });
 
   dotButtons.forEach((btn, i) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
       setIndex(i);
       startAuto();
     });

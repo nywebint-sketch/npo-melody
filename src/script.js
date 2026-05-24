@@ -989,6 +989,29 @@ const openStudioModal = (service) => {
   });
 };
 
+function getMerchCardPreviewSrc(item) {
+  let list = item.images;
+  if (typeof list === "string") {
+    try {
+      list = JSON.parse(list);
+    } catch {
+      list = null;
+    }
+  }
+  if (Array.isArray(list) && list.length) {
+    const first = String(list[0] || "").trim();
+    if (first && first !== "logo.png" && first !== "smile.png") {
+      return resolveMerchImageSrc(first);
+    }
+  }
+  const poster = item.poster || item.image || item.cover;
+  const posterTrimmed = poster != null ? String(poster).trim() : "";
+  if (posterTrimmed && posterTrimmed !== "logo.png" && posterTrimmed !== "smile.png") {
+    return resolveMerchImageSrc(posterTrimmed);
+  }
+  return resolveMerchImageSrc("logo.png");
+}
+
 function renderMerch() {
   const wrap = $("#merchGrid");
   if (!wrap) return;
@@ -996,17 +1019,9 @@ function renderMerch() {
 
   data.merch.forEach((item) => {
     const card = el("div", { className: "card event-card" });
-    const thumbUrls = getMerchImageUrls(item);
-    const posterRaw =
-      item.poster != null && String(item.poster).trim() !== ""
-        ? String(item.poster).trim()
-        : item.image != null && String(item.image).trim() !== ""
-          ? String(item.image).trim()
-          : null;
-    const thumbSrc = posterRaw
-      ? resolveMerchImageSrc(posterRaw)
-      : (thumbUrls[0] || resolveMerchImageSrc("logo.png"));
-    card.appendChild(createMedia(thumbSrc, item.title, "media event-media event-poster"));
+    card.appendChild(
+      createMedia(getMerchCardPreviewSrc(item), item.title, "media event-media event-poster")
+    );
 
     const pad = el("div", { className: "pad" });
     pad.appendChild(el("b", { className: "event-card-title", text: item.title }));
@@ -1392,12 +1407,32 @@ function getMerchImageUrls(item) {
       list = null;
     }
   }
-  if (Array.isArray(list) && list.length > 0) {
-    const cleaned = list.map((u) => String(u || "").trim()).filter(Boolean);
-    if (cleaned.length) return cleaned.map(resolveMerchImageSrc);
+
+  const rawUrls = [];
+  const poster = item.poster || item.image || item.cover;
+  const posterTrimmed = poster != null ? String(poster).trim() : "";
+  if (posterTrimmed && posterTrimmed !== "logo.png" && posterTrimmed !== "smile.png") {
+    rawUrls.push(posterTrimmed);
   }
-  const single = item.image || item.poster || item.cover || "logo.png";
-  return [resolveMerchImageSrc(single)];
+  if (Array.isArray(list)) {
+    list.forEach((u) => {
+      const s = String(u || "").trim();
+      if (s && s !== "logo.png" && s !== "smile.png") rawUrls.push(s);
+    });
+  }
+
+  const seen = new Set();
+  const resolved = [];
+  rawUrls.forEach((raw) => {
+    const url = resolveMerchImageSrc(raw);
+    if (!seen.has(url)) {
+      seen.add(url);
+      resolved.push(url);
+    }
+  });
+
+  if (resolved.length) return resolved;
+  return [resolveMerchImageSrc("logo.png")];
 }
 
 function buildMerchModalBody(item) {
