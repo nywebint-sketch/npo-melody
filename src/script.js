@@ -40,11 +40,36 @@ const recordsCountRu = (n) => {
 const EVENTS_VISIBLE_LIMIT = 8;
 
 const STUDIO_SERVICES = [
-  { id: "vinyl-wash", title: "Мойка пластинок" },
-  { id: "set-recording", title: "Запись сета" },
-  { id: "mastering", title: "Мастеринг" },
-  { id: "mixing", title: "Сведение" },
-  { id: "lessons", title: "Уроки DJ и продакшена" }
+  {
+    id: "vinyl-wash",
+    title: "Мойка пластинок",
+    about:
+      "Бережная очистка винила от пыли и статики. Подходит для домашней коллекции и пластинок перед эфиром или сетом."
+  },
+  {
+    id: "set-recording",
+    title: "Запись сета",
+    about:
+      "Запись DJ-сета в студии: подготовка сигнала, контроль уровня и экспорт в удобном формате для публикации или архива."
+  },
+  {
+    id: "mastering",
+    title: "Мастеринг",
+    about:
+      "Финальная обработка трека под стриминг и релиз: баланс, громкость и проверка на разных системах воспроизведения."
+  },
+  {
+    id: "mixing",
+    title: "Сведение",
+    about:
+      "Сведение мультитрека: баланс партий, пространство, динамика и подготовка материала к мастерингу."
+  },
+  {
+    id: "lessons",
+    title: "Уроки DJ и продакшена",
+    about:
+      "Индивидуальные занятия по DJ-технике и основам продакшена — от первых шагов до подготовки к выступлению."
+  }
 ];
 
 const STUDIO_CONTACT_URL = "https://t.me/npo_melody";
@@ -758,46 +783,34 @@ function renderStudio() {
   wrap.replaceChildren();
 
   STUDIO_SERVICES.forEach((service) => {
-    const card = el("div", { className: "card event-card" });
-    const imageSrc = service.image || service.poster || "logo.png";
-    card.appendChild(createMedia(imageSrc, service.title, "media event-media event-poster"));
-
-    const pad = el("div", { className: "pad" });
-    pad.appendChild(el("b", { className: "event-card-title", text: service.title }));
-    card.appendChild(pad);
-
+    const card = el("div", { className: "card pad studio-service-card" });
+    card.appendChild(el("b", { className: "studio-service-card__title", text: service.title }));
     setupOpenCard(card, "studio", service.id);
     wrap.appendChild(card);
   });
 }
 
 function buildStudioModalBody(service) {
-  const wrapper = el("div", { className: "event-modal-wrap afisha-modal-wrap studio-modal-wrap" });
+  const body = el("div", { className: "studio-modal-body" });
+  const aboutText = String(service.about ?? "").trim();
+  body.appendChild(
+    el("p", {
+      className: "studio-modal-body__text",
+      text: aboutText || "Подробности и запись — в Telegram."
+    })
+  );
 
-  const left = el("div", { className: "card event-modal-left" });
-  const posterSlot = el("div", { className: "event-modal-poster-slot" });
-  posterSlot.appendChild(createMedia("logo.png", service.title, "media"));
-  left.appendChild(posterSlot);
-
-  const actions = el("div", { className: "event-modal-actions afisha-modal-actions" });
-  const link = el("a", { className: "btn primary event-ticket-btn", text: "Записаться" });
+  const actions = el("div", { className: "studio-modal-body__actions" });
+  const link = el("a", {
+    className: "btn primary studio-modal-body__cta",
+    text: "Записаться в Telegram"
+  });
   link.href = STUDIO_CONTACT_URL;
   link.target = "_blank";
   link.rel = "noopener noreferrer";
   actions.appendChild(link);
-  left.appendChild(actions);
-  wrapper.appendChild(left);
-
-  const right = el("div", { className: "card pad event-modal-right afisha-modal-right" });
-  const aboutText = String(service.about ?? "").trim();
-  right.appendChild(
-    el("div", {
-      className: "muted",
-      text: aboutText || "Подробности и запись — в Telegram."
-    })
-  );
-  wrapper.appendChild(right);
-  return wrapper;
+  body.appendChild(actions);
+  return body;
 }
 
 const openStudioModal = (service) => {
