@@ -717,7 +717,7 @@ function renderStreamsLive() {
     const total = data.live.length;
     const emptyText =
       total === 0
-        ? "Пока нет эфиров. Добавьте их в админ-панели: раздел «НПО РАДИО» (название, дата в будущем, при необходимости ссылка на трансляцию)."
+        ? "Пока нет эфиров. Добавьте их в админ-панели: раздел «Радио» (название, дата в будущем, при необходимости ссылка на трансляцию)."
         : "Нет предстоящих эфиров: все запланированные даты уже в прошлом. Задайте новую дату в админке или добавьте эфир.";
     wrap.appendChild(
       el("div", {
@@ -758,13 +758,16 @@ function renderStudio() {
   wrap.replaceChildren();
 
   STUDIO_SERVICES.forEach((service) => {
-    const row = el("div", { className: "card pad streams-hint-row" });
-    const content = el("div", { className: "row sp" });
-    content.appendChild(el("b", { text: service.title }));
-    content.appendChild(el("span", { className: "tag", text: "→" }));
-    row.appendChild(content);
-    setupOpenCard(row, "studio", service.id);
-    wrap.appendChild(row);
+    const card = el("div", { className: "card event-card" });
+    const imageSrc = service.image || service.poster || "logo.png";
+    card.appendChild(createMedia(imageSrc, service.title, "media event-media event-poster"));
+
+    const pad = el("div", { className: "pad" });
+    pad.appendChild(el("b", { className: "event-card-title", text: service.title }));
+    card.appendChild(pad);
+
+    setupOpenCard(card, "studio", service.id);
+    wrap.appendChild(card);
   });
 }
 
