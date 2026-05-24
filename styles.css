@@ -1646,7 +1646,9 @@
     }
 
     #eventsGrid .event-poster,
-    #eventsGrid .event-media {
+    #eventsGrid .event-media,
+    #merchGrid .event-poster,
+    #merchGrid .event-media {
       width: 100%;
       max-width: 100%;
       aspect-ratio: 4/5;
@@ -1656,18 +1658,6 @@
       background: transparent;
       display: block;
       border-radius: var(--radius-window);
-    }
-
-    #merchGrid .event-poster,
-    #merchGrid .event-media {
-      width: 100%;
-      max-width: 100%;
-      aspect-ratio: 1/1;
-      overflow: hidden;
-      padding: 0;
-      border: none;
-      background: transparent;
-      display: block;
     }
 
     #eventsGrid .event-poster img,
@@ -1683,7 +1673,9 @@
     }
 
     #eventsGrid .event-poster img,
-    #eventsGrid .event-media img {
+    #eventsGrid .event-media img,
+    #merchGrid .event-poster img,
+    #merchGrid .event-media img {
       border-radius: inherit;
     }
 
