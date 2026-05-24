@@ -356,6 +356,26 @@ const deleteLiveItem = async (id) => withClient(async (client) => {
   return true;
 }, false);
 
+const createMerch = async (payload) => withClient(async (client) => {
+  const { data, error } = await client.from('merch').insert(payload).select().single();
+  if (error) throw error;
+  return data;
+}, null);
+
+const addMerch = createMerch;
+
+const updateMerch = async (id, payload) => withClient(async (client) => {
+  const { data, error } = await client.from('merch').update(payload).eq('id', id).select().single();
+  if (error) throw error;
+  return data;
+}, null);
+
+const deleteMerch = async (id) => withClient(async (client) => {
+  const { error } = await client.from('merch').delete().eq('id', id);
+  if (error) throw error;
+  return true;
+}, false);
+
 const syncDefaultData = async () => true;
 
 const api = {
@@ -366,7 +386,8 @@ const api = {
   getUsers, checkIsAdmin, updateUserRole, uploadImage,
   createEvent, updateEvent, deleteEvent, addEvent,
   createArtist, updateArtist, deleteArtist, addArtist,
-  createLiveItem, updateLiveItem, deleteLiveItem, addLiveItem
+  createLiveItem, updateLiveItem, deleteLiveItem, addLiveItem,
+  createMerch, updateMerch, deleteMerch, addMerch
 };
 
 window.dbLayer = api;
@@ -380,6 +401,7 @@ export {
   getUsers, checkIsAdmin, updateUserRole, uploadImage,
   createEvent, updateEvent, deleteEvent, addEvent,
   createArtist, updateArtist, deleteArtist, addArtist,
-  createLiveItem, updateLiveItem, deleteLiveItem, addLiveItem
+  createLiveItem, updateLiveItem, deleteLiveItem, addLiveItem,
+  createMerch, updateMerch, deleteMerch, addMerch
 };
 

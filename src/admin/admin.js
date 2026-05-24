@@ -1,11 +1,45 @@
 import * as db from '../db.js';
-import { getDefaultLogoUrl } from '../logoUrls.js';
+import { getDefaultLogoUrl, ASSET_PREFIX } from '../logoUrls.js';
 
 /** Превью в админке: sentinel `logo.png` → theme-aware URL */
 function resolvePosterPreview(p) {
   const v = String(p || '').trim();
   if (!v || v === 'logo.png') return getDefaultLogoUrl();
   return v;
+}
+
+/** Превью фото товара (короткие имена → microdropych/, полные URL как есть) */
+function resolveMerchPreview(raw) {
+  const s = String(raw || '').trim();
+  if (!s || s === 'logo.png' || s === 'smile.png') return getDefaultLogoUrl();
+  if (/^https?:\/\//i.test(s)) return s;
+  if (!/[\\/]/.test(s)) {
+    const fn = /\.(jpe?g|png|webp|gif)$/i.test(s) ? s : `${s}.jpeg`;
+    return `${ASSET_PREFIX}microdropych/${fn}`;
+  }
+  return ASSET_PREFIX + s.replace(/^\/+/, '');
+}
+
+function merchStatusLabel(status) {
+  const map = {
+    active: 'В продаже',
+    draft: 'Черновик',
+    preorder: 'Предзаказ',
+    archive: 'Архив'
+  };
+  return map[status] || status || '—';
+}
+
+function parseMerchImages(item) {
+  let list = item?.images;
+  if (typeof list === 'string') {
+    try {
+      list = JSON.parse(list);
+    } catch {
+      list = [];
+    }
+  }
+  return Array.isArray(list) ? list.filter(Boolean) : [];
 }
 
 // ---- УПРАВЛЕНИЕ АВТОРИЗАЦИЕЙ ----
@@ -695,25 +729,217 @@ async function deleteLiveById(id) {
 
 async function loadMerchView() {
   addBtn.style.display = 'block';
-  addBtn.onclick = () => alert('Редактор магазина пока в разработке');
+  addBtn.textContent = '+ Добавить товар';
+  addBtn.onclick = () => openMerchEditor();
 
   const merch = await db.getMerch();
-  const rows = merch.map((m) => `
+  const rows = merch.map((m) => {
+    const thumb = m.poster || m.image || parseMerchImages(m)[0] || '';
+    const thumbSrc = thumb ? resolveMerchPreview(thumb) : getDefaultLogoUrl();
+    return `
     <tr>
-      <td>${m.title}</td>
-      <td>${m.price}</td>
-      <td>${m.status}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <img src="${thumbSrc}" alt="" style="width:36px;height:36px;border-radius:4px;object-fit:cover;flex-shrink:0;">
+          <b>${m.title || '—'}</b>
+        </div>
+      </td>
+      <td>${m.price || '—'}</td>
+      <td>${merchStatusLabel(m.status)}</td>
+      <td>
+        <div class="actions">
+          <button type="button" class="btn-sm" data-admin-action="edit-merch" data-id="${m.id}">Изменить</button>
+        </div>
+      </td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 
   viewContainer.innerHTML = `
     <div class="admin-table-wrap">
       <table class="admin-table">
-        <thead><tr><th>Название</th><th>Цена</th><th>Статус</th></tr></thead>
-        <tbody>${rows}</tbody>
+        <thead><tr><th>Название</th><th>Цена</th><th>Статус</th><th>Действия</th></tr></thead>
+        <tbody>${rows || '<tr><td colspan="4" class="muted">Товаров пока нет</td></tr>'}</tbody>
       </table>
     </div>
   `;
+}
+
+async function openMerchEditor(id = null) {
+  let item = {
+    title: '',
+    price: '',
+    desc: '',
+    status: 'active',
+    poster: 'logo.png',
+    images: [],
+    preorder_url: ''
+  };
+  let isEdit = false;
+
+  if (id) {
+    const list = await db.getMerch();
+    const found = list.find((m) => m.id === id);
+    if (found) {
+      const desc =
+        found.desc != null && String(found.desc).trim() !== ''
+          ? String(found.desc)
+          : found.description != null
+            ? String(found.description)
+            : '';
+      item = {
+        ...item,
+        ...found,
+        desc,
+        preorder_url: found.preorder_url || found.preorderUrl || '',
+        images: parseMerchImages(found)
+      };
+    }
+    isEdit = true;
+  }
+
+  const previewSrc = item.poster && item.poster !== 'logo.png'
+    ? resolveMerchPreview(item.poster)
+    : (item.images[0] ? resolveMerchPreview(item.images[0]) : null);
+
+  const mainPoster = item.poster && item.poster !== 'logo.png' ? item.poster : null;
+  const extraPreviews = parseMerchImages(item)
+    .filter((url) => !mainPoster || url !== mainPoster)
+    .map((url) => resolveMerchPreview(url));
+
+  editorTitle.textContent = isEdit ? 'Редактировать товар' : 'Новый товар';
+  const submitLabel = isEdit ? 'Сохранить' : 'Добавить товар';
+
+  editorBody.innerHTML = `
+    <form id="editorForm" class="editor-form">
+      <div class="form-group">
+        <label>Название</label>
+        <input type="text" name="title" value="${item.title}" required>
+      </div>
+      <div class="form-group">
+        <label>Цена</label>
+        <input type="text" name="price" value="${item.price || ''}" placeholder="например: 3 500 ₽">
+      </div>
+      <div class="form-group">
+        <label>Статус</label>
+        <select name="status">
+          <option value="active" ${item.status === 'active' ? 'selected' : ''}>В продаже</option>
+          <option value="preorder" ${item.status === 'preorder' ? 'selected' : ''}>Предзаказ</option>
+          <option value="draft" ${item.status === 'draft' ? 'selected' : ''}>Черновик</option>
+          <option value="archive" ${item.status === 'archive' ? 'selected' : ''}>Архив</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Описание</label>
+        <textarea name="desc" rows="5">${item.desc || ''}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Главное фото</label>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+          ${previewSrc ? `<img src="${previewSrc}" style="width:48px;height:48px;border-radius:4px;object-fit:cover;">` : `<div style="width:48px;height:48px;background:rgba(255,255,255,0.1);border-radius:4px;"></div>`}
+          <input type="file" name="posterFile" accept="image/*" style="font-size:14px;">
+        </div>
+        <div class="muted" style="font-size:12px;">Оставьте пустым, чтобы не менять текущее фото.</div>
+      </div>
+      <div class="form-group">
+        <label>Дополнительные фото (карусель на сайте)</label>
+        ${extraPreviews.length ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">${extraPreviews.map((u) => `<img src="${u}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">`).join('')}</div>` : ''}
+        <input type="file" name="extraFiles" accept="image/*" multiple style="font-size:14px;">
+        <div class="muted" style="font-size:12px;margin-top:6px;">Новые файлы добавятся к существующим. Загрузите снова главное фото, чтобы заменить обложку.</div>
+      </div>
+      <div class="form-group">
+        <label>Ссылка на предзаказ (необязательно)</label>
+        <input type="url" name="preorder_url" value="${item.preorder_url || ''}" placeholder="https://...">
+      </div>
+      <div class="editor-actions${isEdit ? ' editor-actions--spread' : ''}">
+        ${isEdit ? `<button type="button" class="btn-sm danger" data-admin-action="delete-merch" data-id="${id}">Удалить товар</button>` : ''}
+        <div class="editor-actions-main">
+          <button type="button" class="btn ghost" data-admin-action="close-modal">Отмена</button>
+          <button type="submit" class="btn primary" id="saveMerchBtn">${submitLabel}</button>
+        </div>
+      </div>
+    </form>
+  `;
+
+  adminModal.style.display = 'flex';
+
+  document.getElementById('editorForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('saveMerchBtn');
+    btn.textContent = 'Сохранение...';
+    btn.disabled = true;
+
+    const fd = new FormData(e.target);
+    let posterUrl = item.poster || 'logo.png';
+    const posterFile = fd.get('posterFile');
+    const extraFiles = fd.getAll('extraFiles').filter((f) => f && f.size > 0);
+
+    if (posterFile && posterFile.size > 0) {
+      try {
+        posterUrl = await db.uploadImage(posterFile);
+      } catch (err) {
+        alert('Ошибка при загрузке главного фото!');
+        btn.textContent = submitLabel;
+        btn.disabled = false;
+        return;
+      }
+    }
+
+    let images = [...parseMerchImages(item)];
+    if (posterUrl && posterUrl !== 'logo.png') {
+      images = [posterUrl, ...images.filter((u) => u !== posterUrl)];
+    }
+
+    for (const file of extraFiles) {
+      try {
+        const url = await db.uploadImage(file);
+        if (url) images.push(url);
+      } catch (err) {
+        alert('Ошибка при загрузке дополнительного фото!');
+        btn.textContent = submitLabel;
+        btn.disabled = false;
+        return;
+      }
+    }
+
+    images = [...new Set(images.map((u) => String(u || '').trim()).filter(Boolean))];
+    if (!images.length && posterUrl && posterUrl !== 'logo.png') {
+      images = [posterUrl];
+    }
+
+    const data = {
+      title: (fd.get('title') || '').trim(),
+      price: (fd.get('price') || '').trim() || null,
+      status: fd.get('status') || 'active',
+      desc: (fd.get('desc') || '').trim() || null,
+      poster: posterUrl,
+      images: images.length ? images : null,
+      preorder_url: (fd.get('preorder_url') || '').trim() || null
+    };
+
+    try {
+      if (isEdit) {
+        await db.updateMerch(id, data);
+      } else {
+        await db.addMerch(data);
+      }
+      adminModal.style.display = 'none';
+      loadMerchView();
+    } catch (err) {
+      console.error(err);
+      alert(err?.message || 'Не удалось сохранить товар');
+      btn.textContent = submitLabel;
+      btn.disabled = false;
+    }
+  });
+}
+
+async function deleteMerchById(id) {
+  if (confirm('Точно удалить этот товар?')) {
+    await db.deleteMerch(id);
+    loadMerchView();
+    if (adminModal) adminModal.style.display = 'none';
+  }
 }
 
 // ---- ИНИЦИАЛИЗАЦИЯ ----
@@ -748,6 +974,9 @@ if (adminPanel) {
       } else if (action === 'edit-live-item' && id) {
         ev.preventDefault();
         void openLiveEditor(id);
+      } else if (action === 'edit-merch' && id) {
+        ev.preventDefault();
+        void openMerchEditor(id);
       }
     },
     true
@@ -766,6 +995,7 @@ if (adminModal) {
     }
     if (action === 'delete-event' && id) void deleteEventById(id);
     if (action === 'delete-live-item' && id) void deleteLiveById(id);
+    if (action === 'delete-merch' && id) void deleteMerchById(id);
   });
 }
 
