@@ -900,6 +900,8 @@
     }
 
     #streams #streamsLiveList > .streams-live-locked {
+      grid-column: 1 / -1;
+      justify-self: center;
       background: transparent !important;
       backdrop-filter: none;
       border: none;
