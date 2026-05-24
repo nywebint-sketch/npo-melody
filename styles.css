@@ -870,10 +870,7 @@
     }
 
     #streams .radio-yt-card__info {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 24px;
-      gap: 0 8px;
-      align-items: start;
+      min-width: 0;
     }
 
     #streams .radio-yt-card__text {
@@ -900,15 +897,6 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-
-    #streams .radio-yt-card__menu {
-      justify-self: end;
-      margin-top: 2px;
-      font-size: 18px;
-      line-height: 1;
-      color: var(--text-muted);
-      user-select: none;
     }
 
     #streams #streamsLiveList > .streams-live-locked {

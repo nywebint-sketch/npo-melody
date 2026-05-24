@@ -457,10 +457,6 @@ const buildRadioYtCard = (eventItem, { thumbBadge = "", statsLine = "" } = {}) =
   }
   info.appendChild(textCol);
 
-  const menu = el("span", { className: "radio-yt-card__menu", text: "⋮" });
-  menu.setAttribute("aria-hidden", "true");
-  info.appendChild(menu);
-
   card.appendChild(info);
   return card;
 };
