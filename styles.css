@@ -2273,7 +2273,8 @@
       width: 100%;
       min-width: 0;
       min-height: 0;
-      overflow: visible;
+      max-width: 100%;
+      overflow-x: clip;
       box-sizing: border-box;
       line-height: 1.55;
     }
@@ -2287,11 +2288,12 @@
       font-family: inherit;
       font-style: normal;
       font-size: inherit;
-      font-weight: 500;
+      font-weight: 900;
       line-height: inherit;
-      letter-spacing: inherit;
+      letter-spacing: 0.06em;
       text-align: left;
-      color: var(--text-muted);
+      color: var(--text);
+      text-shadow: 0.035em 0 0 currentColor, -0.035em 0 0 currentColor;
       overflow-wrap: anywhere;
       word-break: break-word;
     }
@@ -2472,6 +2474,18 @@
     .afisha-modal-wrap .event-modal-right.afisha-modal-right {
       padding-top: 4px !important;
       gap: 4px;
+      min-width: 0;
+      max-width: 100%;
+      overflow-x: clip;
+      box-sizing: border-box;
+    }
+
+    .afisha-modal-wrap .event-modal-poster-slot {
+      width: fit-content;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box;
     }
 
     /* Правая колонка (афиша / артист / релиз — не мерч): без второй подложки поверх фона модалки */
@@ -2487,6 +2501,16 @@
       line-height: 1.5;
       letter-spacing: 0.02em;
       color: var(--text-muted);
+    }
+
+    #mBody .event-modal-right .event-lineup,
+    #mBody .event-modal-right .event-lineup-chaos {
+      color: var(--text);
+      font-weight: 900;
+      font-size: clamp(14px, 0.875rem, 18px);
+      line-height: 1.45;
+      letter-spacing: 0.06em;
+      text-shadow: 0.035em 0 0 currentColor, -0.035em 0 0 currentColor;
     }
 
     /* Лайнап live: 3 колонки */
@@ -2505,6 +2529,9 @@
       word-break: break-word;
       line-height: 1.35;
       text-align: left;
+      font-weight: inherit;
+      letter-spacing: inherit;
+      color: inherit;
     }
 
     @media (max-width: 420px) {
@@ -2609,6 +2636,14 @@
       line-height: 1.5;
       letter-spacing: 0.02em;
       color: var(--text-muted);
+    }
+
+    #mBody .live-stream-modal-wrap .live-stream-modal-details.afisha-modal-right .event-lineup,
+    #mBody .live-stream-modal-wrap .live-stream-modal-details.afisha-modal-right .event-lineup-chaos {
+      color: var(--text);
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-shadow: 0.035em 0 0 currentColor, -0.035em 0 0 currentColor;
     }
 
     #mBody .event-modal-left .media {
@@ -3221,9 +3256,9 @@
         padding-top: 8px;
       }
 
-      /* Афиша: текст по ширине постера (те же пределы, что у .media img в этой модалке) */
+      /* Афиша: ширина текста/кнопки — по постеру (точнее задаёт syncAfishaModalContentWidth в script.js) */
       #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right {
-        max-width: min(100%, min(62dvh, 520px));
+        max-width: 100%;
         margin-left: auto;
         margin-right: auto;
         box-sizing: border-box;
@@ -3232,7 +3267,7 @@
       }
 
       #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-actions {
-        max-width: min(100%, min(62dvh, 520px));
+        max-width: 100%;
         margin-left: auto;
         margin-right: auto;
         width: 100%;
@@ -3252,6 +3287,10 @@
         grid-template-columns: 1fr;
         grid-template-rows: auto auto auto;
         align-content: start;
+      }
+
+      .event-modal-wrap.afisha-modal-wrap {
+        justify-items: center;
       }
 
       .merch-modal-wrap .event-modal-poster-slot,
@@ -3405,12 +3444,9 @@
         max-height: min(56dvh, 460px);
       }
 
-      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right {
-        max-width: min(100%, min(56dvh, 460px));
-      }
-
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right,
       #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-actions {
-        max-width: min(100%, min(56dvh, 460px));
+        max-width: 100%;
       }
 
       #mBody .event-modal-left .merch-modal-carousel-wrap {

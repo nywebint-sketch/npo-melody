@@ -1042,8 +1042,10 @@ const openModal = ({ title, sub, body }) => {
   if (mSub) mSub.textContent = sub || "";
   if (mBody) mBody.replaceChildren(body || document.createTextNode(""));
   if (mBody) {
+    syncAfishaModalContentWidth(mBody);
     mBody.scrollTop = 0;
     requestAnimationFrame(() => {
+      syncAfishaModalContentWidth(mBody);
       mBody.scrollTop = 0;
     });
   }
@@ -1060,6 +1062,7 @@ const destroyLiveModalVideos = () => {
 };
 
 const closeModal = () => {
+  clearAfishaModalWidthSync(mBody);
   mBody?.querySelector(".live-modal-iframe")?.setAttribute("src", "");
   destroyLiveModalVideos();
   if (modal) modal.style.display = "none";
@@ -1199,6 +1202,61 @@ function bindStreamsSectionPanels() {
 
 const appendDivider = (parent) => parent.appendChild(el("div", { className: "divider" }));
 
+const AFISHA_WIDTH_SYNC_SEL =
+  ".event-modal-poster-slot, .event-modal-right.afisha-modal-right, .afisha-modal-actions";
+
+function clearAfishaModalWidthSync(root) {
+  root?.querySelectorAll(".afisha-modal-wrap").forEach((wrap) => {
+    wrap._afishaWidthObs?.disconnect();
+    wrap._afishaWidthObs = null;
+    wrap.querySelectorAll(AFISHA_WIDTH_SYNC_SEL).forEach((el) => {
+      el.style.maxWidth = "";
+      el.style.width = "";
+      el.style.marginLeft = "";
+      el.style.marginRight = "";
+    });
+  });
+}
+
+/** Текст и кнопка не шире фактического постера (иначе dvh-эвристика не совпадает с картинкой). */
+function syncAfishaModalContentWidth(root) {
+  const wrap = root?.classList?.contains("afisha-modal-wrap")
+    ? root
+    : root?.querySelector?.(".afisha-modal-wrap:not(.live-stream-modal-wrap)");
+  if (!wrap) return;
+
+  const img =
+    wrap.querySelector(".event-modal-poster-slot img") ||
+    wrap.querySelector(".event-modal-left .media img");
+  if (!img) return;
+
+  const targets = [...wrap.querySelectorAll(AFISHA_WIDTH_SYNC_SEL)];
+  if (!targets.length) return;
+
+  const apply = () => {
+    const w = Math.ceil(img.getBoundingClientRect().width);
+    if (w < 1) return;
+    const px = `${w}px`;
+    targets.forEach((el) => {
+      el.style.boxSizing = "border-box";
+      el.style.width = px;
+      el.style.maxWidth = px;
+      el.style.marginLeft = "auto";
+      el.style.marginRight = "auto";
+    });
+  };
+
+  const schedule = () => requestAnimationFrame(apply);
+
+  if (img.complete) schedule();
+  else img.addEventListener("load", schedule, { once: true });
+
+  wrap._afishaWidthObs?.disconnect();
+  const ro = new ResizeObserver(schedule);
+  ro.observe(img);
+  wrap._afishaWidthObs = ro;
+}
+
 function lineupNamesFromEvent(eventItem) {
   return (Array.isArray(eventItem.lineup) ? eventItem.lineup : []).filter(
     (name) => String(name ?? "").trim() !== ""
@@ -1222,16 +1280,16 @@ function buildEventModalRightColumn(
   const lineupNames = lineupNamesFromEvent(eventItem);
   if (!skipLineup && lineupNames.length) {
     if (lineupChaos) {
-      const chaos = el("div", { className: "muted event-lineup-chaos" });
-      chaos.style.marginTop = aboutText ? "8px" : "0";
+      const chaos = el("div", { className: "event-lineup-chaos" });
+      chaos.style.marginTop = aboutText ? "12px" : "0";
       chaos.setAttribute("aria-label", "Лайнап");
       lineupNames.forEach((name) => {
         chaos.appendChild(el("span", { className: "event-lineup-chaos-item", text: String(name) }));
       });
       right.appendChild(chaos);
     } else {
-      const lineup = el("div", { className: "muted event-lineup" });
-      lineup.style.marginTop = aboutText ? "4px" : "0";
+      const lineup = el("div", { className: "event-lineup" });
+      lineup.style.marginTop = aboutText ? "12px" : "0";
       lineupNames.forEach((name) => {
         lineup.appendChild(el("div", { className: "event-lineup-item", text: String(name) }));
       });
