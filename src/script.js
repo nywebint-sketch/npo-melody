@@ -39,6 +39,16 @@ const recordsCountRu = (n) => {
 
 const EVENTS_VISIBLE_LIMIT = 8;
 
+const STUDIO_SERVICES = [
+  { id: "vinyl-wash", title: "Мойка пластинок" },
+  { id: "set-recording", title: "Запись сета" },
+  { id: "mastering", title: "Мастеринг" },
+  { id: "mixing", title: "Сведение" },
+  { id: "lessons", title: "Уроки DJ и продакшена" }
+];
+
+const STUDIO_CONTACT_URL = "https://t.me/npo_melody";
+
 let eventsArchiveExpanded = false;
 
 const sortAsc = (arr, key) => [...arr].sort((a, b) => new Date(a[key]) - new Date(b[key]));
@@ -742,6 +752,60 @@ function renderStreams() {
   renderStreamsLive();
 }
 
+function renderStudio() {
+  const wrap = $("#studioServicesList");
+  if (!wrap) return;
+  wrap.replaceChildren();
+
+  STUDIO_SERVICES.forEach((service) => {
+    const row = el("div", { className: "card pad streams-hint-row" });
+    const content = el("div", { className: "row sp" });
+    content.appendChild(el("b", { text: service.title }));
+    content.appendChild(el("span", { className: "tag", text: "→" }));
+    row.appendChild(content);
+    setupOpenCard(row, "studio", service.id);
+    wrap.appendChild(row);
+  });
+}
+
+function buildStudioModalBody(service) {
+  const wrapper = el("div", { className: "event-modal-wrap afisha-modal-wrap studio-modal-wrap" });
+
+  const left = el("div", { className: "card event-modal-left" });
+  const posterSlot = el("div", { className: "event-modal-poster-slot" });
+  posterSlot.appendChild(createMedia("logo.png", service.title, "media"));
+  left.appendChild(posterSlot);
+
+  const actions = el("div", { className: "event-modal-actions afisha-modal-actions" });
+  const link = el("a", { className: "btn primary event-ticket-btn", text: "Записаться" });
+  link.href = STUDIO_CONTACT_URL;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  actions.appendChild(link);
+  left.appendChild(actions);
+  wrapper.appendChild(left);
+
+  const right = el("div", { className: "card pad event-modal-right afisha-modal-right" });
+  const aboutText = String(service.about ?? "").trim();
+  right.appendChild(
+    el("div", {
+      className: "muted",
+      text: aboutText || "Подробности и запись — в Telegram."
+    })
+  );
+  wrapper.appendChild(right);
+  return wrapper;
+}
+
+const openStudioModal = (service) => {
+  if (!service) return;
+  openModal({
+    title: service.title,
+    sub: "Студия",
+    body: buildStudioModalBody(service)
+  });
+};
+
 function renderMerch() {
   const wrap = $("#merchGrid");
   if (!wrap) return;
@@ -1307,6 +1371,11 @@ document.addEventListener("click", (e) => {
     const item = data.merch.find((x) => x.id === id);
     if (!item) return;
     openModal({ title: item.title, sub: item.price ? String(item.price) : "", body: buildMerchModalBody(item) });
+    return;
+  }
+
+  if (type === "studio") {
+    openStudioModal(STUDIO_SERVICES.find((x) => x.id === id));
   }
 });
 
@@ -1578,6 +1647,7 @@ const initApp = async () => {
   renderEvents();
   if (isReleasesSectionVisible()) renderReleases();
   renderStreams();
+  renderStudio();
   renderMerch();
 
   // Пример карусели изображений (можно заменить urls на свой массив)
