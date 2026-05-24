@@ -2169,6 +2169,16 @@
       max-width: min(680px, calc(100vw - 16px));
     }
 
+    /* Афиша (DEX): широкое окно 50/50 — постер | текст */
+    #modal.modal-overlay:has(.afisha-modal-dex) .modal-inner {
+      width: min(960px, calc(100vw - 24px));
+      max-width: min(960px, calc(100vw - 24px));
+    }
+
+    #modal.modal-overlay:has(.afisha-modal-dex) .modal-header {
+      border-bottom: 1px solid var(--border);
+    }
+
     #modal.modal-overlay:has(.afisha-modal-wrap) .modal-header {
       padding: 10px 48px;
       min-height: 52px;
@@ -2178,13 +2188,28 @@
       padding: 8px 8px 10px !important;
     }
 
-    #modal.modal-overlay:has(.afisha-modal-wrap) .event-modal-right.afisha-modal-right {
+    /* После общего правила афиши — иначе 8px padding ломает выравнивание на мобилке */
+    #modal.modal-overlay:has(.afisha-modal-dex) #mBody.pad {
+      padding: 0 !important;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: min(58vh, 520px);
+    }
+
+    #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-right.afisha-modal-right {
       padding: 6px 16px !important;
       padding-top: 4px !important;
       gap: 4px;
     }
 
-    #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-left {
+    #modal.modal-overlay:has(.afisha-modal-dex) .afisha-modal-scroll.event-modal-right {
+      padding: 0 !important;
+      margin: 0 !important;
+      text-align: left;
+    }
+
+    #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left {
       max-width: min(340px, 46vw);
     }
 
@@ -2203,19 +2228,19 @@
         padding: 8px 24px 14px !important;
       }
 
-      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .event-modal-left .media {
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left .media {
         max-height: min(78vh, 720px);
         overflow: hidden;
       }
 
-      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .event-modal-left .media img {
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left .media img {
         max-height: min(78vh, 720px);
         object-fit: contain;
       }
     }
 
     .event-modal-wrap.merch-modal-wrap,
-    .event-modal-wrap.afisha-modal-wrap,
+    .event-modal-wrap.afisha-modal-wrap:not(.afisha-modal-dex),
     .event-modal-wrap.artist-modal-wrap {
       grid-template-columns: auto minmax(0, 1fr);
       grid-template-rows: auto;
@@ -2401,7 +2426,7 @@
     }
 
     #mBody .merch-modal-wrap .event-modal-left,
-    #mBody .afisha-modal-wrap:not(.live-stream-modal-wrap) .event-modal-left,
+    #mBody .afisha-modal-wrap:not(.live-stream-modal-wrap):not(.afisha-modal-dex) .event-modal-left,
     #mBody .artist-modal-wrap .event-modal-left {
       max-width: 240px;
       width: 100%;
@@ -2461,7 +2486,7 @@
     }
 
     .merch-modal-wrap .event-modal-right.merch-modal-right,
-    .afisha-modal-wrap .event-modal-right.afisha-modal-right,
+    .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-right.afisha-modal-right,
     .artist-modal-wrap .event-modal-right {
       display: flex;
       flex-direction: column;
@@ -2471,21 +2496,338 @@
       padding: 10px 12px !important;
     }
 
-    .afisha-modal-wrap .event-modal-right.afisha-modal-right {
+    .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-right.afisha-modal-right {
       padding-top: 4px !important;
       gap: 4px;
       min-width: 0;
       max-width: 100%;
-      overflow-x: clip;
+      overflow: visible;
       box-sizing: border-box;
     }
 
-    .afisha-modal-wrap .event-modal-poster-slot {
+    /* Афиша DEX: две колонки, справа — прокрутка длинного текста */
+    .event-modal-wrap.afisha-modal-dex {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      gap: 0;
+    }
+
+    .afisha-modal-dex .afisha-modal-media {
+      flex-shrink: 0;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .afisha-modal-dex .afisha-modal-scroll {
+      display: block;
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 !important;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .afisha-modal-dex .afisha-modal-inner {
+      --afisha-pad-x: 20px;
+      padding: 18px var(--afisha-pad-x) 24px;
+      box-sizing: border-box;
+      text-align: left;
+    }
+
+    .afisha-modal-dex .afisha-modal-inner > * {
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 0;
+      padding-right: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .afisha-modal-dex .afisha-modal-meta,
+    .afisha-modal-dex .afisha-modal-about,
+    .afisha-modal-dex .afisha-modal-lineup,
+    .afisha-modal-dex .afisha-modal-ticket {
+      text-align: left;
+    }
+
+    .afisha-modal-dex .afisha-modal-meta {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .afisha-modal-dex .afisha-modal-date {
+      font-size: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .afisha-modal-dex .afisha-modal-place {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .afisha-modal-dex .afisha-modal-divider {
+      display: block;
+      width: 100%;
+      height: 1px;
+      margin: 16px 0;
+      padding: 0;
+      background: var(--border);
+      border: 0;
+    }
+
+    .afisha-modal-dex .afisha-modal-about,
+    .afisha-modal-dex .afisha-modal-lineup {
+      margin: 0;
+    }
+
+    .afisha-modal-dex .afisha-modal-about {
+      font-weight: 500;
+      font-size: clamp(15px, 0.95rem, 17px);
+      line-height: 1.65;
+      letter-spacing: 0.02em;
+      color: var(--text-muted);
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .afisha-modal-dex .afisha-modal-lineup-title {
+      display: block;
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .afisha-modal-dex .afisha-modal-lineup {
+      font-size: clamp(14px, 0.9rem, 16px);
+      line-height: 1.55;
+      color: var(--text);
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    #mBody .afisha-modal-dex .afisha-modal-ticket {
+      display: inline;
+      margin: 0 0 12px;
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+      font: inherit;
+      font-weight: 600;
+      font-size: clamp(15px, 0.95rem, 17px);
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    #mBody .afisha-modal-dex .afisha-modal-ticket:focus-visible {
+      outline: 2px solid var(--border);
+      outline-offset: 2px;
+    }
+
+  @media (min-width: 769px) {
+      .event-modal-wrap.afisha-modal-dex {
+        flex-direction: row;
+        align-items: flex-start;
+        min-height: 0;
+        max-height: min(86vh, 800px);
+      }
+
+      #modal.modal-overlay:has(.afisha-modal-dex) #mBody.pad {
+        min-height: 0;
+      }
+
+      .afisha-modal-dex .afisha-modal-media {
+        flex: 0 0 50%;
+        width: 50%;
+        max-width: 50%;
+        display: block;
+        min-height: 0;
+      }
+
+      .afisha-modal-dex .afisha-modal-scroll {
+        flex: 1 1 50%;
+        align-self: stretch;
+        max-height: min(86vh, 800px);
+        border-left: 1px solid var(--border);
+        padding: 0 !important;
+      }
+
+      .afisha-modal-dex .afisha-modal-inner {
+        --afisha-pad-x: 28px;
+        padding: 24px var(--afisha-pad-x) 32px;
+      }
+
+      #mBody .afisha-modal-dex .afisha-modal-actions .event-ticket-btn.btn.primary {
+        min-width: 0;
+        padding: 10px 20px !important;
+        font-size: 13px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      #modal.modal-overlay:has(.afisha-modal-dex) .modal-inner {
+        width: min(100%, calc(100vw - 16px));
+        max-width: min(100%, calc(100vw - 16px));
+      }
+
+      #modal.modal-overlay:has(.afisha-modal-dex) #mBody.pad {
+        min-height: 0;
+        overflow-y: auto;
+        display: block;
+      }
+
+      .event-modal-wrap.afisha-modal-dex {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-height: 0;
+        max-height: none;
+      }
+
+      .afisha-modal-dex .afisha-modal-media {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+      }
+
+      .afisha-modal-dex .event-modal-poster-slot {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+      }
+
+
+      .afisha-modal-dex .afisha-modal-scroll {
+        flex: none;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0 !important;
+        border: none;
+        overflow: visible;
+      }
+
+      .afisha-modal-dex .afisha-modal-inner {
+        --afisha-pad-x: 20px;
+        width: 100%;
+        padding: 20px var(--afisha-pad-x) 24px;
+        box-sizing: border-box;
+      }
+
+      .afisha-modal-dex .afisha-modal-inner > * {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        max-width: 100%;
+      }
+
+      .afisha-modal-dex .afisha-modal-date {
+        display: block;
+      }
+
+      #mBody .afisha-modal-dex .afisha-modal-ticket {
+        display: block;
+        width: fit-content;
+        max-width: 100%;
+        margin: 0 0 4px !important;
+        padding: 0 !important;
+        text-align: left;
+      }
+
+      .afisha-modal-dex .afisha-modal-divider {
+        width: 100%;
+        margin: 16px 0;
+      }
+
+      .afisha-modal-dex .afisha-modal-about,
+      .afisha-modal-dex .afisha-modal-lineup {
+        font-style: normal;
+        width: 100%;
+      }
+    }
+
+    .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-poster-slot {
       width: fit-content;
       max-width: 100%;
       margin-left: auto;
       margin-right: auto;
       box-sizing: border-box;
+    }
+
+    /* Афиша DEX: постер целиком, без обрезки (contain) */
+    .afisha-modal-dex .event-modal-poster-slot {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      margin: 0;
+    }
+
+    #modal.modal-overlay:has(.afisha-modal-dex) #mBody .event-modal-poster-slot .media,
+    #modal.modal-overlay:has(.afisha-modal-dex) #mBody .event-modal-poster-slot .media.afisha-modal-poster,
+    #mBody .afisha-modal-dex .event-modal-poster-slot .media.afisha-modal-poster {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: min(78vh, 720px);
+      margin: 0;
+      padding: 0;
+      aspect-ratio: unset;
+      overflow: visible;
+      background: transparent;
+      border: none;
+      box-sizing: border-box;
+    }
+
+    #modal.modal-overlay:has(.afisha-modal-dex) #mBody .event-modal-poster-slot .media img,
+    .afisha-modal-dex .event-modal-poster-slot .media img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      max-height: min(78vh, 720px);
+      margin: 0;
+      object-fit: contain;
+      object-position: center top;
+      vertical-align: top;
+    }
+
+    @media (max-width: 768px) {
+      #modal.modal-overlay:has(.afisha-modal-dex) #mBody .event-modal-poster-slot .media,
+      #modal.modal-overlay:has(.afisha-modal-dex) #mBody .event-modal-poster-slot .media.afisha-modal-poster,
+      #mBody .afisha-modal-dex .event-modal-poster-slot .media.afisha-modal-poster {
+        max-height: min(70dvh, 560px);
+      }
+
+      #modal.modal-overlay:has(.afisha-modal-dex) #mBody .event-modal-poster-slot .media img,
+      .afisha-modal-dex .event-modal-poster-slot .media img {
+        max-height: min(70dvh, 560px);
+      }
     }
 
     /* Правая колонка (афиша / артист / релиз — не мерч): без второй подложки поверх фона модалки */
@@ -2571,6 +2913,26 @@
       border-color: var(--btn-close-hover-border) !important;
     }
 
+    #mBody .afisha-modal-wrap.afisha-modal-dex .afisha-modal-actions .event-ticket-btn.btn.primary {
+      width: auto;
+      max-width: 100%;
+      margin-left: 0 !important;
+      margin-right: auto !important;
+    }
+
+    #modal.modal-overlay:has(.afisha-modal-dex) #mBody .afisha-modal-wrap .afisha-modal-actions {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: auto;
+      max-width: 100%;
+    }
+
+    #modal.modal-overlay:has(.afisha-modal-dex) #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      max-width: 100%;
+    }
+
     #mBody .event-modal-actions .event-ticket-btn:not(.btn.primary),
     .event-modal-wrap .event-modal-actions .event-ticket-btn:not(.btn.primary) {
       justify-content: center;
@@ -2589,7 +2951,7 @@
       border-color: var(--btn-close-hover-border) !important;
     }
 
-    #mBody .event-modal-wrap:not(.live-stream-modal-wrap) .event-modal-left {
+    #mBody .event-modal-wrap:not(.live-stream-modal-wrap):not(.afisha-modal-dex) .event-modal-left {
       width: 100%;
       max-width: 300px;
       margin: 0;
@@ -2664,14 +3026,18 @@
       vertical-align: top;
     }
 
-    /* Десктоп: уменьшаем постер, чтобы всегда была видна кнопка */
+    /* Десктоп: уменьшаем постер, чтобы всегда была видна кнопка (не DEX-афиша) */
     @media (min-width: 769px) {
-      #mBody .event-modal-left .media {
+      #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left .media,
+      #mBody .merch-modal-wrap .event-modal-left .media,
+      #mBody .artist-modal-wrap .event-modal-left .media {
         max-height: 62vh;
         overflow: hidden;
       }
 
-      #mBody .event-modal-left .media img {
+      #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left .media img,
+      #mBody .merch-modal-wrap .event-modal-left .media img,
+      #mBody .artist-modal-wrap .event-modal-left .media img {
         max-height: 62vh;
         object-fit: contain;
       }
@@ -3231,7 +3597,7 @@
       }
 
       #mBody .merch-modal-wrap .event-modal-left,
-      #mBody .afisha-modal-wrap .event-modal-left,
+      #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left,
       #mBody .artist-modal-wrap .event-modal-left {
         max-width: 100%;
       }
@@ -3265,8 +3631,8 @@
         padding-top: 8px;
       }
 
-      /* Афиша: ширина текста/кнопки — по постеру (точнее задаёт syncAfishaModalContentWidth в script.js) */
-      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right {
+      /* Афиша (старый layout): ширина текста/кнопки — по постеру */
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-right.afisha-modal-right {
         max-width: 100%;
         margin-left: auto;
         margin-right: auto;
@@ -3275,7 +3641,7 @@
         padding-right: 10px !important;
       }
 
-      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-actions {
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-actions {
         max-width: 100%;
         margin-left: auto;
         margin-right: auto;
@@ -3283,27 +3649,27 @@
         box-sizing: border-box;
       }
 
-      /* Мерч / афиша / артист на мобилке: фото → текст → кнопка */
+      /* Мерч / афиша (старый) / артист на мобилке: фото → текст → кнопка */
       .merch-modal-wrap .event-modal-left,
-      .afisha-modal-wrap .event-modal-left,
+      .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left,
       .artist-modal-wrap .event-modal-left {
         display: contents;
       }
 
       .event-modal-wrap.merch-modal-wrap,
-      .event-modal-wrap.afisha-modal-wrap,
+      .event-modal-wrap.afisha-modal-wrap:not(.afisha-modal-dex),
       .event-modal-wrap.artist-modal-wrap {
         grid-template-columns: 1fr;
         grid-template-rows: auto auto auto;
         align-content: start;
       }
 
-      .event-modal-wrap.afisha-modal-wrap {
+      .event-modal-wrap.afisha-modal-wrap:not(.afisha-modal-dex) {
         justify-items: center;
       }
 
       .merch-modal-wrap .event-modal-poster-slot,
-      .afisha-modal-wrap .event-modal-poster-slot,
+      .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-poster-slot,
       .artist-modal-wrap .event-modal-poster-slot {
         grid-column: 1;
         grid-row: 1;
@@ -3311,20 +3677,24 @@
       }
 
       .merch-modal-wrap .event-modal-right,
-      .afisha-modal-wrap .event-modal-right,
+      .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-right,
       .artist-modal-wrap .event-modal-right {
         grid-column: 1;
         grid-row: 2;
       }
 
       /* Постер/фото: как на десктопе — ограничение по высоте, иначе на узком экране съедает всё окно */
-      #mBody .event-modal-left .media {
+      #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left .media,
+      #mBody .merch-modal-wrap .event-modal-left .media,
+      #mBody .artist-modal-wrap .event-modal-left .media {
         max-height: min(48dvh, 360px);
         overflow: hidden;
         align-items: center;
       }
 
-      #mBody .event-modal-left .media img {
+      #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left .media img,
+      #mBody .merch-modal-wrap .event-modal-left .media img,
+      #mBody .artist-modal-wrap .event-modal-left .media img {
         max-width: 100%;
         max-height: min(48dvh, 360px);
         width: auto;
@@ -3333,8 +3703,8 @@
         margin: 0 auto;
       }
 
-      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .event-modal-left .media,
-      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .event-modal-left .media img {
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left .media,
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left .media img {
         max-height: min(62dvh, 520px);
       }
 
@@ -3384,7 +3754,7 @@
       }
 
       .merch-modal-wrap .merch-modal-actions,
-      .afisha-modal-wrap .afisha-modal-actions,
+      .afisha-modal-wrap:not(.afisha-modal-dex) .afisha-modal-actions,
       .artist-modal-wrap .event-modal-actions {
         grid-column: 1;
         grid-row: 3;
@@ -3443,18 +3813,22 @@
       }
 
       /* Ещё компактнее на очень узких экранах */
-      #mBody .event-modal-left .media,
-      #mBody .event-modal-left .media img {
+      #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left .media,
+      #mBody .merch-modal-wrap .event-modal-left .media,
+      #mBody .artist-modal-wrap .event-modal-left .media,
+      #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left .media img,
+      #mBody .merch-modal-wrap .event-modal-left .media img,
+      #mBody .artist-modal-wrap .event-modal-left .media img {
         max-height: min(40dvh, 300px);
       }
 
-      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .event-modal-left .media,
-      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .event-modal-left .media img {
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left .media,
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-left .media img {
         max-height: min(56dvh, 460px);
       }
 
-      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-right.afisha-modal-right,
-      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap .event-modal-actions {
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-right.afisha-modal-right,
+      #modal.modal-overlay:has(.afisha-modal-wrap) #mBody .afisha-modal-wrap:not(.afisha-modal-dex) .event-modal-actions {
         max-width: 100%;
       }
 

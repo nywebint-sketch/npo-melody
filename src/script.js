@@ -27,6 +27,15 @@ const fmtDateDots = (iso) => {
   return `${pad2(d.getDate())}.${pad2(d.getMonth() + 1)}.${d.getFullYear()}`;
 };
 
+const weekdaysRuShort = ["ВС", "ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ"];
+
+/** Дата в стиле dexclub.net: «СБ 30.05» */
+const fmtDateDex = (iso) => {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return `${weekdaysRuShort[d.getDay()]} ${pad2(d.getDate())}.${pad2(d.getMonth() + 1)}`;
+};
+
 const recordsCountRu = (n) => {
   const num = Number(n);
   const x = Math.abs(num) % 100;
@@ -1202,14 +1211,23 @@ function bindStreamsSectionPanels() {
 
 const appendDivider = (parent) => parent.appendChild(el("div", { className: "divider" }));
 
-const AFISHA_WIDTH_SYNC_SEL =
+const AFISHA_WIDTH_SYNC_ALL =
   ".event-modal-poster-slot, .event-modal-right.afisha-modal-right, .afisha-modal-actions";
+
+/** На десктопе текст не сужаем до ширины постера — только постер и кнопка билетов. */
+function afishaWidthSyncTargets(wrap) {
+  const mobile = window.matchMedia("(max-width: 768px)").matches;
+  const sel = mobile
+    ? AFISHA_WIDTH_SYNC_ALL
+    : ".event-modal-poster-slot, .afisha-modal-actions";
+  return [...wrap.querySelectorAll(sel)];
+}
 
 function clearAfishaModalWidthSync(root) {
   root?.querySelectorAll(".afisha-modal-wrap").forEach((wrap) => {
     wrap._afishaWidthObs?.disconnect();
     wrap._afishaWidthObs = null;
-    wrap.querySelectorAll(AFISHA_WIDTH_SYNC_SEL).forEach((el) => {
+    wrap.querySelectorAll(AFISHA_WIDTH_SYNC_ALL).forEach((el) => {
       el.style.maxWidth = "";
       el.style.width = "";
       el.style.marginLeft = "";
@@ -1223,21 +1241,25 @@ function syncAfishaModalContentWidth(root) {
   const wrap = root?.classList?.contains("afisha-modal-wrap")
     ? root
     : root?.querySelector?.(".afisha-modal-wrap:not(.live-stream-modal-wrap)");
-  if (!wrap) return;
+  if (!wrap || wrap.classList.contains("afisha-modal-dex")) return;
 
   const img =
     wrap.querySelector(".event-modal-poster-slot img") ||
     wrap.querySelector(".event-modal-left .media img");
   if (!img) return;
 
-  const targets = [...wrap.querySelectorAll(AFISHA_WIDTH_SYNC_SEL)];
-  if (!targets.length) return;
-
   const apply = () => {
+    wrap.querySelectorAll(AFISHA_WIDTH_SYNC_ALL).forEach((el) => {
+      el.style.maxWidth = "";
+      el.style.width = "";
+      el.style.marginLeft = "";
+      el.style.marginRight = "";
+    });
+    const syncTargets = afishaWidthSyncTargets(wrap);
     const w = Math.ceil(img.getBoundingClientRect().width);
     if (w < 1) return;
     const px = `${w}px`;
-    targets.forEach((el) => {
+    syncTargets.forEach((el) => {
       el.style.boxSizing = "border-box";
       el.style.width = px;
       el.style.maxWidth = px;
@@ -1321,13 +1343,13 @@ function buildEventModalTicketActions(eventItem) {
   const ticketUrl = safeHttpUrl(rawTicketUrl);
   const actions = el("div", { className: "event-modal-actions afisha-modal-actions" });
   if (ticketUrl) {
-    const link = el("a", { className: "btn primary event-ticket-btn", text: "Билеты / регистрация" });
+    const link = el("a", { className: "btn primary event-ticket-btn", text: "Купить билет" });
     link.href = ticketUrl;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
     actions.appendChild(link);
   } else {
-    const button = el("button", { className: "btn primary event-ticket-btn", text: "Билеты / регистрация" });
+    const button = el("button", { className: "btn primary event-ticket-btn", text: "Купить билет" });
     button.type = "button";
     button.addEventListener("click", () => alert("Тут будет ссылка на билеты/регистрацию"));
     actions.appendChild(button);
@@ -1395,17 +1417,84 @@ function appendLiveStreamMediaSlot(posterSlot, eventItem) {
   posterSlot.appendChild(wrap);
 }
 
+function appendAfishaDexTicketLink(parent, eventItem) {
+  const rawTicketUrl =
+    eventItem.ticketUrl ||
+    eventItem.ticket_url ||
+    eventItem.ticketsUrl ||
+    eventItem.tickets_url ||
+    eventItem.ticket ||
+    eventItem.tickets;
+  const ticketUrl = safeHttpUrl(rawTicketUrl);
+
+  if (ticketUrl) {
+    const link = el("a", { className: "afisha-modal-ticket", text: "Купить билет" });
+    link.href = ticketUrl;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    parent.appendChild(link);
+    return;
+  }
+
+  const btn = el("button", { className: "afisha-modal-ticket", text: "Купить билет" });
+  btn.type = "button";
+  btn.addEventListener("click", () => alert("Тут будет ссылка на билеты/регистрацию"));
+  parent.appendChild(btn);
+}
+
+function appendAfishaDexModalContent(scrollCol, eventItem) {
+  const inner = el("div", { className: "afisha-modal-inner" });
+
+  const meta = el("div", { className: "afisha-modal-meta" });
+  meta.appendChild(el("span", { className: "afisha-modal-date", text: fmtDateDex(eventItem.date) }));
+  inner.appendChild(meta);
+
+  appendAfishaDexTicketLink(inner, eventItem);
+
+  const aboutText = String(eventItem.about ?? "").trim();
+  if (aboutText) {
+    inner.appendChild(el("div", { className: "afisha-modal-divider" }));
+    const about = el("div", { className: "afisha-modal-about" });
+    about.style.whiteSpace = "pre-line";
+    about.textContent = aboutText;
+    inner.appendChild(about);
+  }
+
+  const lineupNames = lineupNamesFromEvent(eventItem);
+  if (lineupNames.length) {
+    inner.appendChild(el("div", { className: "afisha-modal-divider" }));
+    const lineup = el("p", { className: "afisha-modal-lineup" });
+    lineup.textContent = lineupNames.join(", ");
+    inner.appendChild(lineup);
+  }
+
+  if (eventItem.address) {
+    inner.appendChild(el("div", { className: "afisha-modal-divider" }));
+    inner.appendChild(el("b", { className: "afisha-modal-lineup-title", text: "Адрес" }));
+    const addressEl = el("div", { className: "afisha-modal-about" });
+    addressEl.textContent = String(eventItem.address);
+    inner.appendChild(addressEl);
+  }
+
+  scrollCol.appendChild(inner);
+}
+
+/** Афиша в модалке: как dexclub.net — постер | прокручиваемый текст (50/50 на десктопе). */
 function buildEventModalBody(eventItem) {
-  const wrapper = el("div", { className: "event-modal-wrap afisha-modal-wrap" });
+  const wrapper = el("div", { className: "event-modal-wrap afisha-modal-wrap afisha-modal-dex" });
 
-  const left = el("div", { className: "card event-modal-left" });
+  const media = el("div", { className: "afisha-modal-media event-modal-left" });
   const posterSlot = el("div", { className: "event-modal-poster-slot" });
-  posterSlot.appendChild(createMedia(eventItem.poster || "logo.png", eventItem.title, "media"));
-  left.appendChild(posterSlot);
+  posterSlot.appendChild(
+    createMedia(eventItem.poster || "logo.png", eventItem.title, "media afisha-modal-poster")
+  );
+  media.appendChild(posterSlot);
+  wrapper.appendChild(media);
 
-  left.appendChild(buildEventModalTicketActions(eventItem));
-  wrapper.appendChild(left);
-  wrapper.appendChild(buildEventModalRightColumn(eventItem, { lineupChaos: true }));
+  const scrollCol = el("div", { className: "afisha-modal-scroll" });
+  appendAfishaDexModalContent(scrollCol, eventItem);
+  wrapper.appendChild(scrollCol);
+
   return wrapper;
 }
 
@@ -1555,7 +1644,7 @@ const openEventModal = (eventItem) => {
   if (!eventItem) return;
   openModal({
     title: eventItem.title,
-    sub: `${fmtDT(eventItem.date)} · ${eventItem.place || "—"}`,
+    sub: "",
     body: buildEventModalBody(eventItem)
   });
 };
