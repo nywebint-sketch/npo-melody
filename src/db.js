@@ -295,8 +295,23 @@ const uploadImage = async (file) => withClient(async (client) => {
   return data?.publicUrl || '';
 }, '');
 
+// Колонки таблицы `events` (stream_url только у live_items — не отправлять в insert/update)
+const EVENT_WRITE_FIELDS = [
+  'title', 'date', 'place', 'address', 'status', 'about', 'lineup', 'poster', 'ticket_url', 'tags'
+];
+
+const pickEventPayload = (payload) => {
+  const out = {};
+  for (const key of EVENT_WRITE_FIELDS) {
+    if (payload != null && Object.prototype.hasOwnProperty.call(payload, key)) {
+      out[key] = payload[key];
+    }
+  }
+  return out;
+};
+
 const createEvent = async (payload) => withClient(async (client) => {
-  const { data, error } = await client.from('events').insert(payload).select().single();
+  const { data, error } = await client.from('events').insert(pickEventPayload(payload)).select().single();
   if (error) throw error;
   return data;
 }, null);
@@ -305,7 +320,12 @@ const createEvent = async (payload) => withClient(async (client) => {
 const addEvent = createEvent;
 
 const updateEvent = async (id, payload) => withClient(async (client) => {
-  const { data, error } = await client.from('events').update(payload).eq('id', id).select().single();
+  const { data, error } = await client
+    .from('events')
+    .update(pickEventPayload(payload))
+    .eq('id', id)
+    .select()
+    .single();
   if (error) throw error;
   return data;
 }, null);

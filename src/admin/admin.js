@@ -20,6 +20,12 @@ function resolveMerchPreview(raw) {
   return ASSET_PREFIX + s.replace(/^\/+/, '');
 }
 
+function adminSaveErrorMessage(fallback = 'Не удалось сохранить.') {
+  const health = typeof db.getDbHealth === 'function' ? db.getDbHealth() : null;
+  const msg = String(health?.lastErrorMessage || '').trim();
+  return msg || fallback;
+}
+
 function merchStatusLabel(status) {
   const map = {
     active: 'В продаже',
@@ -346,8 +352,7 @@ async function openEventEditor(id = null) {
     tags: [],
     // Ссылка на билеты может храниться в разных колонках — нормализуем
     ticketUrl: '',
-    ticket_url: '',
-    stream_url: ''
+    ticket_url: ''
   };
   let isEdit = false;
 
@@ -366,8 +371,7 @@ async function openEventEditor(id = null) {
       event = {
         ...event,
         ...found,
-        ticketUrl: ticket,
-        stream_url: found.stream_url || found.streamUrl || ''
+        ticketUrl: ticket
       };
     }
     isEdit = true;
@@ -399,8 +403,10 @@ async function openEventEditor(id = null) {
         <input type="url" name="ticket_url" value="${event.ticketUrl || ''}" placeholder="https://...">
       </div>
       <div class="form-group">
-        <label>Ссылка на трансляцию (YouTube, Vimeo, Rutube, mp4 — для кнопки «Смотреть» в НПО РАДИО)</label>
-        <input type="url" name="stream_url" value="${event.stream_url || event.streamUrl || ''}" placeholder="https://...">
+        <p class="muted" style="font-size:13px;margin:0;">
+          Ссылку на трансляцию (YouTube, Rutube и т.д.) добавляйте в разделе
+          <strong>НПО РАДИО</strong> — у афиши в БД нет поля <code>stream_url</code>.
+        </p>
       </div>
       <div class="form-group">
         <label>Описание</label>
@@ -460,14 +466,21 @@ async function openEventEditor(id = null) {
       place: event.place,
       poster: posterUrl,
       // Пишем в snake_case колонку Supabase
-      ticket_url: (fd.get('ticket_url') || '').trim(),
-      stream_url: (fd.get('stream_url') || '').trim()
+      ticket_url: (fd.get('ticket_url') || '').trim()
     };
 
+    let saved;
     if (isEdit) {
-      await db.updateEvent(id, data);
+      saved = await db.updateEvent(id, data);
     } else {
-      await db.addEvent(data);
+      saved = await db.addEvent(data);
+    }
+
+    if (!saved) {
+      alert(adminSaveErrorMessage('Не удалось сохранить событие. Проверьте вход в админку и RLS в Supabase.'));
+      btn.textContent = eventSubmitLabel;
+      btn.disabled = false;
+      return;
     }
 
     adminModal.style.display = 'none';
