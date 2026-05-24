@@ -37,7 +37,7 @@ const recordsCountRu = (n) => {
   return `${num} записей`;
 };
 
-const EVENTS_VISIBLE_LIMIT = 8;
+const EVENTS_VISIBLE_LIMIT = 3;
 
 const STUDIO_SERVICES = [
   {
