@@ -1623,28 +1623,39 @@
     }
 
     #modal.modal-overlay:has(.studio-modal-body) .modal-sub {
-      display: block;
-      margin-top: 4px;
-      font-size: 12px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      font-weight: 500;
+      display: none;
     }
 
     #modal.modal-overlay:has(.studio-modal-body) #mBody.pad {
-      padding: 4px 24px 28px;
+      padding: 4px 24px 16px;
+      text-align: center;
     }
 
     #mBody .studio-modal-body {
       display: flex;
       flex-direction: column;
-      gap: 22px;
+      align-items: center;
+      gap: 0;
+      width: 100%;
       min-width: 0;
+      min-height: 280px;
+      text-align: center;
+    }
+
+    #mBody .studio-modal-body__main {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 0;
+      padding: 12px 0 8px;
     }
 
     #mBody .studio-modal-body__text {
       margin: 0;
+      width: 100%;
+      max-width: 100%;
       font-size: 15px;
       line-height: 1.6;
       font-style: normal;
@@ -1654,7 +1665,11 @@
 
     #mBody .studio-modal-body__actions {
       display: flex;
+      flex-shrink: 0;
       justify-content: center;
+      width: 100%;
+      margin-top: auto;
+      padding-top: 12px;
     }
 
     #mBody .studio-modal-body__cta.btn.primary {
@@ -1667,7 +1682,7 @@
       box-sizing: border-box;
       padding: 12px 20px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       line-height: 1.25;
       letter-spacing: 0.02em;
       text-decoration: none;

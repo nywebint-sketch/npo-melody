@@ -793,17 +793,19 @@ function renderStudio() {
 function buildStudioModalBody(service) {
   const body = el("div", { className: "studio-modal-body" });
   const aboutText = String(service.about ?? "").trim();
-  body.appendChild(
+  const main = el("div", { className: "studio-modal-body__main" });
+  main.appendChild(
     el("p", {
       className: "studio-modal-body__text",
       text: aboutText || "Подробности и запись — в Telegram."
     })
   );
+  body.appendChild(main);
 
   const actions = el("div", { className: "studio-modal-body__actions" });
   const link = el("a", {
     className: "btn primary studio-modal-body__cta",
-    text: "Записаться в Telegram"
+    text: "Записаться"
   });
   link.href = STUDIO_CONTACT_URL;
   link.target = "_blank";
@@ -817,7 +819,7 @@ const openStudioModal = (service) => {
   if (!service) return;
   openModal({
     title: service.title,
-    sub: "Студия",
+    sub: "",
     body: buildStudioModalBody(service)
   });
 };
