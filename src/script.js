@@ -1,7 +1,7 @@
 // Copied from original script.js with no behavior changes.
 
 import { createCarousel } from "./carousel.js";
-import { ASSET_PREFIX, HERO_PRINT_URL, getDefaultLogoUrl } from "./logoUrls.js";
+import { ASSET_PREFIX, FOOTER_ICONS, HERO_PRINT_URL, LOCAL_IMAGES, getDefaultLogoUrl } from "./logoUrls.js";
 
 // Заглушка «логотип»: в БД может храниться sentinel `logo.png` — в UI подставляется theme-aware URL (см. logoUrls.js).
 
@@ -51,6 +51,73 @@ let data = {
   live: []
 };
 
+const DEFAULT_FOOTER_SOCIALS = [
+  { slug: "telegram", label: "Telegram", url: "https://t.me/npo_melody", icon_url: FOOTER_ICONS.telegram, sort_order: 10 },
+  { slug: "vk", label: "ВКонтакте", url: "https://vk.com/npo_melody", icon_url: FOOTER_ICONS.vk, sort_order: 20 },
+  { slug: "instagram", label: "Instagram", url: "https://www.instagram.com/npo_melody/", icon_url: FOOTER_ICONS.instagram, sort_order: 30 },
+  { slug: "soundcloud", label: "SoundCloud", url: "https://soundcloud.com/npo_radio", icon_url: FOOTER_ICONS.soundcloud, sort_order: 40 },
+  { slug: "email", label: "Почта", url: "mailto:npomelodia@yandex.ru", icon_url: `${LOCAL_IMAGES}icon-email.svg`, sort_order: 50 }
+];
+
+const resolveFooterIconUrl = (raw) => {
+  const value = String(raw || "").trim();
+  if (!value) return "";
+  if (/^(https?:|data:|\/|\.\/)/i.test(value)) return value;
+  return ASSET_PREFIX + value.replace(/^\//, "");
+};
+
+const normalizeFooterSocialRow = (row) => {
+  if (!row || typeof row !== "object") return null;
+  const url = row.url || row.href || row.link || "";
+  const label = row.label || row.name || row.title || "";
+  const slug = row.slug || row.key || row.id || "social";
+  const iconRaw = row.icon_url ?? row.iconUrl ?? row.icon ?? "";
+  if (!url || !label) return null;
+  return {
+    slug: String(slug),
+    label: String(label),
+    url: String(url),
+    icon_url: resolveFooterIconUrl(iconRaw),
+    sort_order: Number(row.sort_order ?? row.sortOrder ?? 0)
+  };
+};
+
+const renderFooterSocials = (items = []) => {
+  const container = $("#footerSocials");
+  if (!container) return;
+  const rows = (Array.isArray(items) ? items : [])
+    .map(normalizeFooterSocialRow)
+    .filter(Boolean)
+    .sort((a, b) => a.sort_order - b.sort_order);
+  container.replaceChildren();
+  for (const item of rows) {
+    const link = document.createElement("a");
+    link.className = `footer-social-btn footer-social-btn--${item.slug}`;
+    link.href = item.url;
+    link.setAttribute("aria-label", item.label);
+    if (/^https?:/i.test(item.url)) {
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+    }
+    const icon = document.createElement("span");
+    icon.className = "footer-social-icon footer-social-icon--mask";
+    icon.setAttribute("aria-hidden", "true");
+    if (item.icon_url) {
+      const mask = `url("${item.icon_url.replace(/"/g, "%22")}")`;
+      icon.style.maskImage = mask;
+      icon.style.webkitMaskImage = mask;
+    }
+    link.appendChild(icon);
+    container.appendChild(link);
+  }
+};
+
+const loadFooterSocialsFromDb = async () => {
+  if (!window.dbLayer?.getFooterSocials) return DEFAULT_FOOTER_SOCIALS;
+  const rows = await window.dbLayer.getFooterSocials();
+  return rows.length ? rows : DEFAULT_FOOTER_SOCIALS;
+};
+
 let clubSession = null;
 let dbNoticeNode = null;
 let dbRetryButtonNode = null;
@@ -84,7 +151,7 @@ const getOrCreateDbNoticeNode = () => {
       if (isReleasesSectionVisible()) renderSkeletonGrid("#releasesGrid", 4);
       renderSkeletonGrid("#streamsLiveList", 4, "row");
       renderSkeletonGrid("#merchGrid", 4);
-      await loadCatalogFromDb();
+      await Promise.all([loadCatalogFromDb(), loadFooterSocialsFromDb().then(renderFooterSocials)]);
       renderEvents();
       if (isReleasesSectionVisible()) renderReleases();
       renderStreams();
@@ -1496,7 +1563,13 @@ const initApp = async () => {
   renderSkeletonGrid("#merchGrid", 4);
 
   if (window.dbLayer) {
-    await Promise.all([refreshClubSession(), loadCatalogFromDb()]);
+    await Promise.all([
+      refreshClubSession(),
+      loadCatalogFromDb(),
+      loadFooterSocialsFromDb().then(renderFooterSocials)
+    ]);
+  } else {
+    renderFooterSocials(DEFAULT_FOOTER_SOCIALS);
   }
 
   const yearNode = $("#year");

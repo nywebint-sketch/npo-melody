@@ -181,6 +181,15 @@ const getMerch = async () => withClient(async (client) => {
   return safeArray(data, error);
 }, []);
 
+const getFooterSocials = async () => withClient(async (client) => {
+  const { data, error } = await client
+    .from('footer_socials')
+    .select('*')
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true });
+  return safeArray(data, error);
+}, []);
+
 const getSession = async () => withClient(async (client) => {
   const { data: { session }, error } = await client.auth.getSession();
   if (error) {
@@ -334,7 +343,7 @@ const syncDefaultData = async () => true;
 const api = {
   initSupabase,
   getDbHealth,
-  getEvents, getEventsAdmin, getArtists, getReleases, getPodcasts, getStreams, getLiveItems, getLiveItemsAdmin, getMerch,
+  getEvents, getEventsAdmin, getArtists, getReleases, getPodcasts, getStreams, getLiveItems, getLiveItemsAdmin, getMerch, getFooterSocials,
   getSession, login, register, logout, syncDefaultData,
   getUsers, checkIsAdmin, updateUserRole, uploadImage,
   createEvent, updateEvent, deleteEvent, addEvent,
@@ -348,7 +357,7 @@ export {
   initSupabase,
   getDbHealth,
   getEvents, getEventsAdmin,
-  getArtists, getReleases, getPodcasts, getStreams, getLiveItems, getLiveItemsAdmin, getMerch,
+  getArtists, getReleases, getPodcasts, getStreams, getLiveItems, getLiveItemsAdmin, getMerch, getFooterSocials,
   getSession, login, register, logout, syncDefaultData,
   getUsers, checkIsAdmin, updateUserRole, uploadImage,
   createEvent, updateEvent, deleteEvent, addEvent,

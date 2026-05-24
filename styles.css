@@ -52,9 +52,6 @@
       --btn-close-hover-bg: #0a0a0a;
       --btn-close-hover-text: #fff;
       --btn-close-hover-border: transparent;
-      --footer-social-btn-bg: #111;
-      --footer-social-btn-fg: #fff;
-      --footer-social-btn-outline: #111;
     }
 
     * {
@@ -2471,29 +2468,52 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      width: 36px;
-      height: 36px;
-      padding: 0;
+      padding: 6px;
       border: none;
-      border-radius: 50%;
-      background: var(--footer-social-btn-bg);
-      color: var(--footer-social-btn-fg);
+      border-radius: 0;
+      background: transparent;
+      color: currentColor;
       text-decoration: none;
       cursor: pointer;
-      transition: background-color .2s ease, color .2s ease;
+      transition: opacity .2s ease;
       user-select: none
     }
 
+    .footer-social-btn:hover {
+      opacity: .6
+    }
+
     .footer-social-btn:focus-visible {
-      outline: 2px solid var(--footer-social-btn-outline);
+      outline: 2px solid currentColor;
       outline-offset: 3px
     }
 
     .footer-social-icon {
       display: block;
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      overflow: visible
+    }
+
+    .footer-social-btn--telegram .footer-social-icon {
+      width: 15px;
+      height: 15px
+    }
+
+    .footer-social-btn--vk .footer-social-icon {
       width: 17px;
-      height: 17px;
-      flex-shrink: 0
+      height: 17px
+    }
+
+    .footer-social-btn--instagram .footer-social-icon {
+      width: 14px;
+      height: 14px
+    }
+
+    .footer-social-btn--email .footer-social-icon {
+      width: 17px;
+      height: 17px
     }
 
     .footer-social-icon--mask {
@@ -2504,26 +2524,6 @@
       -webkit-mask-size: contain;
       -webkit-mask-repeat: no-repeat;
       -webkit-mask-position: center
-    }
-
-    .footer-social-btn--telegram .footer-social-icon--mask {
-      mask-image: url("./images/icon-telegram.png");
-      -webkit-mask-image: url("./images/icon-telegram.png")
-    }
-
-    .footer-social-btn--soundcloud .footer-social-icon--mask {
-      mask-image: url("./images/icon-soundcloud.png");
-      -webkit-mask-image: url("./images/icon-soundcloud.png")
-    }
-
-    .footer-social-btn--instagram .footer-social-icon--mask {
-      mask-image: url("./images/icon-instagram.svg");
-      -webkit-mask-image: url("./images/icon-instagram.svg")
-    }
-
-    .footer-social-btn--email .footer-social-icon--mask {
-      mask-image: url("./images/icon-email.svg");
-      -webkit-mask-image: url("./images/icon-email.svg")
     }
 
     footer .footer-address {
@@ -3388,9 +3388,6 @@
         --btn-close-hover-bg: #fff;
         --btn-close-hover-text: #0a0a0a;
         --btn-close-hover-border: transparent;
-        --footer-social-btn-bg: #fff;
-        --footer-social-btn-fg: #111;
-        --footer-social-btn-outline: #fff;
       }
 
       /* Белое лого: не чистый белый, слегка серое */

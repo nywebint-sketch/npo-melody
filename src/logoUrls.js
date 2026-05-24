@@ -5,6 +5,14 @@ export const LOCAL_IMAGES = "./images/";
 export const ASSET_PREFIX =
   "https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/";
 
+/** Иконки соцсетей в футере (Supabase Storage) */
+export const FOOTER_ICONS = {
+  telegram: ASSET_PREFIX + "tg.png",
+  vk: ASSET_PREFIX + "vk.png",
+  instagram: ASSET_PREFIX + "ig.png",
+  soundcloud: ASSET_PREFIX + "sc.png"
+};
+
 export const LOGO_WHITE_URL = LOCAL_IMAGES + "logo-white.png";
 export const LOGO_BLACK_URL = LOCAL_IMAGES + "logo-black.png";
 export const HERO_PRINT_URL = LOCAL_IMAGES + "npo_print_source.png";
