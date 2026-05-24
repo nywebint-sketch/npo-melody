@@ -803,7 +803,12 @@
     }
 
     #streams .streams-yt-grid {
-      gap: 24px 16px;
+      gap: 16px 12px;
+    }
+
+    #streamsLiveList,
+    #streamsRecordingsList {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     #streams .streams-subhead {
@@ -817,7 +822,7 @@
     #streams .radio-yt-card.open-card {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
       min-width: 0;
       background: transparent !important;
       border: none;
@@ -838,7 +843,7 @@
       position: relative;
       width: 100%;
       aspect-ratio: 16 / 9;
-      border-radius: 12px;
+      border-radius: 10px;
       overflow: hidden;
       background: var(--surface);
     }
@@ -877,7 +882,7 @@
 
     #streams .radio-yt-card__title {
       margin: 0;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
       line-height: 1.35;
       color: var(--text);
@@ -888,8 +893,8 @@
     }
 
     #streams .radio-yt-card__stats {
-      margin: 4px 0 0;
-      font-size: 14px;
+      margin: 2px 0 0;
+      font-size: 12px;
       line-height: 1.35;
       color: var(--text-muted);
       white-space: nowrap;
@@ -2735,7 +2740,9 @@
 
       #merchGrid,
       #releasesGrid,
-      #studioServicesList {
+      #studioServicesList,
+      #streamsLiveList,
+      #streamsRecordingsList {
         grid-template-columns: repeat(4, minmax(0, 1fr));
       }
     }
@@ -2763,7 +2770,9 @@
       #artistsGrid,
       #merchGrid,
       #releasesGrid,
-      #studioServicesList {
+      #studioServicesList,
+      #streamsLiveList,
+      #streamsRecordingsList {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
@@ -3019,8 +3028,8 @@
 
       #streamsLiveList,
       #streamsRecordingsList {
-        grid-template-columns: 1fr !important;
-        gap: 20px;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px;
       }
 
       #mBody .event-modal-left,
@@ -3412,6 +3421,12 @@
 
       .g3 {
         grid-template-columns: 1fr
+      }
+
+      #streamsLiveList,
+      #streamsRecordingsList {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px;
       }
 
       .heroArt {
