@@ -3049,6 +3049,10 @@
         gap: 8px;
       }
 
+      #merchGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
       #podcastsGrid {
         gap: 8px;
       }
@@ -3199,6 +3203,11 @@
         gap: 8px;
       }
 
+      /* Мерч: крупнее превью футболок — 2 в ряд вместо 3 */
+      #merchGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .event-modal-wrap {
         grid-template-columns: 1fr;
         grid-template-rows: auto auto auto;
@@ -3237,7 +3246,7 @@
 
       /* Мерч: описание и кнопка по ширине карусели, текст по центру */
       #mBody .merch-modal-wrap .event-modal-right.merch-modal-right {
-        max-width: min(100%, min(48dvh, 360px));
+        max-width: min(100%, min(62dvh, 520px));
         margin-left: auto;
         margin-right: auto;
         padding: 6px 0 0 !important;
@@ -3249,7 +3258,7 @@
       }
 
       .merch-modal-wrap .merch-modal-actions {
-        max-width: min(100%, min(48dvh, 360px));
+        max-width: min(100%, min(62dvh, 520px));
         margin-left: auto;
         margin-right: auto;
         justify-content: center;
@@ -3358,7 +3367,7 @@
       #mBody .event-modal-left .merch-modal-carousel .carousel-slide img {
         width: 100%;
         height: auto;
-        max-height: min(48dvh, 360px);
+        max-height: min(62dvh, 520px);
         object-fit: contain;
         object-position: center;
       }
@@ -3425,7 +3434,7 @@
 
       #mBody .merch-modal-wrap .event-modal-right.merch-modal-right,
       .merch-modal-wrap .merch-modal-actions {
-        max-width: min(100%, min(40dvh, 300px));
+        max-width: min(100%, min(56dvh, 460px));
       }
 
       .modal-body {
@@ -3473,8 +3482,8 @@
         height: auto;
       }
 
-      #mBody .event-modal-left .merch-modal-carousel .carousel-slide img {
-        max-height: min(40dvh, 300px);
+      #mBody .merch-modal-wrap .event-modal-left .merch-modal-carousel .carousel-slide img {
+        max-height: min(56dvh, 460px);
       }
 
       .g4 {
@@ -3519,6 +3528,10 @@
       #eventsGrid,
       #studioServicesList {
         grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      }
+
+      #merchGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
       }
 
       /* Афиша и мерч: постер не обрезать в квадрат */
