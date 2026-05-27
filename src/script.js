@@ -51,31 +51,31 @@ const EVENTS_VISIBLE_LIMIT = 3;
 const STUDIO_SERVICES = [
   {
     id: "vinyl-wash",
-    title: "Мойка пластинок",
+    title: "мойка пластинок",
     about:
       "Бережная очистка винила от пыли и статики. Подходит для домашней коллекции и пластинок перед эфиром или сетом."
   },
   {
     id: "set-recording",
-    title: "Запись сета",
+    title: "запись сета",
     about:
       "Запись DJ-сета в студии: подготовка сигнала, контроль уровня и экспорт в удобном формате для публикации или архива."
   },
   {
     id: "mastering",
-    title: "Мастеринг",
+    title: "мастеринг",
     about:
       "Финальная обработка трека под стриминг и релиз: баланс, громкость и проверка на разных системах воспроизведения."
   },
   {
     id: "mixing",
-    title: "Сведение",
+    title: "сведение",
     about:
       "Сведение мультитрека: баланс партий, пространство, динамика и подготовка материала к мастерингу."
   },
   {
     id: "lessons",
-    title: "Уроки DJ и продакшена",
+    title: "уроки DJ и продакшена",
     about:
       "Индивидуальные занятия по DJ-технике и основам продакшена — от первых шагов до подготовки к выступлению."
   }
@@ -975,7 +975,7 @@ function buildStudioModalBody(service) {
   const actions = el("div", { className: "studio-modal-body__actions" });
   const link = el("a", {
     className: "btn primary studio-modal-body__cta",
-    text: "Записаться"
+    text: "записаться"
   });
   link.href = STUDIO_CONTACT_URL;
   link.target = "_blank";
