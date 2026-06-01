@@ -1,9 +1,10 @@
+import { SUPABASE_STORAGE_PUBLIC_IMAGES } from "./config.js";
+
 /** Локальные статические ассеты (Vite: public/images → /images/…) */
 export const LOCAL_IMAGES = "./images/";
 
 /** Supabase Storage — постеры, мерч и прочий контент из БД */
-export const ASSET_PREFIX =
-  "https://rvswpgsxutfcpgvmzonr.supabase.co/storage/v1/object/public/images/";
+export const ASSET_PREFIX = SUPABASE_STORAGE_PUBLIC_IMAGES;
 
 /** Иконки соцсетей в футере (Supabase Storage) */
 export const FOOTER_ICONS = {

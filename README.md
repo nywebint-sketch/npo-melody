@@ -83,11 +83,16 @@ npm run build
 
 Подробнее про кастомный домен и DNS — см. ниже (раздел «Нормальный адрес»).
 
-### Supabase
+### Supabase и переменные окружения
 
-URL и anon-ключ проекта заданы в `src/db.js`; клиент Supabase подключается через npm (`@supabase/supabase-js`) и попадает в бандл Vite.
+URL и anon-ключ задаются через `VITE_SUPABASE_URL` и `VITE_SUPABASE_ANON_KEY` (см. `.env.example`). Локально скопируйте в `.env.local`; для GitHub Pages добавьте те же ключи в **Settings → Secrets** (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`) — workflow подставит их при `npm run build`.
 
-Дальше можно вынести значения в переменные окружения (`VITE_SUPABASE_*`) и подставлять при сборке в CI.
+Опционально:
+
+- `VITE_BOOKING_ENDPOINT` — URL для POST заявок на букинг (без значения форма отключена).
+- `VITE_FOOTER_SOCIALS_FROM_DB=true` — иконки футера из таблицы `footer_socials` в Supabase.
+
+Клиент Supabase подключается через npm (`@supabase/supabase-js`) в `src/db.js` и попадает в бандл Vite.
 
 ### Сущности в БД
 

@@ -2,10 +2,7 @@
  * Слой данных (Data Layer) — Supabase Integration
  */
 import { createClient } from '@supabase/supabase-js';
-
-const SUPABASE_URL = 'https://rvswpgsxutfcpgvmzonr.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2c3dwZ3N4dXRmY3Bndm16b25yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQ1MTEsImV4cCI6MjA4ODY2MDUxMX0.I_XagunD2zgTVmpaOrt4SvbJbJFHAJAd2j7JpYb26oY';
-const STORAGE_BUCKET = 'images';
+import { STORAGE_BUCKET, SUPABASE_ANON_KEY, SUPABASE_URL } from './config.js';
 
 let supabaseClt = null;
 let dbHealth = {
